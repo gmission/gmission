@@ -1,0 +1,34 @@
+{% extends 'admin/master.html' %}
+{% block body %}
+    <ul class="nav nav-tabs">
+        <li class="active">
+            <a href="javascript:void(0)">List ({{ task|length }})</a>
+        </li>
+    </ul>
+
+    <table class="table table-striped table-bordered model-list">
+
+        <thead>
+            <tr>
+
+                <th>Conference</th>
+                <th>Field</th>
+                <th>Answer Count</th>
+                <th></th>
+            </tr>
+            {% for x in task %}
+                <tr>
+                    <td>{{ x.conference.name }}</td>
+                    <td>{{ x.field }}</td>
+                    <td>{{ x.optlen }}</td>
+                    <th><a class="icon" href="edit?id={{ x.ctid }}">
+                            <i class="icon-pencil"></i>
+                    </a></th>
+                </tr>
+            {% endfor %}
+
+        </thead>
+
+    </table>
+
+{% endblock %}

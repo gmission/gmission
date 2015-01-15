@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>testing msg</title>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+</head>
+<body>
+
+<form target="_self" method="GET">
+    {% for k,v in defaults.items() %}
+        {{k}}<input name="{{k}}" type="text" value="{{v}}"> <br/>
+    {% endfor %}
+    <input type="submit" >
+
+
+</form>
+
+</body>
+</html>

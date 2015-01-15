@@ -1,0 +1,52 @@
+
+<div>
+
+<h2>{{location.name}}</h2>
+
+<h3>all requests</h3>
+    <table>
+        <tr>
+            <th>Brief</th>
+            <th>Type</th>
+            <th>Credit</th>
+            <th>Time</th>
+            <th>Status</th>
+        </tr>
+        <tr ng-repeat="request in all_requests">
+            <td><a href="#/request/{{request.id}}" > {{request.task.brief}} </a></td>
+            <td> {{request.task.type}}</td>
+            <td>  {{request.credit}}</td>
+            <td>  {{request.begin_time|date:'short'}} - {{request.end_time|date:'short'}} <br/>
+            <td>  {{request.status}}</td>
+        </tr>
+    </table>
+
+
+<h3>all tasks</h3>
+<ul class="location">
+    <li ng-repeat="task in all_tasks">
+        <a href="#/task/{{task.id}}" >
+            {{task.brief}}
+        </a>
+    </li>
+</ul>
+
+
+<form novalidate class="request-form">
+    Type: <input type="radio" ng-model="new_request.type" value="text" />text
+          <input type="radio" ng-model="new_request.type" value="image" />image<br />
+          <input type="radio" ng-model="new_request.type" value="video" />video<br />
+
+    Brief: <textarea  ng-model="new_request.brief"></textarea><br />
+
+    Valid Period:<input type="text" ng-model="new_request.valid" /> minutes<br />
+    Credit:<input type="text" ng-model="new_request.credit" /><br />
+    How many answers required:<input type="text" ng-model="new_request.required_answer_count" /><br />
+
+    Location ID: <input type="text" ng-model="new_request.location_id" /><br />
+
+    <button ng-click="submit()">submit</button>
+</form>
+
+
+</div>

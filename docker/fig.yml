@@ -1,0 +1,19 @@
+gmissionbyuwsgi:
+  build: ./gmission_by_uwsgi
+  links:
+    - mysql:docker-mysql
+  volumes:
+    - ../:/GMission-Server
+  ports:
+    - "80:9090"
+
+mysql:
+  build: ./mysql
+  ports:
+    - "3306:3306"
+  volumes_from:
+    - mysqldata
+
+mysqldata:
+  build: ./mysql_data
+
