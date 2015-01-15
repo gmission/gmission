@@ -7,5 +7,5 @@ FROM chenzhao/gmission
 
 WORKDIR /GMission-Server/hkust-gmission
 
-CMD  git pull && python db_util.py && uwsgi --http-socket :9090 --module gmission --callable app
+CMD  python db_util.py && uwsgi --http-socket :9090 --module gmission --callable app
 
