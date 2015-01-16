@@ -5,7 +5,7 @@ gmissionbyuwsgi:
   volumes:
     - ../:/GMission-Server
   ports:
-    - "80:9090"
+    - "9090:9090"
 
 mysql:
   build: ./mysql
