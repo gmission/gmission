@@ -1,6 +1,6 @@
+# -*- coding: utf-8 -*-
+ # import sys
 __author__ = 'chenzhao'
-# coding:utf8
-import sys
 import os
 import random
 from termcolor import colored
@@ -8,7 +8,7 @@ import requests
 import json
 
 
-url_root = 'http://127.0.0.1:5000/'
+url_root = 'TO BE SET IN MAIN()'
 
 def color_print(color, *args):
     colored_str = colored(' '.join(map(str, args)), color)
@@ -141,7 +141,8 @@ def test_user_created():
 
 @test_case
 def user_register_new():
-    new_user = dict(email='testcase_new_user@test.com', password='1234567', name='testcase_new')
+    new_user = dict(email='testcase_new_user%d@test.com'%random.randint(0,10000000),
+                    password='1234567', name='testcase_new%d'%random.randint(0,1000000))
     rest_delete_all('user', dict(email=new_user['email']))
 
     r = post('user/register', **new_user)
@@ -503,7 +504,8 @@ And by opposing end them? To die: to sleep;''', user_id=user['id'])
                       u'''工信处女干事每月经过下属科室都要亲口交代24口交换机等技术性器件的安装工作''', user_id=user['id'])
     moment_j = rest_post('moment', new_moment).json()
     assert moment_j['id']
-    assert moment_j['status'] == 'private'
+    # only for public version
+    # assert moment_j['status'] == 'private'
     return True
 
 
@@ -531,7 +533,7 @@ def run_all_cases():
 
 def main():
     global url_root
-    url_root = 'http://gmission-asia.cloudapp.net/gmission_szww/'
+    url_root = 'http://192.168.59.106:9090/'
     run_all_cases()
 
 

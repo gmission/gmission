@@ -52,7 +52,7 @@ def android_push_task(app, payload_dict, baidu_user_id):
 
 
 def push_by_php(app, platform, payload_dict, baidu_user_id):
-    push_url = 'http://115.29.195.20/php/baiduPush/push.php'
+    push_url = 'http://docker-php-push/baiduPush/push.php'
 
     params = dict(app=app, platform=platform, message=json.dumps(payload_dict), user_id=baidu_user_id)
     if platform=='android':

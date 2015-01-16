@@ -1,7 +1,9 @@
-gmissionbyuwsgi:
+gmissionbyuwsgi:  # celery should be separated
   build: ./gmission_by_uwsgi
   links:
     - mysql:docker-mysql
+    - redis:docker-redis
+    - phppush:docker-php-push
   volumes:
     - ../:/GMission-Server
   ports:
@@ -15,5 +17,20 @@ mysql:
     - mysqldata
 
 mysqldata:
-  build: ./mysql_data
+  image: tutum/mysql
+  volumes:
+    - /var/lib/mysql
+  command: /bin/sh
+
+redis: # some redis warnings ignored..
+  image: dockerfile/redis
+
+phppush:
+  image: tutum/apache-php
+  ports:
+    - "9898:80"
+  volumes:
+    - ../PHP-push:/app
+
+
 

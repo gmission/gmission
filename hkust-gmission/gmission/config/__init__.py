@@ -7,16 +7,18 @@ import os.path
 
 def config(app, root):
     config_common(app, root)
-    if is_production():
-        config_production(app)
-    else:
-        config_developing(app)
+    # if is_production():
+    #     config_production(app)
+    # else:
+    #     config_developing(app)
 
     check_dir_config(app)
 
 
 def is_production():
-    return 'xjimi.com' in socket.gethostname() or 'gmission' in socket.gethostname()
+    print 'docker now, all is production'
+    return True
+    # return 'xjimi.com' in socket.gethostname() or 'gmission' in socket.gethostname()
 
 
 def makedir(dir_path):
@@ -48,6 +50,8 @@ def config_common(app, root_path):
 
     app.config['GMISSION_LOGS_DIR'] = os.path.join(root_path, 'logs')
 
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://csp_team:csp2014hkust@docker-mysql/gmission_hkust'
+
 
     FP_PATH = os.path.join(root_path, 'static', 'fp_collection')
     app.config['APK_PATH'] = os.path.join(FP_PATH, 'app-debug-unaligned.apk')
@@ -55,21 +59,18 @@ def config_common(app, root_path):
     app.config['WIFIPAD_PATH'] = os.path.join(FP_PATH,'wififorpad.apk')
     app.config['LOCALIZATION_PATH'] = os.path.join(FP_PATH, 'wifilocalization.apk')
 
-    # app.config['CELERY_BROKER_URL'] = 'amqp://gmission:gmission1234@'+celery_host()+':5672/gmission_vhost/'
-    # app.config['CELERY_RESULT_BACKEND'] = 'amqp://gmission:gmission1234@'+celery_host()+':5672/gmission_vhost/'
 
     log.set_logger(app)
     app.config.from_object('email')
 
-
-def config_developing(app):
-    print 'NOT production server'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://csp_team:csp2014hkust@docker-mysql/gmission_hkust'
-    # app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:swarm@csz908.cse.ust.hk/gmission_dev'
-    pass
-
-
-def config_production(app):
-    print 'production server'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://csp_team:csp2014hkust@127.0.0.1/gmission_vldb2014'
-    pass
+#
+# def config_developing(app):
+#     print 'NOT production server'
+#     app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://csp_team:csp2014hkust@docker-mysql/gmission_hkust'
+#     pass
+#
+#
+# def config_production(app):
+#     print 'production server'
+#     app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://csp_team:csp2014hkust@docker-mysql/gmission_hkust'
+#     pass
