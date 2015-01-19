@@ -1,5 +1,9 @@
 #!/bin/bash
 
+
+cp /usr/share/zoneinfo/Asia/Hong_Kong /etc/localtime
+
+
 VOLUME_HOME="/var/lib/mysql"
 CONF_FILE="/etc/mysql/conf.d/my.cnf"
 LOG="/var/log/mysql/error.log"

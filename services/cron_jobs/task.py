@@ -120,7 +120,7 @@ def gen_tasks():
 
 def run():
     c = CronTab(
-        Event(gen_tasks, min=[0], hour=range(10, 19)),
+        Event(gen_tasks, min=[0, 30], hour=range(10, 19)),
     )
     c.run()
     pass
