@@ -34,7 +34,7 @@ def check_enough_answer():
 
 
 def close_task_and_pay_workers(task):
-    if task.type in ('image', 'video'):
+    if task.type in ('image', 'video', 'mix'):
         pay_image(task)
     else:  # text multiple choice
         # pay_choice(task)

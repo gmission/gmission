@@ -10,6 +10,7 @@ import rest
 from flask import render_template, request, redirect, jsonify, g
 from models import *
 
+import json
 
 app.register_blueprint(blueprints.user_bp,      url_prefix='/user')
 app.register_blueprint(blueprints.image_bp,     url_prefix='/image')
@@ -32,49 +33,20 @@ def index():
     return render_template('index.html', config=app.config)
 
 
-@app.route('/test_data')
-def test_data():
-    length = int(request.args.get('size', 1))
-    wait = int(request.args.get('wait', 0))
-    page = int(request.args.get('page', 0))
-    result = '*'*length
-    if wait:
-        time.sleep(wait)
-    if page:
-        return render_template('empty.html', result=result)
-    else:
-        return result
+
+@app.route('/marauders-map')
+def marauders_map():
+    users = User.query.all()
+
+    user_traces = {}
+    # for u in User.query.all()[:50]:
+    for u in User.query.filter(User.id==36):
+        traces = PositionTrace.query.filter_by(user=u).all()
+        user_traces[u.id] = [(t.longitude, t.latitude) for t in traces]
 
 
-from controllers.message_controller import save_and_push_msg
-@app.route('/test_msg', methods=['GET', 'POST'])
-def test_msg():
-    defaults = {'sender_id':'1', 'receiver_id':'1', 'content':'this is an empty testing msg', 'type':'testing', 'status':'new',
-                'att_type':'', 'attachment':''}
-    msg_dict = {}
-    for k, v in defaults.items():
-        msg_dict[k] = request.args.get(k, v)
-    defaults = msg_dict
-    receiver = msg_dict['receiver_id']
-    if receiver=='31415926': #to all
-        for user in User.query.all():
-            send_msg_dict(msg_dict, user.id)
-        defaults['receiver_id'] = '31415926'
-    elif ',' in receiver:
-        for user_id in receiver.split(','):
-            send_msg_dict(msg_dict, user_id)
-    else:
-        send_msg_dict(msg_dict)
-    return render_template('test_msg.html', defaults=defaults)
+    return render_template('marauders_map.html', users=users, user_traces=json.dumps(user_traces))
 
-
-def send_msg_dict(msg_dict, receiver_id = None):
-    if not receiver_id:
-        receiver_id = msg_dict['receiver_id']
-    msg_dict['receiver_id'] = int(receiver_id)
-    msg_dict['sender_id'] = int( msg_dict['sender_id'] )
-    m = Message(**msg_dict)
-    save_and_push_msg(m)
 
 
 

@@ -24,8 +24,8 @@ function right_output ( $str )
 
 
 //请开发者设置自己的apiKey与secretKey
-$apiKey = "cK1GnOiXFLTRvXP5RZwXZo3e";
-$secretKey = "lpjfkZSMCB28jmqMAyPVPcUNhIt21Rwo";
+$apiKey = "LQpGHpuTYA0lkjQj6zY3ZVfB"; //"cK1GnOiXFLTRvXP5RZwXZo3e";
+$secretKey = "kkwpcFMTsKhdECYMbEOl7NF1hG2OGd4x"; //"lpjfkZSMCB28jmqMAyPVPcUNhIt21Rwo";
 
 
 //推送android设备消息

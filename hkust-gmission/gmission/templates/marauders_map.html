@@ -1,0 +1,197 @@
+<!DOCTYPE html>  
+<html>  
+<head>  
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />  
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />  
+<title>A map of all users</title>
+
+<link rel="stylesheet" href="{{url_for('static',filename='css/bootstrap.min.css')}}">
+<link rel="stylesheet" href="{{url_for('static',filename='css/bootstrap-theme.min..css')}}">
+<link rel="stylesheet" href="{{url_for('static',filename='css/bootstrap-slider.css')}}">
+
+<style type="text/css">
+    html{
+        min-width: 900px;
+        height: 100%;
+    }
+    body, .container-fluid, .row, #baidu_map, #map_container {
+        height:100%;
+        margin:0px;
+        padding:0px
+    }
+    #map_container{
+        height:100%;
+        min-width: 900px;
+    }
+    #controller_container{
+        height: 100%;
+    }
+    #user_list{
+        max-height:600px;
+        overflow-y:auto;
+
+    }
+    .row {
+        display: table;
+    }
+
+[class*="col-"] {
+    float: none;
+    display: table-cell;
+    vertical-align: top;
+}
+.list-group-item{
+    padding-bottom: 3px;
+    padding-top: 3px;
+}
+
+    #time_slider_container{
+        border-style: solid;
+        border-width: 0px;
+        border-color: #000000;
+        position: absolute;
+        top: 0;
+        width:100%;
+        z-index:100;
+        background-color: #ffffff;
+        opacity: 0.8;
+    }
+{#    #time_slider{#}
+{#        width: 400px;#}
+{#    }#}
+</style>
+
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=1.5&ak=3aKw8PYudOOu9nuaNha0OcG5"></script>
+<script type="text/javascript" src="{{url_for('static',filename='js/LuShu.js')}}"></script>
+</head>
+   
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div id="map_container" class="col-md-10">
+            <div id="time_slider_container">&nbsp;&nbsp;
+                <input id="time_slider" type="text"/> &nbsp;&nbsp;
+                Time: <span id="time_sliderSliderVal">...</span>
+            </div>
+            <div id="baidu_map" ></div>
+        </div>
+
+        <div id="controller_container" class="col-md-2">
+            <h4>controller</h4>
+            <div id="user_list" class="well well-sm">
+                <h5>user path</h5>
+                <div class="list-group">
+                    {% for u in users %}
+                        <a href="#" onclick="showPathOfUser(this)" data-uid="{{ u.id }}"
+                           class="user_item list-group-item">{{ u.name }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div> {#    <div class="row">#}
+</div> {#<div class="container-fluid">#}
+
+
+
+
+<script type="text/javascript" src="{{url_for('static',filename='js/jquery-2.1.1.min.js')}}"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="{{url_for('static',filename='js/bootstrap-slider.js')}}"></script>
+<script type="text/javascript">
+
+    $(document).ready(function(){
+        $("#time_slider_container").hide();
+    })
+
+var initTimeSlider = function(times){
+    $("#time_slider_container").show();
+    var len = times.length;
+    $("#time_slider").slider({min:1, max:len, step:1, value:1, width:400});
+    $("#time_slider").on("slide", function(slideEvt) {
+        $("#time_sliderSliderVal").text(times[slideEvt.value]);
+    });
+}
+var showPathOfUser = function (item) {
+    $(".user_item").removeClass("active");
+    $(item).addClass("active");
+    var uid = item.dataset.uid;
+    console.log(uid, 'clicked');
+    var filters = {filters:[{name:'user_id', op:'==', val:uid}]};
+
+    $.getJSON("rest/position_trace?q="+JSON.stringify(filters), function( data ) {
+        var traces = data['objects'];
+{#        console.log("trace:")#}
+{#        console.log(data)#}
+        var times = traces.map(function(trace){ return trace["created_on"]; });
+        initTimeSlider(times);
+
+        var randomColor = '#'+Math.floor(Math.random()*16777215).toString(16);
+{#        console.log(randomColor)#}
+        var baiduPointPath = traces.map(function(trace){ return new BMap.Point(trace["longitude"], trace["latitude"]); });
+        var polyline = new BMap.Polyline(baiduPointPath, {strokeColor:randomColor, strokeWeight:2, strokeOpacity:0.4} );
+        map.addOverlay(polyline);
+        var lushu = new BMapLib.LuShu(map, baiduPointPath, {defaultContent:uid, landmarkPois:[], speed:20, icon:myIcon});
+        lushu.start()
+    });
+}
+var map = new BMap.Map("baidu_map");
+//var point = new BMap.Point(116.404, 39.915);  // tiananmen
+//var start_point = new BMap.Point(113.979334,22.541648);// szww
+var start_point = new BMap.Point( 114.274277,22.340725); // fire bird
+
+map.centerAndZoom(start_point, 17);                 // 初始化地图，设置中心点坐标和地图级别
+
+
+map.addControl(new BMap.NavigationControl());
+map.addControl(new BMap.ScaleControl());
+map.addControl(new BMap.OverviewMapControl());
+map.addControl(new BMap.MapTypeControl());
+map.setCurrentCity("香港");
+
+
+var myIcon = new BMap.Icon("{{url_for('static', filename='image/face.png')}}", new BMap.Size(20, 20), {
+    anchor: new BMap.Size(10, 10),
+    imageSize:new BMap.Size(20, 20)
+ });
+
+var addFace = function(lng, lat, title_text, label_text){
+    console.log(label_text);
+    var point = new BMap.Point(lng, lat);
+
+     var marker = new BMap.Marker(point);
+     marker.setIcon(myIcon);
+    if (label_text) {
+        marker.setLabel(new BMap.Label(label_text, {offset: new BMap.Size(0, 32)}));
+    }
+    marker.setTitle(title_text);
+     map.addOverlay(marker);
+}
+
+var bounds = map.getBounds();
+//console.log(bounds);
+var southWest = bounds.getSouthWest()
+var northEast = bounds.getNorthEast()
+//console.log(southWest, northEast);
+
+
+//console.log(devices);
+
+addFace(114.274277,22.340725, 'bird', '');
+
+//var users = {{ users|safe }};
+//$.getJSON("rest/user_last_position", function( data ) {
+//  var items = data['objects'];
+//    console.log("laste positions:")
+//  console.log(data)
+//  $.each( items, function( key, val ) {
+//      var pos = val;
+//      var label = devices[pos.user_id];
+//      var title = pos.last_updated;
+//      console.log(pos, pos.user_id, title, label);
+//      addFace(pos.longitude, pos.latitude, title, label);
+//  });
+//});
+
+</script>
+</body>  
+</html>

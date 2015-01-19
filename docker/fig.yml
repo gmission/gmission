@@ -1,11 +1,12 @@
 gmissionbyuwsgi:  # celery should be separated
-  build: ./gmission_by_uwsgi
+  image: chenzhao/gmission
   links:
     - mysql:docker-mysql
     - redis:docker-redis
     - phppush:docker-php-push
   volumes:
     - ../:/GMission-Server
+  command: /bin/sh /GMission-Server/docker/gmission_by_uwsgi/run.sh
   ports:
     - "9090:9090"
 

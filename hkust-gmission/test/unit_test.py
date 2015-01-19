@@ -509,7 +509,6 @@ And by opposing end them? To die: to sleep;''', user_id=user['id'])
     return True
 
 
-
 def run_all_cases():
     test_user_created()
 
@@ -531,9 +530,9 @@ def run_all_cases():
     new_moment()
 
 
+url_root = 'http://192.168.59.106:9090/'
 def main():
-    global url_root
-    url_root = 'http://192.168.59.106:9090/'
+    # url_root = 'http://lccpu3.cse.ust.hk/gmission/'
     run_all_cases()
 
 

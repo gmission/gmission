@@ -12,7 +12,14 @@ def log_payment(requester, worker, answer, credit):
     db.session.add(ct)
 
 
+def has_paid(requester, worker, answer):
+    logged = CreditTransaction.query.filter(CreditTransaction.answer_id==answer.id).count()
+    return logged > 0
+
+
 def pay(requester, worker, answer, credit):
+    if has_paid(requester, worker, answer):
+        return
     worker.credit += credit
     requester.credit -= credit
     log_payment(requester, worker, answer, credit)
