@@ -117,7 +117,6 @@ def gen_tasks():
     assert task_j['requester_id'] == new_task['requester_id']
 
 
-
 def run():
     c = CronTab(
         Event(gen_tasks, min=[0, 30], hour=range(10, 19)),
