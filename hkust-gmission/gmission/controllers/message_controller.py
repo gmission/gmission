@@ -99,12 +99,11 @@ def push_user_async(user):
 def push_message_async(message_obj):
 
     def apply_push_task_for_message(baidu_push_info, message_dict):
-        if is_production():
-            if baidu_push_info.type=='android':
-                android_push_task.apply_async(('szww', message_dict, baidu_push_info.baidu_user_id))
-            elif baidu_push_info.type=='ios':
-                ios_push_task.apply_async(('szww', message_dict['content'], message_dict, baidu_push_info.baidu_user_id))
-            push_msg_logger.info('sent to MQ %s %s', repr(message_dict), repr(baidu_push_info.baidu_user_id))
+        if baidu_push_info.type=='android':
+            android_push_task.apply_async(('szww', message_dict, baidu_push_info.baidu_user_id))
+        elif baidu_push_info.type=='ios':
+            ios_push_task.apply_async(('szww', message_dict['content'], message_dict, baidu_push_info.baidu_user_id))
+        push_msg_logger.info('sent to MQ %s %s', repr(message_dict), repr(baidu_push_info.baidu_user_id))
 
 
     bindlist = BaiduPushInfo.query.filter(BaiduPushInfo.user_id == message_obj.receiver_id,

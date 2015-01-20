@@ -127,19 +127,6 @@ $messageKey = $_REQUEST['message_key'];
 $deployStatus = $_REQUEST['deploy_status'];
 
 
-if ($app=='szww'){
-    $apiKey = "cK1GnOiXFLTRvXP5RZwXZo3e";
-    $secretKey = "lpjfkZSMCB28jmqMAyPVPcUNhIt21Rwo";
-}else if ($app=='zhosr'){
-    $apiKey = "X7GaxQBT8bkXXkGxwpxh2RQr";
-    $secretKey = "ctu2cIYsLEhOnjpUmvW8IfsHWFzF6tr5";
-}else if ($app=='vldb'){
-    $apiKey = "cK1GnOiXFLTRvXP5RZwXZo3e";
-    $secretKey = "lpjfkZSMCB28jmqMAyPVPcUNhIt21Rwo";
-}
-
-
-
 if ($platform=='android'){
     pushMessage_android($user_id, $message, $messageKey);
 }else if ($platform=='ios'){

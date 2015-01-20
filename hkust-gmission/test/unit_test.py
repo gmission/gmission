@@ -159,8 +159,9 @@ def user_register_new():
 
 @test_case
 def user_reg_email():
-    new_user = dict(email='chenzhao.hk@gmail.com', password='1234567', name='CHEN Zhao')
+    new_user = dict(email='chenzhao.hk@gmail.com', password='1234567', name='CHEN Zhao %d'%random.randint(0,10000))
     rest_delete_all('user', dict(email=new_user['email']))
+
     r = post('user/register', **new_user)
     assert r.status_code == 200
     rjson = r.json()
