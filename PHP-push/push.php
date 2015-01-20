@@ -9,7 +9,6 @@
 
 require_once("Channel.class.php");
 
-
 function error_output ( $str )
 {
     echo $str . "\n";
@@ -24,8 +23,8 @@ function right_output ( $str )
 
 
 //请开发者设置自己的apiKey与secretKey
-$apiKey = "LQpGHpuTYA0lkjQj6zY3ZVfB"; //"cK1GnOiXFLTRvXP5RZwXZo3e";
-$secretKey = "kkwpcFMTsKhdECYMbEOl7NF1hG2OGd4x"; //"lpjfkZSMCB28jmqMAyPVPcUNhIt21Rwo";
+$apiKey = "LQpGHpuTYA0lkjQj6zY3ZVfB";
+$secretKey = "kkwpcFMTsKhdECYMbEOl7NF1hG2OGd4x";
 
 
 //推送android设备消息
@@ -135,7 +134,10 @@ if ($platform=='android'){
     }else{
         pushMessage_ios_developing($user_id, $message);
     }
+}else{
+    error_output ('INVALID PARAMETERS!');
 }
+
 
 
 

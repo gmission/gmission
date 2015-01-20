@@ -6,6 +6,7 @@
  * Time: 3:53 PM
  */
 
+phpinfo();
 
 require_once("sample.php");
 require_once("push.php");

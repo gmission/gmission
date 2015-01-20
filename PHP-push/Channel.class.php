@@ -204,7 +204,7 @@ class Channel extends BaeBase
 	protected $_requestId = 0;
 	protected $_curlOpts = array(
         CURLOPT_TIMEOUT => 30,
-        CURLOPT_CONNECTTIMEOUT => 5
+        CURLOPT_CONNECTTIMEOUT => 30
         );
 	protected $_host = self::HOST_DEFAULT;
 
