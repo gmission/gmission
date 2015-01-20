@@ -5,7 +5,7 @@ from werkzeug.exceptions import Conflict
 from gmission.models import *
 from gmission.controllers.message_controller import send_answer_message, send_answer_comment_message
 from gmission.controllers.harmony_controller import contains_sensitive_words
-from gmission.controllers.task_controller import refresh_task_status, assign_task_to_knn_workers, assign_task_to_all_nearby_workers
+from gmission.controllers.task_controller import refresh_task_status, assign_task_to_workers
 from gmission.controllers.payment_controller import pay
 # import gmission.controllers.message_controller.send_answer_message as send_answer_message
 
@@ -71,8 +71,7 @@ class ReSTTask(Task, ReSTBase):
     def after_post(cls, result=None):
         # print 'ReSTTask after_post'
         task = Task.query.get(result['id'])
-        assign_task_to_knn_workers(task)
-        # assign_task_to_all_nearby_workers(task)
+        assign_task_to_workers(task)
 
 class ReSTThing(Thing, ReSTBase):
     @classmethod
@@ -103,8 +102,6 @@ class ReSTAnswer(Answer, ReSTBase):
         refresh_task_status()
         # Prof. Chen wants workers to be paid at once:
         pay(answer.task.requester, answer.worker, answer, answer.task.credit)
-
-
 
     @classmethod
     def after_get_many(cls, search_params=None, **kwargs):

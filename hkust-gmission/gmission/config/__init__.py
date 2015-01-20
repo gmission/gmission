@@ -8,6 +8,7 @@ import os.path
 
 def stdout(*lst):
     print '[' + ' '.join(sys.argv) + ']' + ' '.join(map(str, lst))
+    sys.stdout.flush()
 
 
 def config(app, root):

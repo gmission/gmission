@@ -531,6 +531,7 @@ def run_all_cases():
 
 
 url_root = 'http://192.168.59.106:9090/'
+url_root = 'http://hkust-gmission.cloudapp.net:9090/'#;'http://192.168.59.106:9090/'
 def main():
     # url_root = 'http://lccpu3.cse.ust.hk/gmission/'
     run_all_cases()
