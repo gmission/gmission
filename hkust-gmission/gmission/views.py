@@ -44,11 +44,7 @@ def marauders_map():
         traces = PositionTrace.query.filter_by(user=u).all()
         user_traces[u.id] = [(t.longitude, t.latitude) for t in traces]
 
-
     return render_template('marauders_map.html', users=users, user_traces=json.dumps(user_traces))
-
-
-
 
 
 @cache.cached(timeout=3600, key_prefix='crabwords')

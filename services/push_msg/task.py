@@ -11,6 +11,7 @@ import logging
 from logging.handlers import RotatingFileHandler
 
 
+
 def make_push_msg_logger(logs_path):
     profiling_formatter = logging.Formatter('%(asctime)s %(message)s')
     profiling_log_file = os.path.join(logs_path, 'GMissionPushMsg.log')
@@ -24,7 +25,10 @@ def make_push_msg_logger(logs_path):
 
 CELERY_BROKER_URL = 'redis://docker-redis:6379/0'  # 'amqp://guest:guest@localhost:5672//'
 celery_app = celery.Celery(broker=CELERY_BROKER_URL)
-print 'CELERY_BROKER_URL', CELERY_BROKER_URL
+celery_app.conf.CELERY_ACCEPT_CONTENT = ['pickle', 'json', 'msgpack', 'yaml']
+
+# print 'CELERY_BROKER_URL', CELERY_BROKER_URL
+
 logger = make_push_msg_logger(os.path.dirname(__file__))
 
 

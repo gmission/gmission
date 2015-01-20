@@ -4,18 +4,33 @@ __author__ = 'chenzhao'
 
 from datetime import datetime, timedelta
 import sys
+import json
 import time
 import os.path
 import requests
 import logging
 from logging.handlers import RotatingFileHandler
 
+url_root = 'http://docker-gmission:9090'
 
-PWD = os.path.dirname(__file__)
-test_lib_path = os.path.join(os.path.abspath(PWD), '../../hkust-gmission/test')
-sys.path.append(test_lib_path)
+# PWD = os.path.dirname(__file__)
+# test_lib_path = os.path.join(os.path.abspath(PWD), '../../hkust-gmission/test')
+# sys.path.append(test_lib_path)
 
-from unit_test import *
+# from unit_test import *
+
+
+def post(urlpath, **kw):
+    url = url_root+urlpath
+    json_data = json.dumps(kw)
+    headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+    # http_debug('POST', url, json_data)
+    resp = requests.post(url, data=json_data, headers=headers)
+    # http_debug('Response:', resp.status_code, resp.content[:60], '...')
+    return resp
+
+def rest_post(name, obj_dict):
+    return post('rest/'+name, **obj_dict)
 
 
 def make_cron_logger(logs_path):
@@ -60,6 +75,8 @@ class Event(object):
         self.action = action
         self.args = args
         self.kwargs = kwargs
+        print 'new event:', 'mins:', min, 'hours:', hour, 'action:', action.__name__
+        sys.stdout.flush()
 
     def matchtime(self, t):
         """Return True if this event should trigger at the specified datetime"""
@@ -89,9 +106,10 @@ class CronTab(object):
                 time.sleep((t - datetime.now()).seconds)
 
 
-def gen_tasks():
-    logger.info("generating tasks:")
-    print "generating tasks:"
+def gen_taking_picture():
+    logger.info("generating taking_picture:")
+    print "generating taking_picture tasks:"
+    sys.stdout.flush()
     user = dict(email='scheduler@gmission.com', password='1234567', name='a mysterious person')
     rest_post('user', user)
     u = post('user/login', **user).json()
@@ -117,13 +135,50 @@ def gen_tasks():
     assert task_j['requester_id'] == new_task['requester_id']
 
 
+def gen_canteen_menus():
+    logger.info("generating canteen_menus tasks:")
+    print "generating canteen_menus tasks:"
+    sys.stdout.flush()
+    user = dict(email='scheduler@gmission.com', password='1234567', name='a mysterious person')
+    rest_post('user', user)
+    u = post('user/login', **user).json()
+
+    lon, lat = 114.274277, 22.340725
+    bound = dict(left_top_longitude=lon-1,
+                 left_top_latitude=lat-1,
+                 right_bottom_longitude=lon+1,
+                 right_bottom_latitude=lat+1)
+    location = dict(name='Canteen LG7', longitude=lon, latitude=lat, bound=bound)
+    new_task = dict(type='mix',
+                    brief="What's the menu today?",
+                    credit=10,
+                    required_answer_count=5,
+                    requester_id=u['id'],
+                    location=location)
+    r = rest_post('task', new_task)
+    task_j = r.json()
+    assert task_j['id'] and task_j['begin_time'] and task_j['end_time'] and task_j['location_id']
+    assert task_j['status'] == 'open'
+    assert task_j['type'] == new_task['type']
+    assert task_j['credit'] == new_task['credit']
+    assert task_j['requester_id'] == new_task['requester_id']
+
+
 def run():
     c = CronTab(
-        Event(gen_tasks, min=[0, 30], hour=range(10, 19)),
+        Event(gen_taking_picture, min=[0, 30], hour=range(10, 19)),
+        Event(gen_canteen_menus, min=[0], hour=[11, 17]),
     )
     c.run()
     pass
 
 
-if __name__=='__main__':
-    run()
+if __name__ == '__main__':
+    while True:
+        print 'cron start'
+        sys.stdout.flush()
+        try:
+            run()
+        except Exception as e:
+            print 'cron failed', e
+            sys.stdout.flush()

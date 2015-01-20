@@ -1,8 +1,13 @@
 __author__ = 'CHEN Zhao'
 import json_encoder
 import log
+import sys
 import socket
 import os.path
+
+
+def stdout(*lst):
+    print '[' + ' '.join(sys.argv) + ']' + ' '.join(map(str, lst))
 
 
 def config(app, root):
@@ -16,7 +21,7 @@ def config(app, root):
 
 
 def is_production():
-    print 'docker now, all is production'
+    stdout('docker now, all is production')
     return True
     # return 'xjimi.com' in socket.gethostname() or 'gmission' in socket.gethostname()
 

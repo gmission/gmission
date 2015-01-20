@@ -1,14 +1,38 @@
-gmissionbyuwsgi:  # celery should be separated
+cron:
+  image: chenzhao/gmission
+  links:
+    - gmissionbyuwsgi:docker-gmission
+  volumes:
+    - ../:/GMission-Server
+  working_dir: /GMission-Server/services/cron_jobs
+  command: python task.py
+
+
+gmissionbyuwsgi:
   image: chenzhao/gmission
   links:
     - mysql:docker-mysql
     - redis:docker-redis
+  volumes:
+    - ../:/GMission-Server
+  working_dir: /GMission-Server/hkust-gmission
+  command: uwsgi --ini ../docker/gmission_by_uwsgi/uwsgi.ini
+  ports:
+    - "9090:9090"
+
+
+celery:
+  image: chenzhao/gmission
+  links:
+    - redis:docker-redis
     - phppush:docker-php-push
   volumes:
     - ../:/GMission-Server
-  command: /bin/sh /GMission-Server/docker/gmission_by_uwsgi/run.sh
-  ports:
-    - "9090:9090"
+  environment:
+    - C_FORCE_ROOT=true
+  working_dir: /GMission-Server/services
+  command: celery -A push_msg.task worker
+
 
 mysql:
   build: ./mysql
@@ -17,14 +41,17 @@ mysql:
   volumes_from:
     - mysqldata
 
+
 mysqldata:
   image: tutum/mysql
   volumes:
     - /var/lib/mysql
   command: /bin/sh
 
+
 redis: # some redis warnings ignored..
   image: dockerfile/redis
+
 
 phppush:
   image: tutum/apache-php

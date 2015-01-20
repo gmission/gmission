@@ -2,7 +2,7 @@ __author__ = 'chenzhao'
 
 
 from gmission.models import *
-from gmission.flask_app import app, db
+from gmission.flask_app import app, db, stdout
 import sys
 import time
 
@@ -14,15 +14,16 @@ def check_db():
     while tried_times<30:
         try:
             with db.engine.connect() as conn:
+                stdout('db is ready.')
                 pass
         except Exception:
             time.sleep(1)
             tried_times += 1
-            print 'waiting for db', tried_times
+            stdout('waiting for db', tried_times)
             sys.stdout.flush()
             continue
         return
-    print 'db is not ready, cannot start'
+    stdout('db is not ready, cannot start')
     raise Exception()
 
 
@@ -153,9 +154,12 @@ def init_db():
 
 if __name__ == '__main__':
     # drop_all_table()
+    stdout('<<<<<<init db begin.')
     check_db()
     init_db()
     init_data()
+    stdout('>>>>>>init db done.')
+    # raise Exception("error")
     # clear_and_import_all()
     pass
 
