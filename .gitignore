@@ -60,3 +60,5 @@ target/
 .jpg
 .png
 .log
+
+.DS_Store
