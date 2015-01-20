@@ -8,6 +8,7 @@ import celery
 import os.path
 import requests
 import logging
+import gmail
 from logging.handlers import RotatingFileHandler
 
 
@@ -39,6 +40,10 @@ def filter_datetime(message_dict):
     if 'created_on' in message_dict:
         message_dict['created_on'] = message_dict['created_on'].isoformat().split('.')[0]
 
+@celery_app.task()
+def send_email(subject, body, receiver):
+    logger.info('send email [%s] to : %s'%(subject, receiver, ))
+    gmail.send(subject, body, receiver)
 
 @celery_app.task()
 def ios_push_task(app, alert, payload_dict, baidu_user_id):

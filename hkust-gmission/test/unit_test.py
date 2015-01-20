@@ -158,6 +158,22 @@ def user_register_new():
 
 
 @test_case
+def user_reg_email():
+    new_user = dict(email='chenzhao.hk@gmail.com', password='1234567', name='CHEN Zhao')
+    rest_delete_all('user', dict(email=new_user['email']))
+    r = post('user/register', **new_user)
+    assert r.status_code == 200
+    rjson = r.json()
+    assert rjson['res'] == 0
+    assert rjson['email'] == new_user['email']
+    assert rjson['name'] == new_user['name']
+    roles = rjson['roles']
+    assert 'requester' in roles and 'worker' in roles and 'admin' not in roles
+    assert rjson['token'] and rjson['id'] and rjson['credit']
+    return True
+
+
+@test_case
 def user_register_existing():
     existing_user = dict(email='testcase_existing_user@test.com', password='1234567', name='testcase_existing')
     rest_post('user', existing_user)
@@ -513,6 +529,7 @@ def run_all_cases():
     test_user_created()
 
     user_register_new()
+    user_reg_email()
     user_register_existing()
     user_login_success()
     user_login_fail()
@@ -530,8 +547,8 @@ def run_all_cases():
     new_moment()
 
 
-url_root = 'http://192.168.59.106:9090/'
 url_root = 'http://hkust-gmission.cloudapp.net:9090/'#;'http://192.168.59.106:9090/'
+url_root = 'http://192.168.59.106:9090/'
 def main():
     # url_root = 'http://lccpu3.cse.ust.hk/gmission/'
     run_all_cases()

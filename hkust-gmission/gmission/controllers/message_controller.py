@@ -10,13 +10,25 @@ import sys
 import os.path
 service_path = os.path.join(ROOT, '../../services')
 sys.path.append(service_path)
-from push_msg.task import ios_push_task, android_push_task
+from push_msg.task import ios_push_task, android_push_task, send_email
 
 import itertools
 
 
 logger = app.logger
 push_msg_logger = app.push_msg_logger
+
+
+def send_reg_email_async(user):
+    subject = "Welcome to GMission!"
+    body = """Hi %s,
+
+Welcome to GMission. Remember to check our website: http://gmissionhkust.com for updates :)
+
+Best regards,
+GMission team from HKUST """ % (user.name, )
+    send_email.apply_async((subject, body, user.email))
+    push_msg_logger.info('sent to MQ %s', repr(user.email))
 
 
 def get_baidu_infos_of_location(location):

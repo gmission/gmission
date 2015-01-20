@@ -11,6 +11,7 @@ user_blueprint = Blueprint('user', __name__, template_folder='templates')
 
 # from gmission.models.basic_models import *
 from gmission.models import *
+from gmission.controllers.message_controller import send_reg_email_async
 
 @auth_token_required
 def check_user(data=None, **kw):
@@ -58,6 +59,7 @@ def register():
     try:
         db.session.add(user)
         db.session.commit()
+        send_reg_email_async(user)
         return jsonify(res=0, token=user.get_auth_token(), name=user.name, expire='2099-01-01 00:00:00', id=user.id, email=user.email, credit=user.credit, roles=user.get_roles())
     except Exception as e:
         db.session.rollback()
