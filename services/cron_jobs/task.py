@@ -11,7 +11,7 @@ import requests
 import logging
 from logging.handlers import RotatingFileHandler
 
-url_root = 'http://docker-gmission:9090'
+url_root = 'http://docker-gmission:9090/'
 
 # PWD = os.path.dirname(__file__)
 # test_lib_path = os.path.join(os.path.abspath(PWD), '../../hkust-gmission/test')
@@ -87,6 +87,7 @@ class Event(object):
                 (t.weekday()  in self.dow))
 
     def check(self, t):
+        print 'checking', self.mins, self.hours, t.minute, t.hour
         if self.matchtime(t):
             self.action(*self.args, **self.kwargs)
 
@@ -166,7 +167,7 @@ def gen_canteen_menus():
 
 def run():
     c = CronTab(
-        Event(gen_taking_picture, min=[0, 30], hour=range(10, 19)),
+        Event(gen_taking_picture, min=(0, 30), hour=range(10, 19)),
         Event(gen_canteen_menus, min=[0], hour=[11, 17]),
     )
     c.run()
