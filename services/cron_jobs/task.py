@@ -12,12 +12,7 @@ import logging
 from logging.handlers import RotatingFileHandler
 
 url_root = 'http://docker-gmission:9090/'
-
-# PWD = os.path.dirname(__file__)
-# test_lib_path = os.path.join(os.path.abspath(PWD), '../../hkust-gmission/test')
-# sys.path.append(test_lib_path)
-
-# from unit_test import *
+# url_root = 'http://hkust-gmission.cloudapp.net:9090/'#;'http://192.168.59.106:9090/'
 
 
 def post(urlpath, **kw):
@@ -28,6 +23,7 @@ def post(urlpath, **kw):
     resp = requests.post(url, data=json_data, headers=headers)
     # http_debug('Response:', resp.status_code, resp.content[:60], '...')
     return resp
+
 
 def rest_post(name, obj_dict):
     return post('rest/'+name, **obj_dict)
@@ -87,7 +83,7 @@ class Event(object):
                 (t.weekday()  in self.dow))
 
     def check(self, t):
-        print 'checking', self.mins, self.hours, t.minute, t.hour
+        # print 'checking', self.mins, self.hours, t.minute, t.hour
         if self.matchtime(t):
             self.action(*self.args, **self.kwargs)
 
@@ -100,8 +96,11 @@ class CronTab(object):
         t = datetime(*datetime.now().timetuple()[:5])
         while 1:
             for e in self.events:
-                e.check(t)
-
+                try:
+                    e.check(t)
+                except Exception as e:
+                    print 'cron failed', repr(e)
+                    sys.stdout.flush()
             t += timedelta(minutes=1)
             while datetime.now() < t:
                 time.sleep((t - datetime.now()).seconds)
@@ -109,65 +108,32 @@ class CronTab(object):
 
 def gen_taking_picture():
     logger.info("generating taking_picture:")
-    print "generating taking_picture tasks:"
-    sys.stdout.flush()
-    user = dict(email='scheduler@gmission.com', password='1234567', name='a mysterious person')
-    rest_post('user', user)
-    u = post('user/login', **user).json()
 
     lon, lat = 114.274277, 22.340725
-    bound = dict(left_top_longitude=lon-1,
-                 left_top_latitude=lat-1,
-                 right_bottom_longitude=lon+1,
-                 right_bottom_latitude=lat+1)
-    location = dict(name='HKUST', longitude=lon, latitude=lat, bound=bound)
-    new_task = dict(type='mix',
-                    brief='Take a picture here!',
-                    credit=10,
-                    required_answer_count=5,
-                    requester_id=u['id'],
-                    location=location)
+    location = dict(name='HKUST Firebird', longitude=lon, latitude=lat)
+    new_task = dict(type='mix', brief='Take a picture of the Firebird!',
+                    credit=10, required_answer_count=5, requester_id=1, location=location)
     r = rest_post('task', new_task)
-    task_j = r.json()
-    assert task_j['id'] and task_j['begin_time'] and task_j['end_time'] and task_j['location_id']
-    assert task_j['status'] == 'open'
-    assert task_j['type'] == new_task['type']
-    assert task_j['credit'] == new_task['credit']
-    assert task_j['requester_id'] == new_task['requester_id']
+    r.json()
 
 
 def gen_canteen_menus():
     logger.info("generating canteen_menus tasks:")
-    print "generating canteen_menus tasks:"
-    sys.stdout.flush()
-    user = dict(email='scheduler@gmission.com', password='1234567', name='a mysterious person')
-    rest_post('user', user)
-    u = post('user/login', **user).json()
-
     lon, lat = 114.274277, 22.340725
-    bound = dict(left_top_longitude=lon-1,
-                 left_top_latitude=lat-1,
-                 right_bottom_longitude=lon+1,
-                 right_bottom_latitude=lat+1)
-    location = dict(name='Canteen LG7', longitude=lon, latitude=lat, bound=bound)
-    new_task = dict(type='mix',
-                    brief="What's the menu today?",
-                    credit=10,
-                    required_answer_count=5,
-                    requester_id=u['id'],
-                    location=location)
-    r = rest_post('task', new_task)
-    task_j = r.json()
-    assert task_j['id'] and task_j['begin_time'] and task_j['end_time'] and task_j['location_id']
-    assert task_j['status'] == 'open'
-    assert task_j['type'] == new_task['type']
-    assert task_j['credit'] == new_task['credit']
-    assert task_j['requester_id'] == new_task['requester_id']
+    location = dict(name='Canteen LG7', longitude=lon, latitude=lat)
+    new_task = dict(type='mix', brief="What's the menu of LG7 today?",
+                    credit=10, required_answer_count=5, requester_id=1, location=location)
+    rest_post('task', new_task)
+
+    location = dict(name='Canteen LG1', longitude=lon, latitude=lat)
+    new_task = dict(type='mix', brief="What's the menu of LG1 today?",
+                    credit=10, required_answer_count=5, requester_id=1, location=location)
+    rest_post('task', new_task)
 
 
 def run():
     c = CronTab(
-        Event(gen_taking_picture, min=(0, 30), hour=range(10, 19)),
+        Event(gen_taking_picture, min=[0, 30], hour=range(10, 23)),
         Event(gen_canteen_menus, min=[0], hour=[11, 17]),
     )
     c.run()
@@ -175,11 +141,6 @@ def run():
 
 
 if __name__ == '__main__':
-    while True:
-        print 'cron start'
-        sys.stdout.flush()
-        try:
-            run()
-        except Exception as e:
-            print 'cron failed', e
-            sys.stdout.flush()
+    print 'cron start'
+    sys.stdout.flush()
+    run()
