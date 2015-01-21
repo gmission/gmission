@@ -185,7 +185,7 @@ var initTimeSlider = function(times){
 }
 var showPathOfUser = function (uid) {
     console.log(uid, 'clicked');
-    var filters = {filters:[{name:'user_id', op:'==', val:uid}, ], limit:1000};
+    var filters = {filters:[{name:'user_id', op:'==', val:uid}, {name:'longitude', op:'>', val:0.001}], limit:1000};
 
     $.getJSON("rest/position_trace?q="+JSON.stringify(filters), function( data ) {
         var traces = data['objects'];
