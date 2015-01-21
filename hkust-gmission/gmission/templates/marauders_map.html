@@ -61,7 +61,7 @@
 {#    }#}
 </style>
 
-<script type="text/javascript" src="http://api.map.baidu.com/api?v=1.5&ak=3aKw8PYudOOu9nuaNha0OcG5"></script>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=3aKw8PYudOOu9nuaNha0OcG5"></script>
 <script type="text/javascript" src="{{url_for('static',filename='js/LuShu.js')}}"></script>
 </head>
    
@@ -78,11 +78,18 @@
 
         <div id="controller_container" class="col-md-2">
             <h4>controller</h4>
+
+            <div id="all_user_controller" class="well well-sm">
+                <button class="btn btn-default all_user_status" data-time="latest">latest</button> <br/>
+                <button class="btn btn-default all_user_status" data-time="last_hour">last hour</button> <br/>
+                <button class="btn btn-default all_user_status" data-time="today">today</button>
+            </div>
+
             <div id="user_list" class="well well-sm">
-                <h5>user path</h5>
+                <h5>user path:</h5>
                 <div class="list-group">
                     {% for u in users %}
-                        <a href="#" onclick="showPathOfUser(this)" data-uid="{{ u.id }}"
+                        <a href="#"  data-uid="{{ u.id }}"
                            class="user_item list-group-item">{{ u.name }}</a>
                     {% endfor %}
                 </div>
@@ -101,7 +108,72 @@
 
     $(document).ready(function(){
         $("#time_slider_container").hide();
+        $(".all_user_status").on("click", function () {
+            getLocationsOfTimeAnd($(this).data("time"), showLocations);
+        });
+        $(".user_item").on("click", function () {
+            $(".user_item").removeClass("active");
+            $(this).addClass("active");
+            showPathOfUser($(this).data("uid"));
+        })
     })
+
+g_user_dict = {
+    {% for u in users %}
+        {{ u.id }}:"{{ u.name }}",
+    {% endfor %}
+    0:0
+}
+
+var addLocation = function(lng, lat, title, label){
+    var title_text = title.toString();
+    var label_text = label.toString();
+    var point = new BMap.Point(lng, lat);
+    var marker = new BMap.Marker(point);
+    marker.setIcon(myIcon);
+    marker.setTitle(title_text);
+    map.addOverlay(marker);
+
+    if (label_text) {
+        var opts = { position: point, offset: new BMap.Size(-10, 10) };
+        var label = new BMap.Label(label_text, opts);
+		label.setStyle({
+			 border : "0px",
+            "background-color": "transparent"
+		 });
+        map.addOverlay(label);
+    }
+}
+
+//location: title, label, lon
+
+var showLocations = function (locations) {
+    map.clearOverlays();
+    locations.forEach(function(location) {
+        addLocation(location.lon, location.lat, location.title, location.label);
+    });
+}
+
+var getLocationsOfTimeAnd = function(timeStr, callback){
+    var url = "rest/user_last_position"
+    if (timeStr!=="latest"){
+        var time_constraint;
+        if (timeStr==="last_hour"){
+            time_constraint = new Date().toISOString().split(":")[0]+":00:00"
+        }else if (timeStr==="today") {
+            time_constraint = new Date().toISOString().split("T")[0] + "T00:00:00"
+        }
+        var filters = {filters:[{name:'last_updated', op:'>=', val:time_constraint}]};
+        url = "rest/user_last_position?q="+JSON.stringify(filters);
+    }
+    $.getJSON(url, function( data ) {
+        var traces = data['objects'];
+        callback(traces.map(function (trace) {
+            return {label:g_user_dict[trace.user_id], title:trace.last_updated, lon:trace.longitude, lat:trace.latitude};
+        }));
+    });
+}
+
 
 var initTimeSlider = function(times){
     $("#time_slider_container").show();
@@ -111,26 +183,21 @@ var initTimeSlider = function(times){
         $("#time_sliderSliderVal").text(times[slideEvt.value]);
     });
 }
-var showPathOfUser = function (item) {
-    $(".user_item").removeClass("active");
-    $(item).addClass("active");
-    var uid = item.dataset.uid;
+var showPathOfUser = function (uid) {
     console.log(uid, 'clicked');
-    var filters = {filters:[{name:'user_id', op:'==', val:uid}]};
+    var filters = {filters:[{name:'user_id', op:'==', val:uid}, ], limit:1000};
 
     $.getJSON("rest/position_trace?q="+JSON.stringify(filters), function( data ) {
         var traces = data['objects'];
-{#        console.log("trace:")#}
-{#        console.log(data)#}
         var times = traces.map(function(trace){ return trace["created_on"]; });
         initTimeSlider(times);
 
         var randomColor = '#'+Math.floor(Math.random()*16777215).toString(16);
 {#        console.log(randomColor)#}
         var baiduPointPath = traces.map(function(trace){ return new BMap.Point(trace["longitude"], trace["latitude"]); });
-        var polyline = new BMap.Polyline(baiduPointPath, {strokeColor:randomColor, strokeWeight:2, strokeOpacity:0.4} );
+        var polyline = new BMap.Polyline(baiduPointPath, {strokeColor:randomColor, strokeWeight:2, strokeOpacity:1.0} );
         map.addOverlay(polyline);
-        var lushu = new BMapLib.LuShu(map, baiduPointPath, {defaultContent:uid, landmarkPois:[], speed:20, icon:myIcon});
+        var lushu = new BMapLib.LuShu(map, baiduPointPath, {defaultContent:g_user_dict[uid], landmarkPois:[], speed:100, icon:myIcon});
         lushu.start()
     });
 }
@@ -154,18 +221,6 @@ var myIcon = new BMap.Icon("{{url_for('static', filename='image/face.png')}}", n
     imageSize:new BMap.Size(20, 20)
  });
 
-var addFace = function(lng, lat, title_text, label_text){
-    console.log(label_text);
-    var point = new BMap.Point(lng, lat);
-
-     var marker = new BMap.Marker(point);
-     marker.setIcon(myIcon);
-    if (label_text) {
-        marker.setLabel(new BMap.Label(label_text, {offset: new BMap.Size(0, 32)}));
-    }
-    marker.setTitle(title_text);
-     map.addOverlay(marker);
-}
 
 var bounds = map.getBounds();
 //console.log(bounds);
