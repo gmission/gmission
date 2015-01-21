@@ -90,7 +90,7 @@
                 <div class="list-group">
                     {% for u in users %}
                         <a href="#"  data-uid="{{ u.id }}"
-                           class="user_item list-group-item">{{ u.name }}</a>
+                           class="user_item list-group-item">{{ u.name|default(u.email, true) }}</a>
                     {% endfor %}
                 </div>
             </div>
