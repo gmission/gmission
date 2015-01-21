@@ -111,7 +111,7 @@ def gen_taking_picture():
 
     lon, lat = 114.274277, 22.340725
     location = dict(name='HKUST Firebird', longitude=lon, latitude=lat)
-    new_task = dict(type='mix', brief='Take a picture of the Firebird!',
+    new_task = dict(type='image', brief='Take a picture of the Firebird!',
                     credit=10, required_answer_count=5, requester_id=1, location=location)
     r = rest_post('task', new_task)
     r.json()
@@ -119,12 +119,13 @@ def gen_taking_picture():
 
 def gen_canteen_menus():
     logger.info("generating canteen_menus tasks:")
-    lon, lat = 114.274277, 22.340725
+    lon, lat = 114.275063, 22.340898
     location = dict(name='Canteen LG7', longitude=lon, latitude=lat)
     new_task = dict(type='mix', brief="What's the menu of LG7 today?",
                     credit=10, required_answer_count=5, requester_id=1, location=location)
     rest_post('task', new_task)
 
+    lon, lat = 114.275288, 22.340284
     location = dict(name='Canteen LG1', longitude=lon, latitude=lat)
     new_task = dict(type='mix', brief="What's the menu of LG1 today?",
                     credit=10, required_answer_count=5, requester_id=1, location=location)

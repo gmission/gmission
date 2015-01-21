@@ -56,7 +56,7 @@ def create_sim_user(count):
 
 def sim_trace():
     fire_bird_pos = (114.274277, 22.340725)
-    total_workers = 20
+    total_workers = 10
     for uid in create_sim_user(total_workers):
         print uid
         steps = random.randint(10, 100)
