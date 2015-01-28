@@ -32,6 +32,9 @@ def profile_log(*l):
 def index():
     return render_template('index.html', config=app.config)
 
+@app.route('/test')
+def test():
+    return 'hello, world!'
 
 
 @app.route('/marauders-map')
@@ -45,6 +48,7 @@ def marauders_map():
         user_traces[u.id] = [(t.longitude, t.latitude) for t in traces]
 
     return render_template('marauders_map.html', users=users, user_traces=json.dumps(user_traces))
+
 
 
 @cache.cached(timeout=3600, key_prefix='crabwords')
