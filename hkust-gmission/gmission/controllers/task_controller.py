@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 __author__ = 'chenzhao'
 import datetime
-
+import math
 import dateutil
 import dateutil.tz
 
@@ -55,9 +55,34 @@ def assign_task_to_workers(task):
     pass
 
 def get_current_profile(user):
-    traces = PositionTrace.query.order_by(PositionTrace.created_on).filter(PositionTrace.user_id==user.id).limit(20);
+    traces = PositionTrace.query.order_by(PositionTrace.created_on.desc()).filter(PositionTrace.user_id==user.id).limit(20);
+    endPoint = traces.pop()
+    minAngle = 0
+    maxAngle = 0
+    for t in traces:
+        arrivalAngle = geo_angle(t.longitude, t.latitude, endPoint.longitude, endPoint.latitude)
+        if arrivalAngle > maxAngle and arrivalAngle > minAngle:
+            maxAngle = arrivalAngle
+        if arrivalAngle < maxAngle and arrivalAngle < minAngle:
+            minAngle = arrivalAngle
+    minAngle = minAngle + math.pi
+    maxAngle = maxAngle + math.pi
+
+    if minAngle > math.pi * 2:
+        maxAngle = maxAngle - 2 * math.pi
+        minAngle = minAngle - 2 * math.pi
+
+
     user_traces = [(t.longitude, t.latitude, t.created_on) for t in traces]
     return user_traces
+
+def geo_angle(startPointLong, startPointLati, endPointLong, endPointLati):
+    angle = math.atan2(endPointLati - startPointLati, endPointLong - startPointLong)
+    if angle < 0:
+        angle = angle + 2 * math.pi
+    return angle
+
+
 
 K_IN_KNN = 10
 def assign_task_to_knn_workers(task):
@@ -86,6 +111,7 @@ def local_datetime(dt_string):
     if dt.tzinfo:
         dt = dt.astimezone(dateutil.tz.tzlocal())
     return dt
+
 
 
 def geo_distance(long1, lati1, long2, lati2):
