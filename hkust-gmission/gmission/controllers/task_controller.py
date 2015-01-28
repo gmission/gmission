@@ -82,7 +82,7 @@ def get_current_profile(user):
             min_angle = arrivalAngle
 
         distance = geo_distance(t.longitude, t.latitude, last_point.longitude, last_point.latitude)
-        velocity = distance / (time.mktime(last_point.created_on.t.timetuple()) - time.mktime(t.created_on.t.timetuple()))
+        velocity = distance / (time.mktime(last_point.created_on.timetuple()) - time.mktime(t.created_on.timetuple()))
         last_point = t
         velocities[index] = velocity
 
