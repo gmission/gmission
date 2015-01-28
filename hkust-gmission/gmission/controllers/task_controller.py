@@ -69,7 +69,7 @@ def get_current_profile(user):
                                    reliability=DEFAULT_RELIABILITY,
                                    worker=user)
 
-    if len(traces) < 2:
+    if traces.count() < 2:
         return worker_profile
 
     end_point, traces = traces[0], traces[1:]
@@ -104,7 +104,7 @@ def get_current_profile(user):
 
     last_profile = WorkerProfile.query.order_by(WorkerProfile.created_on.desc()).filter(WorkerProfile.worker_id==user.id).limit(1)
 
-    if len(last_profile == 0):
+    if last_profile.count() == 0:
         worker_profile.reliability = DEFAULT_RELIABILITY
     else:
         worker_profile.reliability = last_profile[0].reliability
