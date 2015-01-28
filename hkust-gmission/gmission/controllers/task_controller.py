@@ -72,7 +72,7 @@ def get_current_profile(user):
     min_angle = 0
     max_angle = 0
     last_point = end_point
-    velocities = {}
+    velocities = []
 
     for index, t in enumerate(traces):
         arrivalAngle = geo_angle(t.longitude, t.latitude, end_point.longitude, end_point.latitude)
