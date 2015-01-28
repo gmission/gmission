@@ -94,6 +94,24 @@ def teardown_request(l):
     profile_log(request.path, time.time()-g.request_start_time)
 
 
+@app.route('/matlab', methods=['POST'])
+def login():
+    p = request.json
+    print 'login new_request', p
+    return jsonify(res=-1, msg='invalid login info')
+
+
+def call_matlab():
+    import requests
+    url = "http://matlab_container:9091/matlab"
+    json_data = json.dumps({'asdf':123})
+    headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+    resp = requests.post(url, data=json_data, headers=headers)
+    assert resp.status_code == 200
+    rdict = resp.json()
+    pass
+
+
 
 
 #409 Conflict: the best HTTP code I can find
