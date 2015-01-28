@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 __author__ = 'chenzhao'
-import datetime
+import datetime, time
+
 import math
 import dateutil
 import dateutil.tz
@@ -56,15 +57,35 @@ def assign_task_to_workers(task):
 
 def get_current_profile(user):
     traces = PositionTrace.query.order_by(PositionTrace.created_on.desc()).filter(PositionTrace.user_id==user.id).limit(20)
+
+
+    worker_profile = WorkerProfile(x=0,
+                                   y=0,
+                                   min_angle=0,
+                                   max_angle=0,
+                                   velocity=0,
+                                   reliability=1,
+                                   worker=user)
+
+
     end_point, traces = traces[0], traces[1:]
     min_angle = 0
     max_angle = 0
-    for t in traces:
+    last_point = end_point
+    velocities = {}
+
+    for index, t in enumerate(traces):
         arrivalAngle = geo_angle(t.longitude, t.latitude, end_point.longitude, end_point.latitude)
         if arrivalAngle > max_angle and arrivalAngle > min_angle:
             max_angle = arrivalAngle
         if arrivalAngle < max_angle and arrivalAngle < min_angle:
             min_angle = arrivalAngle
+
+        distance = geo_distance(t.longitude, t.latitude, last_point.longitude, last_point.latitude)
+        velocity = distance / (last_point.created_on.time.mktime() - t.created_on.time.mktime())
+        last_point = t
+        velocities[index] = velocity
+
     min_angle = min_angle + math.pi
     max_angle = max_angle + math.pi
 
@@ -73,8 +94,12 @@ def get_current_profile(user):
         min_angle = min_angle - 2 * math.pi
 
 
+    worker_profile.max_angle = max_angle
+    worker_profile.min_angle = min_angle
+    worker_profile.velocity = max(velocities)
+
     # user_traces = [(t.longitude, t.latitude, t.created_on) for t in traces]
-    return [max_angle, min_angle]
+    return worker_profile
 
 def geo_angle(startPointLong, startPointLati, endPointLong, endPointLati):
     angle = math.atan2(endPointLati - startPointLati, endPointLong - startPointLong)
