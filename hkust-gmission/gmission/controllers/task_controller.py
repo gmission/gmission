@@ -5,7 +5,7 @@ import datetime, time
 import math
 import dateutil
 import dateutil.tz
-
+from sets import Set
 from gmission.controllers.payment_controller import pay_image, pay_choice
 from gmission.controllers.message_controller import send_request_messages
 from gmission.models import *
@@ -72,7 +72,7 @@ def get_current_profile(user):
     min_angle = 0
     max_angle = 0
     last_point = end_point
-    velocities = []
+    velocities = Set()
 
     for index, t in enumerate(traces):
         arrivalAngle = geo_angle(t.longitude, t.latitude, end_point.longitude, end_point.latitude)
@@ -88,7 +88,7 @@ def get_current_profile(user):
         if time_interval != 0:
             velocity = distance / time_interval
         last_point = t
-        velocities[index] = velocity
+        velocities.add(velocity)
 
     min_angle = min_angle + math.pi
     max_angle = max_angle + math.pi
