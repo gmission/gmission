@@ -142,13 +142,14 @@ def assign_task_to_knn_workers(task):
 import errno
 import os
 def write_available_workers_to_file(workers):
-    directory = '/GMission-Server/matlab-workspace/autodirectory'
+    current_seconds = time.mktime(datetime.datetime.now().timetuple())
+    directory = '/GMission-Server/matlab-workspace/' + current_seconds
     try:
         os.makedirs(directory)
     except OSError as exception:
         if exception.errno != errno.EEXIST:
             raise
-    with open ('/GMission-Server/matlab-workspace/autodirectory/tmp.txt', 'a') as f: f.write ('hi there\n')
+    with open (directory+'/tmp.txt', 'a') as f: f.write ('hi there\n')
 
 def query_temporal_available_workers_profile(task):
     users = query_online_users()
