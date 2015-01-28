@@ -140,7 +140,7 @@ def assign_task_to_knn_workers(task):
     send_request_messages(task, users)
 
 def write_available_workers_to_file(workers):
-    with open ('/GMission-Server/matlab-workspace/tmp.txt', 'a') as f: f.write ('hi there\n')
+    with open ('/GMission-Server/matlab-workspace/autodirectory/tmp.txt', 'a') as f: f.write ('hi there\n')
 
 def query_temporal_available_workers_profile(task):
     users = query_online_users()
