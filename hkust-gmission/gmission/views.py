@@ -9,6 +9,7 @@ from flask_app import app, cache
 import rest
 from flask import render_template, request, redirect, jsonify, g
 from models import *
+from controllers import task_controller
 
 import json
 
@@ -34,7 +35,8 @@ def index():
 
 @app.route('/test')
 def test():
-    return 'hello, world!'
+    for u in User.query.filter(User.id==49):
+        return task_controller.get_current_profile()
 
 
 @app.route('/marauders-map')
