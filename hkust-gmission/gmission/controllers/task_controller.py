@@ -55,23 +55,22 @@ def assign_task_to_workers(task):
     pass
 
 def get_current_profile(user):
-    traces = PositionTrace.query.order_by(PositionTrace.created_on.desc()).filter(PositionTrace.user_id==user.id).limit(20);
-    user_traces = [(t.longitude, t.latitude, t.created_on) for t in traces]
-    endPoint = user_traces.pop()
-    minAngle = 0
-    maxAngle = 0
+    traces = PositionTrace.query.order_by(PositionTrace.created_on.desc()).filter(PositionTrace.user_id==user.id).limit(20)
+    end_point, traces = traces[0], traces[1:]
+    min_angle = 0
+    max_angle = 0
     for t in traces:
-        arrivalAngle = geo_angle(t.longitude, t.latitude, endPoint.longitude, endPoint.latitude)
-        if arrivalAngle > maxAngle and arrivalAngle > minAngle:
-            maxAngle = arrivalAngle
-        if arrivalAngle < maxAngle and arrivalAngle < minAngle:
-            minAngle = arrivalAngle
-    minAngle = minAngle + math.pi
-    maxAngle = maxAngle + math.pi
+        arrivalAngle = geo_angle(t.longitude, t.latitude, end_point.longitude, end_point.latitude)
+        if arrivalAngle > max_angle and arrivalAngle > min_angle:
+            max_angle = arrivalAngle
+        if arrivalAngle < max_angle and arrivalAngle < min_angle:
+            min_angle = arrivalAngle
+    min_angle = min_angle + math.pi
+    max_angle = max_angle + math.pi
 
-    if minAngle > math.pi * 2:
-        maxAngle = maxAngle - 2 * math.pi
-        minAngle = minAngle - 2 * math.pi
+    if min_angle > math.pi * 2:
+        max_angle = max_angle - 2 * math.pi
+        min_angle = min_angle - 2 * math.pi
 
 
     user_traces = [(t.longitude, t.latitude, t.created_on) for t in traces]
