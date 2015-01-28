@@ -73,8 +73,8 @@ def get_current_profile(user):
         min_angle = min_angle - 2 * math.pi
 
 
-    user_traces = [(t.longitude, t.latitude, t.created_on) for t in traces]
-    return user_traces
+    # user_traces = [(t.longitude, t.latitude, t.created_on) for t in traces]
+    return [max_angle, min_angle]
 
 def geo_angle(startPointLong, startPointLati, endPointLong, endPointLati):
     angle = math.atan2(endPointLati - startPointLati, endPointLong - startPointLong)
