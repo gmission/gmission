@@ -139,6 +139,15 @@ def assign_task_to_knn_workers(task):
     # users = [u for u in User.query.all() if u.id!=task.requester_id]
     send_request_messages(task, users)
 
+def assign_task_available_workers_gready(task):
+    users = User.query()
+
+
+def query_online_users():
+    users = User.query.join(UserLastPosition)\
+        .filter(UserLastPosition.user_id == User.id)\
+        .filter(datetime.datetime.now().time() - UserLastPosition.last_updated.time() <= 10*60).all()
+    return len(users)
 
 def assign_task_to_all_nearby_workers(task):
     location = task.location
