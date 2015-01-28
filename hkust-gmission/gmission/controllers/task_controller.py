@@ -140,6 +140,7 @@ def assign_task_to_knn_workers(task):
     send_request_messages(task, users)
 
 import errno
+import os
 def write_available_workers_to_file(workers):
     directory = '/GMission-Server/matlab-workspace/autodirectory'
     try:
