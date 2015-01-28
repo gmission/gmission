@@ -57,7 +57,7 @@ def assign_task_to_workers(task):
 
 DEFAULT_RELIABILITY = 0.9
 DEFAULT_VELOCITY = 0.0005
-def get_current_profile(user):
+def calculate_current_profile(user):
     traces = PositionTrace.query.order_by(PositionTrace.created_on.desc()).filter(PositionTrace.user_id==user.id).limit(20).all()
 
 
@@ -139,9 +139,13 @@ def assign_task_to_knn_workers(task):
     # users = [u for u in User.query.all() if u.id!=task.requester_id]
     send_request_messages(task, users)
 
-def assign_task_available_workers_gready(task):
+def write_available_workers_to_file(workers):
+    with open ('/GMission-Server/matlab-workspace', 'a') as f: f.write ('hi there\n')
+
+def query_temporal_available_workers_profile(task):
     users = query_online_users()
     availabe_users = []
+
 
     for u in users:
         latest_temporal_task_message = Message.query.filter(Message.receiver_id == u.id)\
@@ -152,7 +156,13 @@ def assign_task_available_workers_gready(task):
         else:
             availabe_users.append(u)
 
-    return len(availabe_users)
+
+    availabe_users_profile = []
+    for u in availabe_users:
+        u_profile = calculate_current_profile(u)
+        availabe_users_profile.append(u_profile)
+
+    return availabe_users_profile
 
 def query_online_users():
     ten_minutes_ago = datetime.datetime.now() - datetime.timedelta(minutes=10)
