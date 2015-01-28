@@ -55,18 +55,22 @@ def assign_task_to_workers(task):
     assign_task_to_knn_workers(task)
     pass
 
+DEFAULT_RELIABILITY = 0.9
+DEFAULT_VELOCITY = 0.0005
 def get_current_profile(user):
     traces = PositionTrace.query.order_by(PositionTrace.created_on.desc()).filter(PositionTrace.user_id==user.id).limit(20)
 
 
-    worker_profile = WorkerProfile(x=0,
-                                   y=0,
+    worker_profile = WorkerProfile(longtitude=0,
+                                   latitude=0,
                                    min_angle=0,
                                    max_angle=0,
-                                   velocity=0,
-                                   reliability=1,
+                                   velocity=DEFAULT_VELOCITY,
+                                   reliability=DEFAULT_RELIABILITY,
                                    worker=user)
 
+    if len(traces) < 2:
+        return worker_profile
 
     end_point, traces = traces[0], traces[1:]
     min_angle = 0
@@ -98,12 +102,24 @@ def get_current_profile(user):
         min_angle = min_angle - 2 * math.pi
 
 
+    last_profile = WorkerProfile.query.order_by(WorkerProfile.created_on.desc()).filter(WorkerProfile.worker_id==user.id).limit(1)
+
+    if len(last_profile == 0):
+        worker_profile.reliability = DEFAULT_RELIABILITY
+    else:
+        worker_profile.reliability = last_profile[0].reliability
+
     worker_profile.max_angle = max_angle
     worker_profile.min_angle = min_angle
     worker_profile.velocity = float((max(velocities) + min(velocities))/2)
+    worker_profile.longitude = end_point.longitude
+    worker_profile.latitude = end_point.latitude
+    worker_profile.created_on = end_point.created_on
 
-    # user_traces = [(t.longitude, t.latitude, t.created_on) for t in traces]
-    return [worker_profile.velocity, velocities]
+
+
+    # return [worker_profile.velocity, worker_profile.reliability, velocities]
+    return worker_profile
 
 def geo_angle(startPointLong, startPointLati, endPointLong, endPointLati):
     angle = math.atan2(endPointLati - startPointLati, endPointLong - startPointLong)

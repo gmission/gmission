@@ -2,8 +2,8 @@ __author__ = 'bigstone'
 from crowdsourcing import *
 class WorkerProfile(db.Model, BasicModelMixin):
     id = db.Column(db.Integer, primary_key=True)
-    x = db.Column(db.Float)
-    y = db.Column(db.Float)
+    longitude = db.Column(db.Float)
+    latitude = db.Column(db.Float)
     min_angle = db.Column(db.Float)
     max_angle = db.Column(db.Float)
     velocity = db.Column(db.Float)
@@ -18,3 +18,6 @@ class WorkerProfile(db.Model, BasicModelMixin):
 
     def __unicode__(self):
         return '<WorkerProfile id=%s>' % (self.id, )
+
+    def __str__(self):
+        return str([self.id, self.longitude, self.latitude, self.min_angle, self.max_angle, self.velocity, self.reliability])
