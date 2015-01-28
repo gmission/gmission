@@ -145,7 +145,7 @@ def assign_task_available_workers_gready(task):
 
 def query_online_users():
     users = User.query.join(UserLastPosition)\
-        .filter(UserLastPosition.user_id == User.id)\
+        .filter(UserLastPosition.user_id == User.id).all()\
         # .filter(time.mktime(datetime.datetime.now().timetuple()) - time.mktime(UserLastPosition.last_updated.timetuple()) <= 10*60).all()
     return len(users)
 
