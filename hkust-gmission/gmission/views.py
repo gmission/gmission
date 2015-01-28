@@ -36,7 +36,7 @@ def index():
 @app.route('/test')
 def test():
     for u in User.query.filter(User.id==49):
-        return str(task_controller.get_current_profile(u).velocity)
+        return str(task_controller.get_current_profile(u))
 
 
 @app.route('/marauders-map')
