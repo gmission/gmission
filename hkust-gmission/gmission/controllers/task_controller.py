@@ -58,7 +58,7 @@ def assign_task_to_workers(task):
 DEFAULT_RELIABILITY = 0.9
 DEFAULT_VELOCITY = 0.0005
 def get_current_profile(user):
-    traces = PositionTrace.query.order_by(PositionTrace.created_on.desc()).filter(PositionTrace.user_id==user.id).limit(20)
+    traces = PositionTrace.query.order_by(PositionTrace.created_on.desc()).filter(PositionTrace.user_id==user.id).limit(20).all()
 
 
     worker_profile = WorkerProfile(longitude=0,
@@ -69,7 +69,7 @@ def get_current_profile(user):
                                    reliability=DEFAULT_RELIABILITY,
                                    worker=user)
 
-    if traces.count() < 2:
+    if len(traces) < 2:
         return worker_profile
 
     end_point, traces = traces[0], traces[1:]
@@ -102,9 +102,9 @@ def get_current_profile(user):
         min_angle = min_angle - 2 * math.pi
 
 
-    last_profile = WorkerProfile.query.order_by(WorkerProfile.created_on.desc()).filter(WorkerProfile.worker_id==user.id).limit(1)
+    last_profile = WorkerProfile.query.order_by(WorkerProfile.created_on.desc()).filter(WorkerProfile.worker_id==user.id).limit(1).all()
 
-    if last_profile.count() == 0:
+    if len(last_profile) == 0:
         worker_profile.reliability = DEFAULT_RELIABILITY
     else:
         worker_profile.reliability = last_profile[0].reliability
