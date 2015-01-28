@@ -139,7 +139,14 @@ def assign_task_to_knn_workers(task):
     # users = [u for u in User.query.all() if u.id!=task.requester_id]
     send_request_messages(task, users)
 
+import errno
 def write_available_workers_to_file(workers):
+    directory = '/GMission-Server/matlab-workspace/autodirectory'
+    try:
+        os.makedirs(directory)
+    except OSError as exception:
+        if exception.errno != errno.EEXIST:
+            raise
     with open ('/GMission-Server/matlab-workspace/autodirectory/tmp.txt', 'a') as f: f.write ('hi there\n')
 
 def query_temporal_available_workers_profile(task):
