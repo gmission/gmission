@@ -144,7 +144,7 @@ def assign_task_available_workers_gready(task):
 
 
 def query_online_users():
-    ten_minutes_ago = datetime.date.today() - datetime.timedelta(minutes=10)
+    ten_minutes_ago = datetime.date.now() - datetime.timedelta(minutes=10)
     users = User.query.join(UserLastPosition)\
         .filter(UserLastPosition.user_id == User.id)\
         .filter(UserLastPosition.last_updated >= ten_minutes_ago).all()
