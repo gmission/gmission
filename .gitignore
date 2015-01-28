@@ -58,5 +58,5 @@ target/
 .jpg
 .png
 .log
-
+*.pid
 .DS_Store
