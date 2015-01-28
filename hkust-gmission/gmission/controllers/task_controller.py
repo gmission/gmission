@@ -54,6 +54,9 @@ def assign_task_to_workers(task):
     assign_task_to_knn_workers(task)
     pass
 
+def get_current_profile(user):
+    traces = PositionTrace.query.order_by(PositionTrace.created_on).filter_by(PositionTrace.user_id==user.id).all()
+
 
 K_IN_KNN = 10
 def assign_task_to_knn_workers(task):
