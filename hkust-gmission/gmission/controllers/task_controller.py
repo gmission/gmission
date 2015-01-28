@@ -61,7 +61,7 @@ def get_current_profile(user):
     traces = PositionTrace.query.order_by(PositionTrace.created_on.desc()).filter(PositionTrace.user_id==user.id).limit(20)
 
 
-    worker_profile = WorkerProfile(longtitude=0,
+    worker_profile = WorkerProfile(longitude=0,
                                    latitude=0,
                                    min_angle=0,
                                    max_angle=0,
