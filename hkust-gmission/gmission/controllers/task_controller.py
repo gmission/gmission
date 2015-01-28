@@ -146,7 +146,7 @@ def assign_task_available_workers_gready(task):
     for u in users:
         latest_temporal_task_message = Message.query.filter(Message.receiver_id == u.id)\
             .filter(Message.att_type == 'TemporalTask').order_by(Message.created_on.desc()).all()
-        if latest_temporal_task_message.count() != 0:
+        if len(latest_temporal_task_message) != 0:
             if latest_temporal_task_message[0].status != 'new':
                 availabe_users.append(latest_temporal_task_message[0])
         else:
