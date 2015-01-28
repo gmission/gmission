@@ -142,8 +142,8 @@ def assign_task_to_knn_workers(task):
 import errno
 import os
 def write_available_workers_to_file(workers):
-    current_seconds = time.mktime(datetime.datetime.now().timetuple())
-    directory = '/GMission-Server/matlab-workspace/' + current_seconds
+    current_time = datetime.datetime.now().strftime('%d_%m_%Y_%H_%M_%S')
+    directory = '/GMission-Server/matlab-workspace/' + current_time
     try:
         os.makedirs(directory)
     except OSError as exception:
