@@ -56,7 +56,8 @@ def assign_task_to_workers(task):
 
 def get_current_profile(user):
     traces = PositionTrace.query.order_by(PositionTrace.created_on.desc()).filter(PositionTrace.user_id==user.id).limit(20);
-    endPoint = traces.pop()
+    user_traces = [(t.longitude, t.latitude, t.created_on, t.reliability) for t in traces]
+    endPoint = user_traces.pop()
     minAngle = 0
     maxAngle = 0
     for t in traces:
