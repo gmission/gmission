@@ -100,10 +100,10 @@ def get_current_profile(user):
 
     worker_profile.max_angle = max_angle
     worker_profile.min_angle = min_angle
-    worker_profile.velocity = float(max(velocities) + min(velocities)/2)
+    worker_profile.velocity = float((max(velocities) + min(velocities))/2)
 
     # user_traces = [(t.longitude, t.latitude, t.created_on) for t in traces]
-    return worker_profile.velocity
+    return [worker_profile.velocity, velocities]
 
 def geo_angle(startPointLong, startPointLati, endPointLong, endPointLati):
     angle = math.atan2(endPointLati - startPointLati, endPointLong - startPointLong)
