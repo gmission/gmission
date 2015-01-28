@@ -55,7 +55,7 @@ def assign_task_to_workers(task):
     pass
 
 def get_current_profile(user):
-    traces = PositionTrace.query.order_by(PositionTrace.created_on).filter(PositionTrace.user_id==user.id).all()
+    traces = PositionTrace.query.order_by(PositionTrace.created_on).filter(PositionTrace.user_id==user.id).limit(10);
     user_traces = [(t.longitude, t.latitude) for t in traces]
     return user_traces
 
