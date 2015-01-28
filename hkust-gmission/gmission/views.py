@@ -37,7 +37,7 @@ def index():
 def test():
     # for u in User.query.filter(User.id==49):
     #     return str(task_controller.query_online_users())
-    return str(task_controller.query_online_users())
+    return str(task_controller.assign_task_available_workers_gready())
 
 
 @app.route('/marauders-map')

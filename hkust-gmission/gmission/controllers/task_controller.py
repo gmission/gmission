@@ -140,15 +140,26 @@ def assign_task_to_knn_workers(task):
     send_request_messages(task, users)
 
 def assign_task_available_workers_gready(task):
-    users = User.query()
+    users = query_online_users()
+    availabe_users = []
 
+    for u in users:
+        latest_temporal_task_message = Message.query.filter(Message.receiver_id == u.id)\
+            .filter(Message.att_type == 'TemporalTask').order_by(Message.created_on.desc()).all()
+        if latest_temporal_task_message.count() != 0:
+            if latest_temporal_task_message[0].status != 'new':
+                availabe_users.append(latest_temporal_task_message[0])
+        else:
+            availabe_users.append(latest_temporal_task_message[0])
+
+    return len(availabe_users)
 
 def query_online_users():
     ten_minutes_ago = datetime.datetime.now() - datetime.timedelta(minutes=10)
-    users = User.query.join(UserLastPosition)\
+    online_users = User.query.join(UserLastPosition)\
         .filter(UserLastPosition.user_id == User.id)\
         .filter(UserLastPosition.last_updated >= ten_minutes_ago).all()
-    return len(users)
+    return online_users
 
 def assign_task_to_all_nearby_workers(task):
     location = task.location
