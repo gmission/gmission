@@ -94,8 +94,8 @@ def get_current_profile(user):
         last_point = t
         velocities.add(velocity)
 
-    min_angle = min_angle + math.pi
-    max_angle = max_angle + math.pi
+    # min_angle = min_angle + math.pi
+    # max_angle = max_angle + math.pi
 
     if min_angle > math.pi * 2:
         max_angle = max_angle - 2 * math.pi
