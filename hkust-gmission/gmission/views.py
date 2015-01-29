@@ -37,7 +37,7 @@ def index():
 def test():
     # for u in User.query.filter(User.id==49):
     #     return str(task_controller.query_online_users())
-    call_matlab()
+    return call_matlab()
     # return str(task_controller.write_available_workers_to_file(1))
 
 
@@ -102,13 +102,11 @@ def matlab(directory):
 
 def call_matlab():
     import requests
-    base_url = "http://docker_matlab:9093/matlab/"
+    base_url = "http://docker_matlab:9090/matlab/"
     current_time = datetime.datetime.now().strftime('%Y_%m_%d_%H_%M_%S')
     resp = requests.get(base_url+current_time)
     assert resp.status_code == 200
-    rdict = resp.json()
-    pass
-
+    return "hello, world"
 
 
 
