@@ -96,7 +96,7 @@ def teardown_request(l):
 
 
 @app.route('/matlab', methods=['POST'])
-def login():
+def matlab():
     p = request.json
     print 'matlab call', p
     return jsonify(res=-1, msg='invalid login info')
@@ -105,7 +105,7 @@ def login():
 def call_matlab():
     import requests
     url = "http://docker_matlab:9093/matlab"
-    json_data = json.dumps({'dir':'abc'})
+    json_data = json.dumps({'dir': 'abc'})
     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
     resp = requests.post(url, data=json_data, headers=headers)
     assert resp.status_code == 200
