@@ -60,7 +60,7 @@ def assign_temporal_task_to_workers_random():
     opening_tasks = query_opening_task()
     import random
     random.seed()
-    if len(available_workers) != 0:
+    if len(available_workers) != 0 and len(opening_tasks) != 0:
         for w in available_workers:
             assigned_task = opening_tasks[random.randint(0, len(opening_tasks)-1)]
             db.session.add(w)
