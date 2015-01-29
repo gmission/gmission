@@ -95,19 +95,16 @@ def teardown_request(l):
     profile_log(request.path, time.time()-g.request_start_time)
 
 
-@app.route('/matlab', methods=['POST'])
-def matlab():
-    p = request.json
-    print 'matlab call', p
-    return jsonify(res=-1, msg='invalid login info')
+@app.route('/matlab/<directory>')
+def matlab(directory):
+    return directory
 
 
 def call_matlab():
     import requests
-    url = "http://docker_matlab:9093/matlab"
-    json_data = json.dumps({'dir': 'abc'})
-    headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-    resp = requests.post(url, data=json_data, headers=headers)
+    base_url = "http://docker_matlab:9093/matlab/"
+    current_time = datetime.datetime.now().strftime('%Y_%m_%d_%H_%M_%S')
+    resp = requests.get(base_url+current_time)
     assert resp.status_code == 200
     rdict = resp.json()
     pass
