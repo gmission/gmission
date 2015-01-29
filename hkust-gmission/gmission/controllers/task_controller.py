@@ -7,7 +7,7 @@ import dateutil
 import dateutil.tz
 from sets import Set
 from gmission.controllers.payment_controller import pay_image, pay_choice
-from gmission.controllers.message_controller import send_request_messages
+from gmission.controllers.message_controller import send_request_messages, save_and_push_temporal_task_msg
 from gmission.models import *
 
 
@@ -54,6 +54,22 @@ def delete_related_messages(task):
 def assign_task_to_workers(task):
     assign_task_to_knn_workers(task)
     pass
+
+def assign_temporal_task_to_workers_random():
+    available_workers = query_temporal_available_workers_profile()
+    opening_tasks = query_opening_task()
+    import random
+    random.seed()
+    if len(available_workers) != 0:
+        for w in available_workers:
+            assigned_task = opening_tasks[random.randint(0, len(opening_tasks)-1)]
+            db.session.add(w)
+            db.session.commit()
+            save_and_push_temporal_task_msg(assigned_task, w)
+
+
+
+
 
 DEFAULT_RELIABILITY = 0.9
 DEFAULT_VELOCITY = 0.0005
@@ -151,7 +167,7 @@ def write_available_workers_to_file(workers):
             raise
     with open (directory+'/tmp.txt', 'a') as f: f.write ('hi there\n')
 
-def query_temporal_available_workers_profile(task):
+def query_temporal_available_workers_profile():
     users = query_online_users()
     availabe_users = []
 
@@ -179,6 +195,12 @@ def query_online_users():
         .filter(UserLastPosition.user_id == User.id)\
         .filter(UserLastPosition.last_updated >= ten_minutes_ago).all()
     return online_users
+
+def query_opening_task():
+    datetime_now = datetime.datetime.now()
+    opening_task = Task.query\
+        .filter(Task.end_time.last_updated >= datetime_now).all()
+    return opening_task
 
 def assign_task_to_all_nearby_workers(task):
     location = task.location

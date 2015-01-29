@@ -33,6 +33,11 @@ def profile_log(*l):
 def index():
     return render_template('index.html', config=app.config)
 
+@app.route('/assignWorkers')
+def assign_workers():
+    task_controller.assign_temporal_task_to_workers_random()
+    return "OK"
+
 @app.route('/test')
 def test():
     # for u in User.query.filter(User.id==49):
