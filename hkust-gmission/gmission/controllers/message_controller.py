@@ -169,7 +169,7 @@ def send_request_messages(task, users):
 def save_and_push_temporal_task_msg(task, worker_prifile):
     msg_type = 'temporal task assignment'
     m = Message(type=msg_type,
-                content=worker_prifile.id,
+                content=str(worker_prifile.id) + ";" + str(worker_prifile.latitude) + ";" + str(worker_prifile.longitude),
                 att_type='TemporalTask',
                 attachment=task.id,
                 sender=task.requester,
