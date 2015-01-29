@@ -37,7 +37,8 @@ def index():
 def test():
     # for u in User.query.filter(User.id==49):
     #     return str(task_controller.query_online_users())
-    return str(task_controller.write_available_workers_to_file(1))
+    call_matlab()
+    # return str(task_controller.write_available_workers_to_file(1))
 
 
 @app.route('/marauders-map')
@@ -97,14 +98,14 @@ def teardown_request(l):
 @app.route('/matlab', methods=['POST'])
 def login():
     p = request.json
-    print 'login new_request', p
+    print 'matlab call', p
     return jsonify(res=-1, msg='invalid login info')
 
 
 def call_matlab():
     import requests
-    url = "http://matlab_container:9091/matlab"
-    json_data = json.dumps({'asdf':123})
+    url = "http://docker_matlab:9093/matlab"
+    json_data = json.dumps({'dir':'abc'})
     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
     resp = requests.post(url, data=json_data, headers=headers)
     assert resp.status_code == 200
