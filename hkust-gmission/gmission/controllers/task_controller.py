@@ -199,7 +199,7 @@ def query_online_users():
 def query_opening_task():
     datetime_now = datetime.datetime.now()
     opening_task = Task.query\
-        .filter(Task.end_time >= datetime_now).all()
+        .filter(Task.status=='open').all()
     return opening_task
 
 def assign_task_to_all_nearby_workers(task):
