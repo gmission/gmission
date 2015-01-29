@@ -106,7 +106,7 @@ def call_matlab():
     current_time = datetime.datetime.now().strftime('%Y_%m_%d_%H_%M_%S')
     resp = requests.get(base_url+current_time)
     assert resp.status_code == 200
-    return "hello, world"
+    return resp.text
 
 
 
