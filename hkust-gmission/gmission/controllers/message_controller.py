@@ -156,15 +156,6 @@ def send_request_messages(task, users):
                     receiver=user,
                     status='new')
         save_and_push_msg(m, False)
-    for user in users:
-        m = Message(type=msg_type,
-                    content=msg_content,
-                    att_type='TemporalTask',
-                    attachment=task.id,
-                    sender=task.requester,
-                    receiver=user,
-                    status='new')
-        save_and_push_msg(m, False)
     db.session.commit()
 def save_and_push_temporal_task_msg(task, worker_prifile):
     msg_type = 'temporal task assignment'

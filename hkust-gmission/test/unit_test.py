@@ -536,9 +536,8 @@ def new_spatial_tasks():
                     left_top_latitude=120,
                     right_bottom_longitude=101,
                     right_bottom_latitude=121)
-
-    current_time = datetime.datetime.now()
-    a_quarter_later = current_time + datetime.timedelta(minutes=15)
+    current_time = datetime.datetime.now().isoformat().split('.')[0]
+    a_quarter_later = (datetime.datetime.now() + datetime.timedelta(minutes=15)).isoformat().split('.')[0]
 
     location = dict(name='FireBird', longitude=114.262974, latitude=22.337508, bound=bound)
     new_task = dict(type='image',
@@ -609,10 +608,12 @@ def new_spatial_tasks():
                     location=location)
 
     r = rest_post('task', new_task)
+    task_j = r.json()
 
     return True
 
-
+def date_handler(obj):
+    return obj.isoformat() if hasattr(obj, 'isoformat') else obj
 def run_all_cases():
     test_user_created()
 
@@ -637,6 +638,7 @@ def run_all_cases():
 
 url_root = 'http://hkust-gmission.cloudapp.net:9090/'#;'http://192.168.59.106:9090/'
 url_root = 'http://192.168.59.106:9090/'
+url_root = 'http://lccpu3.cse.ust.hk/gmission-test/'
 def main():
     # url_root = 'http://lccpu3.cse.ust.hk/gmission/'
     #run_all_cases()
