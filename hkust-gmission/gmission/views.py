@@ -40,6 +40,9 @@ def assign_workers():
 
 @app.route('/test')
 def test():
+    from mlabwrap import mlab
+    sorted = mlab.sort([1,2,3])
+    print sorted
     # for u in User.query.filter(User.id==49):
     #     return str(task_controller.query_online_users())
     return task_controller.test()
