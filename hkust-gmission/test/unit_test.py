@@ -229,7 +229,7 @@ def new_image_task():
                     left_top_latitude=120,
                     right_bottom_longitude=101,
                     right_bottom_latitude=121)
-    location = dict(name='testlocation', longitude=110, latitude=119, bound=bound)
+    location = dict(name='testlocatioasdfn', longitude=110, latitude=119, bound=bound)
     new_task = dict(type='image',
                     brief='test new image task',
                     credit=10,

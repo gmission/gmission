@@ -63,8 +63,8 @@ phppush:
 matlab:
   image: docker_matlab
   links:
-    - mysqltest:docker-mysql
-    - redisTest:docker-redis
+    - mysql:docker-mysql
+    - redis:docker-redis
   volumes:
     - /home/bigstone/MATLAB2014/:/matlabDIR
     - ../:/GMission-Server

@@ -152,6 +152,16 @@ class ReSTIndoorRectangle(IndoorRectangle, ReSTBase):
     pass
 
 
+
+class ReSTBaiduPushInfo(BaiduPushInfo, ReSTBase):
+    @classmethod
+    def before_post(cls, data):
+        baidu_uid = data.get("baidu_user_id", "")
+        existings = BaiduPushInfo.query.filter(BaiduPushInfo.baidu_user_id == baidu_uid).update({'is_valid': False}, synchronize_session=False)
+        pass
+    pass
+
+
 class ReSTCheckin(Checkin, ReSTBase):
     @classmethod
     def before_post(cls, data):
