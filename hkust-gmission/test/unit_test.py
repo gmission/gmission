@@ -229,7 +229,7 @@ def new_image_task():
                     left_top_latitude=120,
                     right_bottom_longitude=101,
                     right_bottom_latitude=121)
-    location = dict(name='testlocation', longitude=110, latitude=119, bound=bound)
+    location = dict(name='testlocatioasdfn', longitude=110, latitude=119, bound=bound)
     new_task = dict(type='image',
                     brief='test new image task',
                     credit=10,
@@ -550,9 +550,12 @@ def run_all_cases():
 
 url_root = 'http://hkust-gmission.cloudapp.net:9090/'#;'http://192.168.59.106:9090/'
 url_root = 'http://192.168.59.106:9090/'
+url_root = 'http://lccpu3.cse.ust.hk/gmission/'
 def main():
     # url_root = 'http://lccpu3.cse.ust.hk/gmission/'
-    run_all_cases()
+    # run_all_cases()
+    new_image_task()
+    new_task_with_existing_location()
 
 
 if __name__=='__main__':
