@@ -42,8 +42,8 @@ def assign_workers():
 def test():
     # for u in User.query.filter(User.id==49):
     #     return str(task_controller.query_online_users())
-    return call_matlab()
-    # return str(task_controller.write_available_workers_to_file(1))
+    return task_controller.test()
+    # return str(task_controller.write_available_worker_profiles_to_file(1))
 
 
 @app.route('/marauders-map')
@@ -103,15 +103,6 @@ def teardown_request(l):
 @app.route('/matlab/<directory>')
 def matlab(directory):
     return directory
-
-
-def call_matlab():
-    import requests
-    base_url = "http://docker_matlab:9090/matlab/"
-    current_time = datetime.datetime.now().strftime('%Y_%m_%d_%H_%M_%S')
-    resp = requests.get(base_url+current_time)
-    assert resp.status_code == 200
-    return resp.text
 
 
 
