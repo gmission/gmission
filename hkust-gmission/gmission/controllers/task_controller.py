@@ -51,7 +51,7 @@ def delete_related_messages(task):
 
 
 def assign_task_to_workers(task):
-    assign_task_to_knn_workers(task)
+    assign_task_to_all_nearby_workers(task)
     pass
 
 

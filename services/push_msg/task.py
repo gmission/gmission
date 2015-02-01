@@ -68,7 +68,7 @@ def push_by_php(app, platform, payload_dict, baidu_user_id):
         msgkey = str(random.randint(10000000, 999999999))  # useful only if platform == 'android':
         params['message_key'] = msgkey
     elif platform=='ios':
-        params['deploy_status'] = 'production'
+        params['deploy_status'] = 'developing'
     r = requests.get(push_url, params=params)
     print r.url
     if r.status_code != 200:

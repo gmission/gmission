@@ -1,11 +1,11 @@
-cron:
-  image: chenzhao/gmission
-  links:
-    - gmissionbyuwsgi:docker-gmission
-  volumes:
-    - ../:/GMission-Server
-  working_dir: /GMission-Server/services/cron_jobs
-  command: python task.py
+#cron:
+#  image: chenzhao/gmission
+#  links:
+#    - gmissionbyuwsgi:docker-gmission
+#  volumes:
+#    - ../:/GMission-Server
+#  working_dir: /GMission-Server/services/cron_jobs
+#  command: python task.py
 
 
 gmissionbyuwsgi:

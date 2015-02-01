@@ -33,7 +33,7 @@ class Location(db.Model, BasicModelMixin):
     bound_id = db.Column(db.Integer, db.ForeignKey('location_bound.id'))
     bound = db.relationship('LocationBound')
 
-    __table_args__ = (UniqueConstraint('name', 'z', name='location_uc'), )
+    __table_args__ = (UniqueConstraint('name', 'longitude','latitude','z', name='location_uc'), )
 
 
 #TODO: to be or not to be?

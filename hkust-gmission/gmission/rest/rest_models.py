@@ -1,5 +1,6 @@
 __author__ = 'chenzhao'
 
+
 from .base import ReSTBase
 from werkzeug.exceptions import Conflict
 from gmission.models import *
@@ -54,7 +55,7 @@ def filter_location(data):
         return
     if 'location' in data:
         # print 'location provided'
-        uc_keys = ['name', ]
+        uc_keys = ['name', 'longitude','latitude']
         existing_location = Location.query.filter_by(**dict(zip(uc_keys, map(data['location'].get, uc_keys)))).first()
         # print 'existing location', existing_location
         if existing_location:
@@ -113,7 +114,7 @@ class ReSTLocation(Location, ReSTBase):
     @classmethod
     def before_post(cls, data):
         # print 'ReSTLocation before_post'
-        uc_keys = ['name', ]
+        uc_keys = ['name', 'longitude','latitude']
         location = Location.query.filter_by(**dict(zip(uc_keys, map(data.get, uc_keys)))).first()
         if location:
             e = Conflict()
@@ -180,4 +181,14 @@ class ReSTMoment(Moment, ReSTBase):
 
 
 class ReSTCategory(Category, ReSTBase):
+    pass
+
+
+
+class ReSTBaiduPushInfo(BaiduPushInfo, ReSTBase):
+    @classmethod
+    def before_post(cls, data):
+        baidu_uid = data.get("baidu_user_id", "")
+        existings = BaiduPushInfo.query.filter(BaiduPushInfo.baidu_user_id == baidu_uid).update({'is_valid': False}, synchronize_session=False)
+        pass
     pass
