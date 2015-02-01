@@ -52,11 +52,11 @@ docs/_build/
 target/
 
 
-
+matlab-workspace
 
 .idea
 .jpg
 .png
 .log
-
+*.pid
 .DS_Store

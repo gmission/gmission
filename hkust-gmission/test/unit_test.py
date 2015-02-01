@@ -525,7 +525,95 @@ And by opposing end them? To die: to sleep;''', user_id=user['id'])
     # assert moment_j['status'] == 'private'
     return True
 
+@test_case
+def new_spatial_tasks():
+    import datetime
+    user = dict(email='testcase_existing_user@test.com', password='1234567', name='testcase_existing')
+    r = post('user/login', email=user['email'], password=user['password'])
+    user_j = r.json()
 
+    bound = dict(left_top_longitude=100,
+                    left_top_latitude=120,
+                    right_bottom_longitude=101,
+                    right_bottom_latitude=121)
+    current_time = datetime.datetime.now().isoformat().split('.')[0]
+    a_quarter_later = (datetime.datetime.now() + datetime.timedelta(minutes=15)).isoformat().split('.')[0]
+
+    location = dict(name='FireBird', longitude=114.262974, latitude=22.337508, bound=bound)
+    new_task = dict(type='image',
+                    brief='Take a photo of FireBird',
+                    credit=10,
+                    begin_time=current_time,
+                    end_time=a_quarter_later,
+                    required_answer_count=1000,
+                    requester_id=user_j['id'],
+                    location=location)
+
+    r = rest_post('task', new_task)
+
+
+
+
+    location = dict(name='HKSUT Cafe (Floor1)', longitude=114.263731, latitude=22.336441, bound=bound)
+    new_task = dict(type='image',
+                    brief='Take a photo at Cafe',
+                    credit=10,
+                    begin_time=current_time,
+                    end_time=a_quarter_later,
+                    required_answer_count=1000,
+                    requester_id=user_j['id'],
+                    location=location)
+
+    r = rest_post('task', new_task)
+
+
+
+    location = dict(name='Engineering School Commons', longitude=114.263677, latitude=22.335806, bound=bound)
+    new_task = dict(type='image',
+                    brief='Take a photo at Engineering School Commons',
+                    credit=10,
+                    begin_time=current_time,
+                    end_time=a_quarter_later,
+                    required_answer_count=1000,
+                    requester_id=user_j['id'],
+                    location=location)
+
+    r = rest_post('task', new_task)
+
+
+
+
+    location = dict(name='Front Door of HKUST', longitude=114.262154, latitude=22.338733, bound=bound)
+    new_task = dict(type='image',
+                    brief='Take a photo of the front door of HKUST',
+                    credit=10,
+                    begin_time=current_time,
+                    end_time=a_quarter_later,
+                    required_answer_count=1000,
+                    requester_id=user_j['id'],
+                    location=location)
+
+    r = rest_post('task', new_task)
+
+
+
+    location = dict(name='CarPark in HKUST', longitude=114.263044, latitude=22.339289, bound=bound)
+    new_task = dict(type='image',
+                    brief='Take a photo of CarPark',
+                    credit=10,
+                    begin_time=current_time,
+                    end_time=a_quarter_later,
+                    required_answer_count=1000,
+                    requester_id=user_j['id'],
+                    location=location)
+
+    r = rest_post('task', new_task)
+    task_j = r.json()
+
+    return True
+
+def date_handler(obj):
+    return obj.isoformat() if hasattr(obj, 'isoformat') else obj
 def run_all_cases():
     test_user_created()
 
@@ -550,10 +638,11 @@ def run_all_cases():
 
 url_root = 'http://hkust-gmission.cloudapp.net:9090/'#;'http://192.168.59.106:9090/'
 url_root = 'http://192.168.59.106:9090/'
+url_root = 'http://lccpu3.cse.ust.hk/gmission-test/'
 def main():
     # url_root = 'http://lccpu3.cse.ust.hk/gmission/'
-    run_all_cases()
-
+    #run_all_cases()
+    new_spatial_tasks()
 
 if __name__=='__main__':
     main()

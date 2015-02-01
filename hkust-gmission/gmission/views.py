@@ -9,6 +9,7 @@ from flask_app import app, cache
 import rest
 from flask import render_template, request, redirect, jsonify, g
 from models import *
+from controllers import task_controller
 
 import json
 
@@ -32,6 +33,17 @@ def profile_log(*l):
 def index():
     return render_template('index.html', config=app.config)
 
+@app.route('/assignWorkers')
+def assign_workers():
+    task_controller.assign_temporal_task_to_workers_random()
+    return "OK"
+
+@app.route('/test')
+def test():
+    # for u in User.query.filter(User.id==49):
+    #     return str(task_controller.query_online_users())
+    return task_controller.test()
+    # return str(task_controller.write_available_worker_profiles_to_file(1))
 
 
 @app.route('/marauders-map')
@@ -45,6 +57,7 @@ def marauders_map():
         user_traces[u.id] = [(t.longitude, t.latitude) for t in traces]
 
     return render_template('marauders_map.html', users=users, user_traces=json.dumps(user_traces))
+
 
 
 @cache.cached(timeout=3600, key_prefix='crabwords')
@@ -86,6 +99,10 @@ def after_request(response):
 def teardown_request(l):
     profile_log(request.path, time.time()-g.request_start_time)
 
+
+@app.route('/matlab/<directory>')
+def matlab(directory):
+    return directory
 
 
 
