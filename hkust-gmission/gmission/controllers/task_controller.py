@@ -117,7 +117,7 @@ def assign_temporal_task_to_workers():
                                   '/Matlab-Scripts/spatialTaskAssign', current_time_string])
         if result != 0:
             print "error in calling Matlab script..."
-            pass
+            return
 
         # read_assignments
         assignment_result_lines = read_assignment_result_from_file(current_time_string)
