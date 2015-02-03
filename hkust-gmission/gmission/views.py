@@ -35,7 +35,7 @@ def index():
 
 @app.route('/assignWorkers')
 def assign_workers():
-    task_controller.assign_temporal_task_to_workers_random()
+    task_controller.assign_temporal_task_to_workers()
     return "assignWorkers OK"
 
 @app.route('/test')
