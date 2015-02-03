@@ -66,7 +66,7 @@ def filter_location(data):
 class ReSTTask(Task, ReSTBase):
     @classmethod
     def before_post(cls, data):
-        print "beta", data.get("beta")
+        print "beta", data.pop("beta")
         # print 'ReSTTask before_post'
         filter_location(data)
     @classmethod

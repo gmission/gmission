@@ -209,5 +209,6 @@ def run():
 
 if __name__ == '__main__':
     print 'cron start'
+    gen_testing_tasks()
     sys.stdout.flush()
-    run()
+    # run()
