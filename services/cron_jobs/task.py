@@ -162,10 +162,46 @@ def gen_canteen_menus():
     rest_post('task', new_task)
 
 
+
+def gen_testing_tasks():
+    lon, lat =  22.335292, 114.264655
+    location = dict(name='Tower B Carpark', longitude=lon, latitude=lat)
+    new_task = dict(type='mix', brief="take a photo there",
+                    credit=10, required_answer_count=5, requester_id=1, location=location)
+    rest_post('task', new_task)
+
+
+    lon, lat =  22.334439, 114.263126
+    location = dict(name='Tennis Court', longitude=lon, latitude=lat)
+    new_task = dict(type='mix', brief="take a photo there",
+                    credit=10, required_answer_count=5, requester_id=1, location=location)
+    rest_post('task', new_task)
+
+    lon, lat =  22.333295, 114.262863
+    location = dict(name='South Gate Bus Stop', longitude=lon, latitude=lat)
+    new_task = dict(type='mix', brief="take a photo there",
+                    credit=10, required_answer_count=5, requester_id=1, location=location)
+    rest_post('task', new_task)
+
+    lon, lat = 22.334982, 114.263845
+    location = dict(name='Garden new Lift32', longitude=lon, latitude=lat)
+    new_task = dict(type='mix', brief="take a photo there",
+                    credit=10, required_answer_count=5, requester_id=1, location=location)
+    rest_post('task', new_task)
+
+    lon, lat =  22.335841, 114.263714
+
+    location = dict(name='Engineering Common', longitude=lon, latitude=lat)
+    new_task = dict(type='mix', brief="take a photo there",
+                    credit=10, required_answer_count=5, requester_id=1, location=location)
+    rest_post('task', new_task)
+
+
 def run():
     c = CronTab(
         Event(gen_taking_picture, name='firebird', min=[0, 30], hour=range(10, 23)),
         Event(gen_canteen_menus, name='menu', min=[0, 49], hour=[11, 17]),
+        Event(gen_testing_tasks, name='testing', min=[0, 49], hour=[11, 17]),
     )
     c.run()
     pass
