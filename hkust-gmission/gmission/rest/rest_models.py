@@ -66,13 +66,16 @@ def filter_location(data):
 class ReSTTask(Task, ReSTBase):
     @classmethod
     def before_post(cls, data):
+        print "beta", data.get("beta")
         # print 'ReSTTask before_post'
         filter_location(data)
     @classmethod
     def after_post(cls, result=None):
+
         # print 'ReSTTask after_post'
         task = Task.query.get(result['id'])
         assign_task_to_workers(task)
+
 
 class ReSTThing(Thing, ReSTBase):
     @classmethod
