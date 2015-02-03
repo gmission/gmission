@@ -197,6 +197,8 @@ def gen_testing_tasks():
     rest_post('task', new_task)
 
 
+
+
 def run():
     c = CronTab(
         Event(gen_taking_picture, name='firebird', min=[0, 30], hour=range(10, 23)),
