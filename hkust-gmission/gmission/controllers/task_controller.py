@@ -124,9 +124,9 @@ def assign_temporal_task_to_workers():
 
         for line in assignment_result_lines:
             pair = line.split(" ")
-            task = Task.query.filter(Task.id == pair[0])
+            task = Task.query.filter(Task.id == pair[0]).all()
             worker_profile = WorkerProfile.query.filter(WorkerProfile.id == pair[1]).all()
-            save_and_push_temporal_task_msg(task, worker_profile[0])
+            save_and_push_temporal_task_msg(task[0], worker_profile[0])
 
 
 def write_task_profiles_to_file(tasks, current_time_string):
