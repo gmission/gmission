@@ -9,12 +9,14 @@
 
 
 gmissionbyuwsgi:
-  image: chenzhao/gmission
+  image: gmission_java
   links:
     - mysql:docker-mysql
     - redis:docker-redis
   volumes:
     - ../:/GMission-Server
+    - /home/bigstone/MATLAB2014/:/matlab-home
+    - /home/bigstone/workspace/matlab/geocrowdMatlab/:/Matlab-Scripts
   working_dir: /GMission-Server/hkust-gmission
   command: uwsgi --ini ../docker/gmission_by_uwsgi/uwsgi.ini
   ports:
@@ -59,17 +61,3 @@ phppush:
     - "9898:80"
   volumes:
     - ../PHP-push:/app
-
-matlab:
-  image: docker_matlab
-  links:
-    - mysql:docker-mysql
-    - redis:docker-redis
-  volumes:
-    - /home/bigstone/MATLAB2014/:/matlabDIR
-    - ../:/GMission-Server
-  working_dir: /GMission-Server/hkust-gmission
-  command: uwsgi --ini ../docker/gmission_by_uwsgi/uwsgi.ini
-  ports:
-    - "9092:9090"
-
