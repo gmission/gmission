@@ -166,33 +166,33 @@ def gen_canteen_menus():
 def gen_testing_tasks():
     lon, lat =  22.335292, 114.264655
     location = dict(name='Tower B Carpark', longitude=lon, latitude=lat)
-    new_task = dict(type='mix', brief="take a photo there",
-                    credit=10, required_answer_count=1000, requester_id=1, location=location, beta=0.5)
+    new_task = dict(type='image', brief="Tower B Carpark",
+                    credit=10, required_answer_count=1000, requester_id=1, location=location, beta=0.9)
     rest_post('task', new_task)
 
 
     lon, lat =  22.334439, 114.263126
     location = dict(name='Tennis Court ABC', longitude=lon, latitude=lat)
-    new_task = dict(type='mix', brief="take a photo there",
-                    credit=10, required_answer_count=1000, requester_id=1, location=location, beta=0.5)
+    new_task = dict(type='image', brief="Tennis Court ABC",
+                    credit=10, required_answer_count=1000, requester_id=1, location=location, beta=0.7)
     rest_post('task', new_task)
 
     lon, lat =  22.333295, 114.262863
     location = dict(name='South Gate Bus Stop', longitude=lon, latitude=lat)
-    new_task = dict(type='mix', brief="take a photo there",
-                    credit=10, required_answer_count=1000, requester_id=1, location=location, beta=0.5)
+    new_task = dict(type='image', brief="South Gate Bus Stop",
+                    credit=10, required_answer_count=1000, requester_id=1, location=location, beta=0.8)
     rest_post('task', new_task)
 
     lon, lat = 22.334982, 114.263845
     location = dict(name='Garden new Lift32', longitude=lon, latitude=lat)
-    new_task = dict(type='mix', brief="take a photo there",
-                    credit=10, required_answer_count=1000, requester_id=1, location=location, beta=0.5)
+    new_task = dict(type='image', brief="Garden new Lift32",
+                    credit=10, required_answer_count=1000, requester_id=1, location=location, beta=0.0)
     rest_post('task', new_task)
 
     lon, lat =  22.335841, 114.263714
 
     location = dict(name='Engineering Commons', longitude=lon, latitude=lat)
-    new_task = dict(type='mix', brief="take a photo there",
+    new_task = dict(type='image', brief="Engineering Commons",
                     credit=10, required_answer_count=1000, requester_id=1, location=location, beta=0.5)
     rest_post('task', new_task)
 

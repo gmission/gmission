@@ -8,6 +8,7 @@ from gmission.controllers.message_controller import send_answer_message, send_an
 from gmission.controllers.harmony_controller import contains_sensitive_words
 from gmission.controllers.task_controller import refresh_task_status, assign_task_to_workers
 from gmission.controllers.payment_controller import pay
+
 # import gmission.controllers.message_controller.send_answer_message as send_answer_message
 
 # for k,v in app.blueprints.items():
@@ -62,18 +63,24 @@ def filter_location(data):
             data.pop('location', None)
             data['location_id'] = existing_location.id
 
-
+BETA = 0;
 class ReSTTask(Task, ReSTBase):
+
     @classmethod
     def before_post(cls, data):
-        print "beta", data.pop("beta")
+        global BETA
+        BETA = data.pop('beta')
         # print 'ReSTTask before_post'
         filter_location(data)
     @classmethod
     def after_post(cls, result=None):
-
+        global BETA
         # print 'ReSTTask after_post'
         task = Task.query.get(result['id'])
+        beta = Beta(value=BETA,
+                    task_id=task.id)
+        db.session.add(beta)
+        db.session.commit()
         assign_task_to_workers(task)
 
 
