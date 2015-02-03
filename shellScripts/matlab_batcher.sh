@@ -27,8 +27,8 @@ X="${X})"
 echo The MATLAB function call is ${X}
 
 #Call Matlab
-echo "cd /Matlab-Scritps ;${X}" > matlab_command.m
-${matlab_exec} -nojvm -nodisplay -nosplash -r < matlab_command.m
-
+cd /Matlab-Scripts
+echo "${X}" > matlab_command.m
+${matlab_exec} -nojvm -nodisplay -nosplash < matlab_command.m
 #Remove the matlab function call
 rm matlab_command.m
