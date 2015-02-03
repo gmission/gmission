@@ -168,7 +168,7 @@ def gen_testing_tasks():
     a_quarter_later = (datetime.datetime.now() + datetime.timedelta(minutes=15)).isoformat().split('.')[0]
     lon, lat =  22.335292, 114.264655
     location = dict(name='Tower B Carpark', longitude=lon, latitude=lat)
-    new_task = dict(type='image', brief="Tower B Carpark", begin_time=current_time,
+    new_task = dict(type='image', brief="take a photo at Tower B Carpark", begin_time=current_time,
                     end_time=a_quarter_later,
                     credit=10, required_answer_count=1000, requester_id=1, location=location, beta=0.9)
     rest_post('task', new_task)
@@ -176,21 +176,21 @@ def gen_testing_tasks():
 
     lon, lat =  22.334439, 114.263126
     location = dict(name='Tennis Court ABC', longitude=lon, latitude=lat)
-    new_task = dict(type='image', brief="Tennis Court ABC",begin_time=current_time,
+    new_task = dict(type='image', brief="take a photo at Tennis Court ABC",begin_time=current_time,
                     end_time=a_quarter_later,
                     credit=10, required_answer_count=1000, requester_id=1, location=location, beta=0.7)
     rest_post('task', new_task)
 
     lon, lat =  22.333295, 114.262863
     location = dict(name='South Gate Bus Stop', longitude=lon, latitude=lat)
-    new_task = dict(type='image', brief="South Gate Bus Stop",begin_time=current_time,
+    new_task = dict(type='image', brief="take a photo at South Gate Bus Stop",begin_time=current_time,
                     end_time=a_quarter_later,
                     credit=10, required_answer_count=1000, requester_id=1, location=location, beta=0.8)
     rest_post('task', new_task)
 
     lon, lat = 22.334982, 114.263845
     location = dict(name='Garden new Lift32', longitude=lon, latitude=lat)
-    new_task = dict(type='image', brief="Garden new Lift32",begin_time=current_time,
+    new_task = dict(type='image', brief="take a photo at Garden new Lift32",begin_time=current_time,
                     end_time=a_quarter_later,
                     credit=10, required_answer_count=1000, requester_id=1, location=location, beta=0.0)
     rest_post('task', new_task)
@@ -198,7 +198,7 @@ def gen_testing_tasks():
     lon, lat =  22.335841, 114.263714
 
     location = dict(name='Engineering Commons', longitude=lon, latitude=lat)
-    new_task = dict(type='image', brief="Engineering Commons",begin_time=current_time,
+    new_task = dict(type='image', brief="take a photo at Engineering Commons",begin_time=current_time,
                     end_time=a_quarter_later,
                     credit=10, required_answer_count=1000, requester_id=1, location=location, beta=0.5)
     rest_post('task', new_task)
