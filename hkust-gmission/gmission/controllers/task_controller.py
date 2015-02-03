@@ -65,7 +65,7 @@ def delete_related_messages(task):
 
 def fail_related_assignment(task):
     Message.query.filter_by(att_type='TemporalTask',
-                            attachment=task.id).update({'status': 'failed'}, synchronize_session=False)
+                            attachment=task.id, status='new').update({'status': 'failed'}, synchronize_session=False)
     db.session.commit()
 
 

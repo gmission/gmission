@@ -18,7 +18,6 @@ import gmail
 url_root = 'http://docker-gmission:9090/'
 url_root = 'http://lccpu3.cse.ust.hk/gmission/'
 # url_root = 'http://hkust-gmission.cloudapp.net:9090/'#;'http://192.168.59.106:9090/'
-import datetime
 
 def post(urlpath, **kw):
     url = url_root+urlpath
@@ -164,8 +163,8 @@ def gen_canteen_menus():
 
 
 def gen_testing_tasks():
-    current_time = datetime.datetime.now().isoformat().split('.')[0]
-    a_quarter_later = (datetime.datetime.now() + datetime.timedelta(minutes=15)).isoformat().split('.')[0]
+    current_time = datetime.now().isoformat().split('.')[0]
+    a_quarter_later = (datetime.now() + timedelta(minutes=15)).isoformat().split('.')[0]
     lon, lat =  22.335292, 114.264655
     lon, lat = lat,lon
     location = dict(name='Tower B Carpark', longitude=lon, latitude=lat)
@@ -211,13 +210,14 @@ def gen_testing_tasks():
 def call_assign():
     # url_root = 'http://lccpu3.cse.ust.hk/gmission/'
     r = requests.get(url_root+'test')
+    print r.text
 
 def run():
     c = CronTab(
         # Event(gen_taking_picture, name='firebird', min=[0, 30], hour=range(10, 23)),
         # Event(gen_canteen_menus, name='menu', min=[0, 49], hour=[11, 17]),
-        # Event(gen_testing_tasks, name='testing', min=[0, 15, 30, 45], hour=range(15, 19)),
-        Event(call_assign, name='call testing', min=range(0,61), hour=range(15, 19)),
+        Event(gen_testing_tasks, name='testing', min=[0, 15, 30, 45], hour=range(15, 19)),
+        Event(call_assign, name='call testing', min=range(0,61,3), hour=range(15, 19)),
     )
     c.run()
     pass
@@ -225,6 +225,6 @@ def run():
 
 if __name__ == '__main__':
     print 'cron start'
-    gen_testing_tasks()
+    # gen_testing_tasks()
     sys.stdout.flush()
-    # run()
+    run()
