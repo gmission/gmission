@@ -106,16 +106,20 @@ def assign_temporal_task_to_workers():
 
         db.session.commit()
 
+        # write current situation to files
         write_available_worker_profiles_to_file(available_workers, current_time_string)
         write_task_profiles_to_file(opening_tasks, current_time_string)
         for t in opening_tasks:
             calibrate_temporal_task_worker_velocity(t)
             write_assigned_worker_profiles_to_file(t, current_time_string)
 
-        # result = subprocess.call(['/GMission-Server/shellScripts/matlab_batcher.sh', '/Matlab-Scripts/spatialTaskAssign', current_time_string])
-        # if result == 0:
-        #     pass
-            # read_assignments
+        result = subprocess.call(['/GMission-Server/shellScripts/matlab_batcher.sh',
+                                  '/Matlab-Scripts/spatialTaskAssign', current_time_string])
+        if result != 0:
+            print "error in calling Matlab script..."
+            pass
+
+        # read_assignments
         assignment_result_lines = read_assignment_result_from_file(current_time_string)
 
         for line in assignment_result_lines:
