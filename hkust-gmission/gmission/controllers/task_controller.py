@@ -114,7 +114,7 @@ def assign_temporal_task_to_workers():
             write_assigned_worker_profiles_to_file(t, current_time_string)
 
         result = subprocess.call(['/GMission-Server/shellScripts/matlab_batcher.sh',
-                                  '/Matlab-Scripts/spatialTaskAssign', current_time_string])
+                                  'spatialTaskAssign', current_time_string])
         if result != 0:
             print "error in calling Matlab script..."
             return
