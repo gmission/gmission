@@ -32,6 +32,13 @@ class Task(db.Model, BasicModelMixin):
         return '<%s,%s>' % (repr(self.id), self.task)
 
 
+class Beta(db.Model, BasicModelMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    task_id = db.Column(db.Integer, db.ForeignKey('task.id'), nullable=False)
+    task = db.relationship('Task')
+    value = db.Column(db.Float)
+
+
 class Answer(db.Model, BasicModelMixin):
     id = db.Column(db.Integer, primary_key=True)
 

@@ -18,6 +18,7 @@ from harmony import *
 from feedback import *
 from attachment import *
 from crowdsourcing import *
+from worker import *
 
 
 from thing import *

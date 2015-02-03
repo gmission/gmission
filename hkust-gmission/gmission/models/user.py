@@ -34,5 +34,7 @@ class User(db.Model, UserMixin, BasicModelMixin):
         return '<User id=%s email=%s>' % (self.id, self.email)
 
 
+
+
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 

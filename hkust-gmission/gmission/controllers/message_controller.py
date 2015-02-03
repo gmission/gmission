@@ -125,6 +125,22 @@ def save_and_push_msg(msg, commit=True):
     push_message_async(msg)
 
 
+# def send_request_messages(task, users):
+#     msg_type = 'task assignment'
+#     # scheduler = User.query.get(1)
+#     msg_content = u'在"%s"有一个新任务!' % (task.location.name,)
+#     # msg_content = u'There is a new task at "%s"!' % (task.location.name,)
+#
+#     for user in users:
+#         m = Message(type=msg_type,
+#                     content=msg_content,
+#                     att_type=task.__class__.__name__,
+#                     attachment=task.id,
+#                     sender=task.requester,
+#                     receiver=user,
+#                     status='new')
+#         save_and_push_msg(m, False)
+#     db.session.commit()
 def send_request_messages(task, users):
     msg_type = 'task assignment'
     # scheduler = User.query.get(1)
@@ -141,6 +157,18 @@ def send_request_messages(task, users):
                     status='new')
         save_and_push_msg(m, False)
     db.session.commit()
+def save_and_push_temporal_task_msg(task, worker_prifile):
+    msg_type = 'temporal task assignment'
+    m = Message(type=msg_type,
+                content=str(worker_prifile.id) + ";" + str(worker_prifile.latitude) + ";" + str(worker_prifile.longitude),
+                att_type='TemporalTask',
+                attachment=task.id,
+                sender=task.requester,
+                receiver_id=worker_prifile.worker_id,
+                status='new')
+    db.session.add(m)
+    db.session.commit()
+
 
 def send_user_info(user):
     print 'update user info via push :', user.id, user.name
