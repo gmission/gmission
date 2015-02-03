@@ -36,14 +36,18 @@ def index():
 @app.route('/assignWorkers')
 def assign_workers():
     task_controller.assign_temporal_task_to_workers_random()
-    return "OK"
+    return "assignWorkers OK"
 
 @app.route('/test')
 def test():
     # for u in User.query.filter(User.id==49):
     #     return str(task_controller.query_online_users())
-    return task_controller.test()
+    # task = Task.query.filter(Task.id == '435').limit(1).all()
+    # task_controller.calibrate_temporal_task_worker_velocity(task[0])
     # return str(task_controller.write_available_worker_profiles_to_file(1))
+    task_controller.assign_temporal_task_to_workers()
+    # task_controller.test()
+    return "test OK"
 
 
 @app.route('/marauders-map')

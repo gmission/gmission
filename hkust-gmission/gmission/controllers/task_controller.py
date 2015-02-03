@@ -11,6 +11,7 @@ from sets import Set
 from gmission.controllers.payment_controller import pay_image, pay_choice
 from gmission.controllers.message_controller import send_request_messages, save_and_push_temporal_task_msg
 from gmission.models import *
+import subprocess
 
 def refresh_task_status():
     check_expired()
@@ -75,7 +76,7 @@ def assign_task_to_workers(task):
 
 def assign_temporal_task_to_workers_random():
     available_workers = query_temporal_available_workers_profile()
-    opening_tasks = query_opening_task()
+    opening_tasks = query_opening_temporal_task()
     import random
     random.seed()
     if len(available_workers) != 0 and len(opening_tasks) != 0:
@@ -87,34 +88,63 @@ def assign_temporal_task_to_workers_random():
 
 
 def test():
-    available_workers_profile = query_temporal_available_workers_profile()
+    # available_workers_profile = query_temporal_available_workers_profile()
+    available_workers_profile = WorkerProfile.query.all()
     write_available_worker_profiles_to_file(available_workers_profile, datetime.datetime.now().strftime('%Y_%m_%d_%H_%M_%S'))
     return "OK"
 
 
 def assign_temporal_task_to_workers():
-    opening_tasks = query_opening_task()
+    opening_tasks = query_opening_temporal_task()
     available_workers = query_temporal_available_workers_profile()
-
+    print "task count:", len(opening_tasks)
+    print "available_workers:", len(available_workers)
     if len(opening_tasks) != 0 and len(available_workers) != 0:
         current_time_string = datetime.datetime.now().strftime('%Y_%m_%d_%H_%M_%S')
+        for a in available_workers:
+            db.session.add(a)
+
+        db.session.commit()
+
+        write_available_worker_profiles_to_file(available_workers, current_time_string)
+        write_task_profiles_to_file(opening_tasks, current_time_string)
         for t in opening_tasks:
             calibrate_temporal_task_worker_velocity(t)
+            write_assigned_worker_profiles_to_file(t, current_time_string)
 
+        # result = subprocess.call(['/GMission-Server/shellScripts/matlab_batcher.sh', '/matlab_scripts/dynamic', current_time_string])
+        # if result == 0:
+        #     pass
+            # read_assignments
 
 
 def write_task_profiles_to_file(tasks, current_time_string):
-    for t in tasks:
-        directory = MATLAB_WORKSPACE + current_time_string
-        try:
-            os.makedirs(directory)
-        except OSError as exception:
-            if exception.errno != errno.EEXIST:
-                raise
+    output_template = '{t.id} {t.location.longitude} {t.location.latitude} ' \
+                      '{begin_time_seconds} {end_time_seconds} {beta}\n'
+    directory = MATLAB_WORKSPACE + current_time_string
+    try:
+        os.makedirs(directory)
+    except OSError as exception:
+        if exception.errno != errno.EEXIST:
+            raise
+    with open(directory+'/tasks.txt', 'a') as f:
+        for t in tasks:
+            beta = Beta.query.filter(Beta.task_id==t.id).all()
+            if len(beta) != 0:
+                beta = beta[0]
+                print "beta", beta.value
+                begin_time_seconds = (t.begin_time-datetime.datetime(1970, 1, 1)).total_seconds()
+                end_time_seconds = (t.end_time - datetime.datetime(1970, 1, 1)).total_seconds()
+                f.write(output_template.format(t=t, beta=beta.value,
+                                               begin_time_seconds=begin_time_seconds,
+                                               end_time_seconds=end_time_seconds))
+
+        f.close()
 
 
 def write_available_worker_profiles_to_file(workers, current_time_string):
-    output_template = '{w.id} {w.worker_id} {w.longitude} {w.latitude} {w.created_on} {w.min_angle} {w.max_angle} ' \
+    output_template = '{w.id} {w.longitude} {w.latitude} ' \
+                      '{created_on_time_seconds} {w.min_angle} {w.max_angle} ' \
                       '{w.velocity} {w.reliability}\n'
     directory = MATLAB_WORKSPACE + current_time_string
     try:
@@ -124,23 +154,44 @@ def write_available_worker_profiles_to_file(workers, current_time_string):
             raise
     with open(directory+'/available_workers.txt', 'a') as f:
         for w in workers:
-            f.write(output_template.format(w=w))
+            created_on_time_seconds = (w.created_on-datetime.datetime(1970, 1, 1)).total_seconds()
+            output_content = str(output_template.format(w=w, created_on_time_seconds=created_on_time_seconds))
+            f.write(output_content)
+            print output_content
         f.close()
 
 
-def write_assigned_worker_profiles_to_file(workers, current_time_string):
-    output_template = '{w.id} {w.worker_id} {w.longitude} {w.latitude} {w.created_on} {w.min_angle} {w.max_angle} ' \
-                      '{w.velocity} {w.reliability}\n'
+def write_assigned_worker_profiles_to_file(task, current_time_string):
+    output_template = str(task.id) + ' {w.id} {w.longitude} {w.latitude} {created_on_time_seconds} {w.min_angle} ' \
+                                     '{w.max_angle} {w.velocity} {w.reliability}\n'
     directory = MATLAB_WORKSPACE + current_time_string
+    print "output assigned workers about task:", task.id
     try:
         os.makedirs(directory)
     except OSError as exception:
         if exception.errno != errno.EEXIST:
             raise
     with open(directory+'/assigned_workers.txt', 'a') as f:
-        for w in workers:
-            f.write(output_template.format(w=w))
+        temporal_workers_assignment_messages = Message.query.filter(Message.att_type == 'TemporalTask')\
+            .filter(Message.attachment == task.id).filter(Message.status == 'submitted').all()
+        for m in temporal_workers_assignment_messages:
+            fields = m.content.split(';')
+            temporal_worker_profile_id = fields[0]
+            print "workerProfile ID:", temporal_worker_profile_id
+            worker_profile = WorkerProfile.query.filter(WorkerProfile.id==temporal_worker_profile_id).all()
+            if len(worker_profile) != 0:
+                worker_profile = worker_profile[0]
+                created_on_time_seconds = (worker_profile.created_on-datetime.datetime(1970, 1, 1)).total_seconds()
+                f.write(output_template.format(w=worker_profile, created_on_time_seconds=created_on_time_seconds))
         f.close()
+
+
+def read_assignment_result_from_file(current_time_string):
+    directory = MATLAB_WORKSPACE + current_time_string
+    with open(directory + '/assignment_result.txt', 'r') as r:
+        for line in r:
+            print line
+        r.close()
 
 
 def calibrate_temporal_task_worker_velocity(task):
@@ -153,28 +204,34 @@ def calibrate_temporal_task_worker_velocity(task):
         temporal_worker_profile_id = fields[0]
         temporal_worker_latitude = fields[1]
         temporal_workers_longitude = fields[2]
-        worker_temporal_profile = WorkerProfile.query.filter(WorkerProfile.id == temporal_worker_profile_id)
         submit_message = Message.query.filter(Message.type == 'new answer noti')\
             .filter(Message.attachment == m.attachment)\
-            .filter(Message.sender_id == m.sender_id)\
+            .filter(Message.sender_id == m.receiver_id)\
             .filter(Message.receiver_id == m.sender_id)\
+            .filter(Message.created_on > m.created_on)\
             .order_by(Message.created_on).limit(1).all()
         if len(submit_message) == 0:
             continue
         else:
+            submit_message = submit_message[0]
             next_assign_message = Message.query.filter(Message.att_type == 'TemporalTask')\
                 .filter(Message.attachment == m.attachment).filter(Message.sender_id == m.sender_id)\
-                .filter(Message.receiver_id == m.recever_id).filter(Message.created_on > m.created_on)\
+                .filter(Message.receiver_id == m.receiver_id).filter(Message.created_on > m.created_on)\
                 .order_by(Message.created_on).limit(1).all()
-            if next_assign_message.created_on < submit_message.created_on:
+            if len(next_assign_message) == 0 or next_assign_message[0].created_on < submit_message.created_on:
                 moving_time_seconds = (submit_message.created_on - start_moving_time).total_seconds()
-                calibrated_velocity = geo_distance(task.location.longitude,
-                                                   task.location.latitude,
-                                                   temporal_workers_longitude,
-                                                   temporal_worker_latitude) / moving_time_seconds
-                worker_temporal_profile.velocity = calibrated_velocity
-                db.session.update(worker_temporal_profile)
+                distance = geo_distance(task.location.longitude,
+                                           task.location.latitude,
+                                           float(temporal_workers_longitude),
+                                           float(temporal_worker_latitude))
+                print "distance", distance
+                print "moving_time", moving_time_seconds
+                calibrated_velocity = distance / moving_time_seconds
+                print "new velocity", calibrated_velocity
+                WorkerProfile.query.filter(WorkerProfile.id == temporal_worker_profile_id) \
+                    .update({'velocity': calibrated_velocity}, synchronize_session=False)
                 db.session.commit()
+
 
 
 
@@ -194,21 +251,35 @@ def calculate_current_profile(user):
                                    reliability=DEFAULT_RELIABILITY,
                                    worker_id=user.id)
 
+    print "length of traces:", len(traces)
+    print "user id:", user.id
     if len(traces) < 2:
         return worker_profile
 
     end_point, traces = traces[0], traces[1:]
     min_angle = 0
     max_angle = 0
+    has_inited = False
     last_point = end_point
     velocities = Set()
 
     for index, t in enumerate(traces):
+        if t.latitude == end_point.latitude and t.longitude == end_point.longitude:
+            continue
         arrival_angle = geo_angle(t.longitude, t.latitude, end_point.longitude, end_point.latitude)
-        if arrival_angle > max_angle and arrival_angle > min_angle:
-            max_angle = arrival_angle
-        if arrival_angle < max_angle and arrival_angle < min_angle:
+        # print "arrival_angle:", arrival_angle
+        if not has_inited:
             min_angle = arrival_angle
+            max_angle = arrival_angle
+            has_inited = True
+            # print "initial angle:", arrival_angle
+            continue
+        if arrival_angle > max_angle:
+            max_angle = arrival_angle
+            # print "max_angle:", max_angle
+        if arrival_angle < min_angle:
+            min_angle = arrival_angle
+            # print "min_angle:", min_angle
 
         velocity = 0.001
 
@@ -222,12 +293,13 @@ def calculate_current_profile(user):
     # min_angle = min_angle + math.pi
     # max_angle = max_angle + math.pi
 
-    if min_angle > math.pi * 2:
-        max_angle += - 2 * math.pi
-        min_angle += - 2 * math.pi
+    if min_angle < 0:
+        max_angle += 2 * math.pi
+        min_angle += 2 * math.pi
 
 
-    last_profile = WorkerProfile.query.order_by(WorkerProfile.created_on.desc()).filter(WorkerProfile.worker_id==user.id).limit(1).all()
+    last_profile = WorkerProfile.query.order_by(WorkerProfile.created_on.desc())\
+        .filter(WorkerProfile.worker_id==user.id).limit(1).all()
 
     if len(last_profile) == 0:
         worker_profile.reliability = DEFAULT_RELIABILITY
@@ -236,7 +308,10 @@ def calculate_current_profile(user):
 
     worker_profile.max_angle = max_angle
     worker_profile.min_angle = min_angle
-    worker_profile.velocity = float((max(velocities) + min(velocities))/2)
+    if len(velocities) == 0:
+        worker_profile.velocity = 0
+    else:
+        worker_profile.velocity = float((max(velocities) + min(velocities))/2)
     worker_profile.longitude = end_point.longitude
     worker_profile.latitude = end_point.latitude
     worker_profile.created_on = end_point.created_on
@@ -246,8 +321,6 @@ def calculate_current_profile(user):
 
 def geo_angle(startPointLong, startPointLati, endPointLong, endPointLati):
     angle = math.atan2(endPointLati - startPointLati, endPointLong - startPointLong)
-    if angle < 0:
-        angle += 2 * math.pi
     return angle
 
 
@@ -293,9 +366,10 @@ def query_online_users():
     return online_users
 
 
-def query_opening_task():
+def query_opening_temporal_task():
+    # assume every temporal task needs 1000 workers and other kind of task does not need 1000 workers
     opening_task = Task.query\
-        .filter(Task.status == 'open').all()
+        .filter(Task.status == 'open').filter(Task.required_answer_count==1000).all()
     return opening_task
 
 
