@@ -69,7 +69,7 @@ class ReSTTask(Task, ReSTBase):
     @classmethod
     def before_post(cls, data):
         global BETA
-        BETA = data.pop('beta')
+        BETA = data.pop('beta', 0.5)
         # print 'ReSTTask before_post'
         filter_location(data)
     @classmethod
@@ -77,6 +77,7 @@ class ReSTTask(Task, ReSTBase):
         global BETA
         # print 'ReSTTask after_post'
         task = Task.query.get(result['id'])
+        print BETA
         beta = Beta(value=BETA,
                     task_id=task.id)
         db.session.add(beta)
