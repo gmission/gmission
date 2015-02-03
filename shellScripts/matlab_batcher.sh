@@ -1,6 +1,6 @@
 #!/bin/bash
 
-matlab_exec=matlab
+matlab_exec=/matlab-home/bin/matlab
 
 #Remove the first two arguments
 i=0
@@ -27,8 +27,8 @@ X="${X})"
 echo The MATLAB function call is ${X}
 
 #Call Matlab
-echo "cd('`pwd`');${X}" > matlab_command.m
-${matlab_exec} -nojvm -nodisplay -nosplash < matlab_command.m
+echo "${X}" > matlab_command.m
+${matlab_exec} -nojvm -nodisplay -nosplash -r < matlab_command.m
 
 #Remove the matlab function call
 rm matlab_command.m
