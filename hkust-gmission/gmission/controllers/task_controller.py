@@ -112,10 +112,17 @@ def assign_temporal_task_to_workers():
             calibrate_temporal_task_worker_velocity(t)
             write_assigned_worker_profiles_to_file(t, current_time_string)
 
-        # result = subprocess.call(['/GMission-Server/shellScripts/matlab_batcher.sh', '/matlab_scripts/dynamic', current_time_string])
+        # result = subprocess.call(['/GMission-Server/shellScripts/matlab_batcher.sh', '/Matlab-Scripts/spatialTaskAssign', current_time_string])
         # if result == 0:
         #     pass
             # read_assignments
+        assignment_result_lines = read_assignment_result_from_file(current_time_string)
+
+        for line in assignment_result_lines:
+            pair = line.split(" ")
+            task = Task.query.filter(Task.id == pair[0])
+            worker_profile = WorkerProfile.query.filter(WorkerProfile.id == pair[1])
+            save_and_push_temporal_task_msg(task, worker_profile)
 
 
 def write_task_profiles_to_file(tasks, current_time_string):
@@ -189,9 +196,10 @@ def write_assigned_worker_profiles_to_file(task, current_time_string):
 def read_assignment_result_from_file(current_time_string):
     directory = MATLAB_WORKSPACE + current_time_string
     with open(directory + '/assignment_result.txt', 'r') as r:
-        for line in r:
-            print line
+        lines = r.readlines()
         r.close()
+
+    return lines
 
 
 def calibrate_temporal_task_worker_velocity(task):
