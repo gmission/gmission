@@ -37,6 +37,19 @@ def check_enough_answer():
             close_task_and_pay_workers(request)
 
 
+EXPORT_DIR = '/GMission-Server/export-files/'
+def export_temporal_task_results(task_ids, subdir_name):
+    tasks = []
+    for id in task_ids:
+        task = Task.query.get(id)
+        if task is not None:
+            tasks.append(task)
+            assigned_workers = calibrate_temporal_task_worker_velocity(task)
+            export_assigned_worker_profiles_to_file(task, assigned_workers, EXPORT_DIR+subdir_name)
+
+    write_task_profiles_to_file(tasks, EXPORT_DIR+subdir_name)
+
+
 MATLAB_WORKSPACE = '/GMission-Server/matlab-workspace/'
 def call_matlab(current_time_string):
     import requests
@@ -87,13 +100,6 @@ def assign_temporal_task_to_workers_random():
             save_and_push_temporal_task_msg(assigned_task, w)
 
 
-def test():
-    # available_workers_profile = query_temporal_available_workers_profile()
-    available_workers_profile = WorkerProfile.query.all()
-    write_available_worker_profiles_to_file(available_workers_profile, datetime.datetime.now().strftime('%Y_%m_%d_%H_%M_%S'))
-    return "OK"
-
-
 def assign_temporal_task_to_workers():
     opening_tasks = query_opening_temporal_task()
     available_workers = query_temporal_available_workers_profile()
@@ -107,11 +113,11 @@ def assign_temporal_task_to_workers():
         db.session.commit()
 
         # write current situation to files
-        write_available_worker_profiles_to_file(available_workers, current_time_string)
-        write_task_profiles_to_file(opening_tasks, current_time_string)
+        write_available_worker_profiles_to_file(available_workers, MATLAB_WORKSPACE + current_time_string)
+        write_task_profiles_to_file(opening_tasks, MATLAB_WORKSPACE + current_time_string)
         for t in opening_tasks:
             calibrate_temporal_task_worker_velocity(t)
-            write_assigned_worker_profiles_to_file(t, current_time_string)
+            write_assigned_worker_profiles_to_file(t, MATLAB_WORKSPACE + current_time_string)
 
         result = subprocess.call(['/GMission-Server/shellScripts/matlab_batcher.sh',
                                   'spatialTaskAssign', '/GMission-Server/matlab-workspace/'+current_time_string])
@@ -124,15 +130,16 @@ def assign_temporal_task_to_workers():
 
         for line in assignment_result_lines:
             pair = line.split(" ")
-            task = Task.query.filter(Task.id == pair[0]).all()
-            worker_profile = WorkerProfile.query.filter(WorkerProfile.id == pair[1]).all()
-            save_and_push_temporal_task_msg(task[0], worker_profile[0])
+            task = Task.query.get(pair[0])
+            worker_profile = WorkerProfile.query.get(pair[1])
+            if task is not None and worker_profile is not None:
+                save_and_push_temporal_task_msg(task, worker_profile)
 
 
-def write_task_profiles_to_file(tasks, current_time_string):
+def write_task_profiles_to_file(tasks, directory):
     output_template = '{t.id} {t.location.longitude} {t.location.latitude} ' \
                       '{begin_time_seconds} {end_time_seconds} {beta}\n'
-    directory = MATLAB_WORKSPACE + current_time_string
+    # directory = MATLAB_WORKSPACE + current_time_string
     try:
         os.makedirs(directory)
     except OSError as exception:
@@ -140,24 +147,23 @@ def write_task_profiles_to_file(tasks, current_time_string):
             raise
     with open(directory+'/tasks.txt', 'a') as f:
         for t in tasks:
-            beta = Beta.query.filter(Beta.task_id==t.id).all()
-            if len(beta) != 0:
-                beta = beta[0]
+            beta = Beta.query.filter(Beta.task_id==t.id).all()[0]
+            print beta
+            if beta is not None:
                 print "beta", beta.value
                 begin_time_seconds = (t.begin_time-datetime.datetime(1970, 1, 1)).total_seconds()
                 end_time_seconds = (t.end_time - datetime.datetime(1970, 1, 1)).total_seconds()
                 f.write(output_template.format(t=t, beta=beta.value,
                                                begin_time_seconds=begin_time_seconds,
                                                end_time_seconds=end_time_seconds))
-
         f.close()
 
 
-def write_available_worker_profiles_to_file(workers, current_time_string):
+def write_available_worker_profiles_to_file(workers, directory):
     output_template = '{w.id} {w.longitude} {w.latitude} ' \
                       '{created_on_time_seconds} {w.min_angle} {w.max_angle} ' \
                       '{w.velocity} {w.reliability}\n'
-    directory = MATLAB_WORKSPACE + current_time_string
+    # directory = MATLAB_WORKSPACE + current_time_string
     try:
         os.makedirs(directory)
     except OSError as exception:
@@ -172,10 +178,27 @@ def write_available_worker_profiles_to_file(workers, current_time_string):
         f.close()
 
 
-def write_assigned_worker_profiles_to_file(task, current_time_string):
+def export_assigned_worker_profiles_to_file(task, workers, directory):
     output_template = str(task.id) + ' {w.id} {w.longitude} {w.latitude} {created_on_time_seconds} {w.min_angle} ' \
                                      '{w.max_angle} {w.velocity} {w.reliability}\n'
-    directory = MATLAB_WORKSPACE + current_time_string
+    # directory = MATLAB_WORKSPACE + current_time_string
+    print "output assigned workers about task:", task.id
+    try:
+        os.makedirs(directory)
+    except OSError as exception:
+        if exception.errno != errno.EEXIST:
+            raise
+    with open(directory+'/assigned_workers.txt', 'a') as f:
+        for worker_profile in workers:
+            created_on_time_seconds = (worker_profile.created_on-datetime.datetime(1970, 1, 1)).total_seconds()
+            f.write(output_template.format(w=worker_profile, created_on_time_seconds=created_on_time_seconds))
+        f.close()
+
+
+def write_assigned_worker_profiles_to_file(task, directory):
+    output_template = str(task.id) + ' {w.id} {w.longitude} {w.latitude} {created_on_time_seconds} {w.min_angle} ' \
+                                     '{w.max_angle} {w.velocity} {w.reliability}\n'
+    # directory = MATLAB_WORKSPACE + current_time_string
     print "output assigned workers about task:", task.id
     try:
         os.makedirs(directory)
@@ -189,9 +212,8 @@ def write_assigned_worker_profiles_to_file(task, current_time_string):
             fields = m.content.split(';')
             temporal_worker_profile_id = fields[0]
             print "workerProfile ID:", temporal_worker_profile_id
-            worker_profile = WorkerProfile.query.filter(WorkerProfile.id==temporal_worker_profile_id).all()
-            if len(worker_profile) != 0:
-                worker_profile = worker_profile[0]
+            worker_profile = WorkerProfile.query.get(temporal_worker_profile_id)
+            if worker_profile is not None:
                 created_on_time_seconds = (worker_profile.created_on-datetime.datetime(1970, 1, 1)).total_seconds()
                 f.write(output_template.format(w=worker_profile, created_on_time_seconds=created_on_time_seconds))
         f.close()
@@ -208,8 +230,8 @@ def read_assignment_result_from_file(current_time_string):
 
 def calibrate_temporal_task_worker_velocity(task):
     temporal_workers_assignment_messages = Message.query.filter(Message.att_type == 'TemporalTask')\
-        .filter(Message.attachment == task.id).filter(Message.status == 'submitted').all()
-
+        .filter(Message.attachment == task.id).all()
+    assigned_workers = []
     for m in temporal_workers_assignment_messages:
         start_moving_time = m.created_on
         fields = m.content.split(';')
@@ -243,10 +265,19 @@ def calibrate_temporal_task_worker_velocity(task):
                 WorkerProfile.query.filter(WorkerProfile.id == temporal_worker_profile_id) \
                     .update({'velocity': calibrated_velocity}, synchronize_session=False)
                 db.session.commit()
+                assigned_workers.append(WorkerProfile.query.get(temporal_worker_profile_id))
+
+    return assigned_workers
 
 
-
-
+def calibrate_worker_profile_latitude_longitude():
+    worker_profiles = WorkerProfile.query.filter(WorkerProfile.id==1).all()
+    for w in worker_profiles:
+        position = PositionTrace.query.filter(PositionTrace.user_id==w.worker_id)\
+            .filter(PositionTrace.created_on <= w.created_on).limit(1).all()
+        WorkerProfile.query.filter(WorkerProfile.id == w.id) \
+                    .update({'latitude': position.latitude, 'longitude': position.longitude}, synchronize_session=False)
+        db.session.commit()
 
 
 DEFAULT_RELIABILITY = 0.9
@@ -352,10 +383,9 @@ def query_temporal_available_workers_profile():
     users = query_online_users()
     available_users = []
 
-
     for u in users:
         latest_temporal_task_message = Message.query.filter(Message.receiver_id == u.id)\
-            .filter(Message.att_type == 'TemporalTask').order_by(Message.created_on.desc()).all()
+            .filter(Message.att_type == 'TemporalTask').order_by(Message.created_on.desc()).limit(1).all()
         if len(latest_temporal_task_message) != 0:
             if latest_temporal_task_message[0].status != 'new':
                 available_users.append(u)

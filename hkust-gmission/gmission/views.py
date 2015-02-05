@@ -50,6 +50,18 @@ def test():
     return "test OK"
 
 
+@app.route('/export')
+def export():
+    # for u in User.query.filter(User.id==49):
+    #     return str(task_controller.query_online_users())
+    # task = Task.query.filter(Task.id == '435').limit(1).all()
+    # task_controller.calibrate_temporal_task_worker_velocity(task[0])
+    # return str(task_controller.write_available_worker_profiles_to_file(1))
+    task_controller.export_temporal_task_results(range(424,429), 'random_1min')
+    # task_controller.test()
+    return "export OK"
+
+
 @app.route('/marauders-map')
 def marauders_map():
     users = User.query.all()

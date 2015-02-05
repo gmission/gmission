@@ -209,7 +209,7 @@ def gen_testing_tasks():
 
 def call_assign():
     # url_root = 'http://lccpu3.cse.ust.hk/gmission/'
-    r = requests.get(url_root+'test')
+    r = requests.get(url_root+'assignWorkers')
     print r.text
 
 def run():
@@ -235,8 +235,8 @@ def runTimes(minute, total_times, target):
 
 if __name__ == '__main__':
     print 'cron start'
-    runTimes(0.5, 10, call_assign)
-    runTimes(0.5, 10, call_assign)
+    # runTimes(0.5, 10, call_assign)
+    # runTimes(0.5, 10, call_assign)
     # gen_testing_tasks()
     sys.stdout.flush()
     run()
