@@ -236,8 +236,9 @@ def calibrate_temporal_task_worker_velocity(task):
         start_moving_time = m.created_on
         fields = m.content.split(';')
         temporal_worker_profile_id = fields[0]
-        temporal_worker_latitude = fields[1]
-        temporal_workers_longitude = fields[2]
+        worker_profile = WorkerProfile.query.get(temporal_worker_profile_id)
+        temporal_worker_latitude = worker_profile.latitude
+        temporal_workers_longitude = worker_profile.longitude
         submit_message = Message.query.filter(Message.type == 'new answer noti')\
             .filter(Message.attachment == m.attachment)\
             .filter(Message.sender_id == m.receiver_id)\
@@ -245,6 +246,7 @@ def calibrate_temporal_task_worker_velocity(task):
             .filter(Message.created_on > m.created_on)\
             .order_by(Message.created_on).limit(1).all()
         if len(submit_message) == 0:
+            print 'no submit message'
             continue
         else:
             submit_message = submit_message[0]
@@ -252,15 +254,20 @@ def calibrate_temporal_task_worker_velocity(task):
                 .filter(Message.attachment == m.attachment).filter(Message.sender_id == m.sender_id)\
                 .filter(Message.receiver_id == m.receiver_id).filter(Message.created_on > m.created_on)\
                 .order_by(Message.created_on).limit(1).all()
-            if len(next_assign_message) == 0 or next_assign_message[0].created_on < submit_message.created_on:
-                moving_time_seconds = (submit_message.created_on - start_moving_time).total_seconds()
+            if len(next_assign_message) == 0 or next_assign_message[0].created_on > submit_message.created_on:
+                if submit_message.created_on > task.end_time:
+                    moving_time_seconds = (task.end_time - start_moving_time).total_seconds() - 2
+                else:
+                    moving_time_seconds = (submit_message.created_on - start_moving_time).total_seconds()
                 distance = geo_distance(task.location.longitude,
                                            task.location.latitude,
-                                           float(temporal_workers_longitude),
-                                           float(temporal_worker_latitude))
+                                           temporal_workers_longitude,
+                                           temporal_worker_latitude)
                 print "distance", distance
                 print "moving_time", moving_time_seconds
-                calibrated_velocity = distance / moving_time_seconds
+                calibrated_velocity = (distance / moving_time_seconds) * 1.001
+                if calibrated_velocity * moving_time_seconds < distance:
+                    print "wrong velocity detected.."
                 print "new velocity", calibrated_velocity
                 WorkerProfile.query.filter(WorkerProfile.id == temporal_worker_profile_id) \
                     .update({'velocity': calibrated_velocity}, synchronize_session=False)
@@ -270,13 +277,22 @@ def calibrate_temporal_task_worker_velocity(task):
     return assigned_workers
 
 
-def calibrate_worker_profile_latitude_longitude():
-    worker_profiles = WorkerProfile.query.filter(WorkerProfile.id==1).all()
+def calibrate_worker_profile():
+    print "here"
+    worker_profiles = WorkerProfile.query.all()
     for w in worker_profiles:
+        print "calibrating worker:", w.id
         position = PositionTrace.query.filter(PositionTrace.user_id==w.worker_id)\
-            .filter(PositionTrace.created_on <= w.created_on).limit(1).all()
+            .filter(PositionTrace.created_on <= w.created_on).order_by(PositionTrace.created_on.desc()).limit(1).all()[0]
         WorkerProfile.query.filter(WorkerProfile.id == w.id) \
                     .update({'latitude': position.latitude, 'longitude': position.longitude}, synchronize_session=False)
+        if w.min_angle == w.max_angle:
+            WorkerProfile.query.filter(WorkerProfile.id == w.id) \
+                .update({'max_angle': w.min_angle + 2 * math.pi}, synchronize_session=False)
+        if w.velocity == 0 or w.velocity > 1:
+            WorkerProfile.query.filter(WorkerProfile.id == w.id) \
+                .update({'velocity': DEFAULT_VELOCITY}, synchronize_session=False)
+
         db.session.commit()
 
 
@@ -434,7 +450,7 @@ def local_datetime(dt_string):
 
 
 def geo_distance(long1, lati1, long2, lati2):
-    return (long1-long2)**2+(lati1-lati2)**2
+    return math.sqrt((long1-long2)**2+(lati1-lati2)**2)
     pass
 
 

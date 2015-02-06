@@ -53,6 +53,7 @@ target/
 
 
 matlab-workspace
+export-files
 
 .idea
 .jpg
