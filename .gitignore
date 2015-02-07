@@ -5,6 +5,9 @@ __pycache__/
 # C extensions
 *.so
 
+#server files
+hkust-gmission/gmission/static/image
+
 # Distribution / packaging
 .Python
 env/
