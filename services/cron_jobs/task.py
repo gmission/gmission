@@ -207,10 +207,50 @@ def gen_testing_tasks():
                     credit=10, required_answer_count=1000, requester_id=1, location=location, beta=0.5)
     rest_post('task', new_task)
 
-def call_assign():
-    # url_root = 'http://lccpu3.cse.ust.hk/gmission/'
-    r = requests.get(url_root+'test')
-    print r.text
+
+def gen_firebird_tasks():
+    current_time = datetime.now().isoformat().split('.')[0]
+    a_quarter_later = (datetime.now() + timedelta(minutes=15)).isoformat().split('.')[0]
+    lon, lat = 22.337507, 114.262970
+    lon, lat = lat,lon
+    location = dict(name='FireBird', longitude=lon, latitude=lat)
+    new_task = dict(type='image', brief="take a photo at FireBird", begin_time=current_time,
+                    end_time=a_quarter_later,
+                    credit=10, required_answer_count=1000, requester_id=1, location=location, beta=0.9)
+    rest_post('task', new_task)
+
+
+    lon, lat = 22.337029, 114.263367
+    lon, lat = lat,lon
+    location = dict(name='Hang Seng Bank', longitude=lon, latitude=lat)
+    new_task = dict(type='image', brief="take a photo at Hang Seng Bank",begin_time=current_time,
+                    end_time=a_quarter_later,
+                    credit=10, required_answer_count=1000, requester_id=1, location=location, beta=0.2)
+    rest_post('task', new_task)
+
+    lon, lat = 22.337942, 114.263176
+    lon, lat = lat,lon
+    location = dict(name='Bank of East Asia', longitude=lon, latitude=lat)
+    new_task = dict(type='image', brief="take a photo at Bank of East Asia",begin_time=current_time,
+                    end_time=a_quarter_later,
+                    credit=10, required_answer_count=1000, requester_id=1, location=location, beta=0.2)
+    rest_post('task', new_task)
+
+    lon, lat = 22.338631, 114.262025
+    lon, lat = lat,lon
+    location = dict(name='North Bus Stop', longitude=lon, latitude=lat)
+    new_task = dict(type='image', brief="take a photo at North Bus Stop",begin_time=current_time,
+                    end_time=a_quarter_later,
+                    credit=10, required_answer_count=1000, requester_id=1, location=location, beta=0.1)
+    rest_post('task', new_task)
+
+    lon, lat = 22.338424, 114.263010
+    lon, lat = lat,lon
+    location = dict(name='Under Ground Car Park', longitude=lon, latitude=lat)
+    new_task = dict(type='image', brief="take a photo at Under Ground Car Park",begin_time=current_time,
+                    end_time=a_quarter_later,
+                    credit=10, required_answer_count=1000, requester_id=1, location=location, beta=0.3)
+    rest_post('task', new_task)
 
 def run():
     c = CronTab(
@@ -238,6 +278,6 @@ if __name__ == '__main__':
     # runTimes(0.5, 10, call_assign)
     # runTimes(0.5, 10, call_assign)
     # gen_testing_tasks()
-    sys.stdout.flush()
-    # gen_testing_tasks()
-    run()
+    # sys.stdout.flush()
+    gen_firebird_tasks()
+    # run()
