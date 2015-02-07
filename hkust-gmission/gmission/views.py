@@ -45,9 +45,28 @@ def test():
     # task = Task.query.filter(Task.id == '435').limit(1).all()
     # task_controller.calibrate_temporal_task_worker_velocity(task[0])
     # return str(task_controller.write_available_worker_profiles_to_file(1))
-    task_controller.assign_temporal_task_to_workers()
+    # task_controller.calibrate_worker_profile()
+    task_controller.export_temporal_task_results([424], 'test')
     # task_controller.test()
     return "test OK"
+
+
+@app.route('/export')
+def export():
+    task_controller.export_temporal_task_results(range(424,429), 'random_1min')  #redo
+    task_controller.export_temporal_task_results(range(429,434), 'random_2min')
+    task_controller.export_temporal_task_results(range(434,439), 'random_3min')
+    task_controller.export_temporal_task_results(range(439,444), 'random_4min')
+    task_controller.export_temporal_task_results(range(541,546), 'greedy_1min')
+    task_controller.export_temporal_task_results(range(546,551), 'greedy_2min')
+    task_controller.export_temporal_task_results(range(551,556), 'greedy_3min')
+    task_controller.export_temporal_task_results(range(556,566), 'greedy_4min')
+
+    task_controller.export_temporal_task_results(range(623,628), 'sampling_1min')
+    task_controller.export_temporal_task_results(range(601,606), 'sampling_2min')
+    task_controller.export_temporal_task_results(range(606,611), 'sampling_3min')  #redo
+    task_controller.export_temporal_task_results(range(616,621), 'sampling_4min')
+    return "export OK"
 
 
 @app.route('/marauders-map')

@@ -2,12 +2,12 @@ __author__ = 'bigstone'
 from crowdsourcing import *
 class WorkerProfile(db.Model, BasicModelMixin):
     id = db.Column(db.Integer, primary_key=True)
-    longitude = db.Column(db.Float)
-    latitude = db.Column(db.Float)
-    min_angle = db.Column(db.Float)
-    max_angle = db.Column(db.Float)
-    velocity = db.Column(db.Float)
-    reliability = db.Column(db.Float)
+    longitude = db.Column(GEO_NUMBER_TYPE)
+    latitude = db.Column(GEO_NUMBER_TYPE)
+    min_angle = db.Column(GEO_NUMBER_TYPE)
+    max_angle = db.Column(GEO_NUMBER_TYPE)
+    velocity = db.Column(GEO_NUMBER_TYPE)
+    reliability = db.Column(GEO_NUMBER_TYPE)
 
     worker_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     worker = db.relationship('User', foreign_keys=worker_id)
