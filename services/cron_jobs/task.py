@@ -216,8 +216,9 @@ def run():
     c = CronTab(
         # Event(gen_taking_picture, name='firebird', min=[0, 30], hour=range(10, 23)),
         # Event(gen_canteen_menus, name='menu', min=[0, 49], hour=[11, 17]),
-        Event(gen_testing_tasks, name='testing', min=[0, 15, 30, 45], hour=range(15, 19)),
-        Event(call_assign, name='call testing', min=range(0,61,3), hour=range(15, 19)),
+        #Event(gen_testing_tasks, name='testing', min=[0, 15, 30, 45], hour=range(15, 19)),
+        #Event(call_assign, name='call testing', min=range(0,61,3), hour=range(15, 19)),
+	Event(gen_testing_tasks, name='testing', min=[5, 20, 35, 50], hour=range(15, 19)),
     )
     c.run()
     pass
