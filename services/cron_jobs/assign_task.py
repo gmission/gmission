@@ -209,15 +209,15 @@ def gen_testing_tasks():
 
 def call_assign():
     # url_root = 'http://lccpu3.cse.ust.hk/gmission/'
-    r = requests.get(url_root+'assignWorkers')
-    print r.text
+    r = requests.get('http://lccpu3.cse.ust.hk/gmission/assignWorkers')
+    print r.text#,datetime.now()
 
 def run():
     c = CronTab(
         # Event(gen_taking_picture, name='firebird', min=[0, 30], hour=range(10, 23)),
         # Event(gen_canteen_menus, name='menu', min=[0, 49], hour=[11, 17]),
         # Event(gen_testing_tasks, name='testing', min=[0, 15, 30, 45], hour=range(15, 19)),
-        Event(call_assign, name='call testing', min=range(0,61,1), hour=range(15, 19)),
+        Event(call_assign, name='call_assign', min=range(0,61,3), hour=range(14, 19)),
     )
     c.run()
     pass
@@ -235,7 +235,7 @@ def runTimes(minute, total_times, target):
 
 if __name__ == '__main__':
     print 'cron start'
-    # runTimes(0.5, 10, call_assign)
+    # runTimes(1, 15, call_assign)
     # runTimes(0.5, 10, call_assign)
     # gen_testing_tasks()
     sys.stdout.flush()

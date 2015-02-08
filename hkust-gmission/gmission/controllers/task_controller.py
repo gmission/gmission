@@ -70,6 +70,12 @@ def close_task_and_pay_workers(task):
     db.session.commit()
 
 
+def clean_temporal_tasks_and_messages():
+    tasks = Task.query.filter(Task.status=='open')
+    for t in tasks:
+        Task.query.filter_by(status='open').update({'status': 'closed'}, synchronize_session=False)
+        fail_related_assignment(t)
+
 def delete_related_messages(task):
     Message.query.filter_by(att_type=task.__class__.__name__,
                             attachment=task.id).update({'status': 'deleted'}, synchronize_session=False)
