@@ -51,7 +51,7 @@ def test():
     return "test OK"
 
 @app.route('/cleanTemporalTask')
-def test():
+def cleanTemporalTask():
     # for u in User.query.filter(User.id==49):
     #     return str(task_controller.query_online_users())
     # task = Task.query.filter(Task.id == '435').limit(1).all()
