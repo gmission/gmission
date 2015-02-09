@@ -39,6 +39,13 @@ class Beta(db.Model, BasicModelMixin):
     value = db.Column(db.Float)
 
 
+class WorkerQuality(db.Model, BasicModelMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    worker_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    worker = db.relationship('User')
+    value = db.Column(db.Float)
+
+
 class Answer(db.Model, BasicModelMixin):
     id = db.Column(db.Integer, primary_key=True)
 
@@ -63,3 +70,36 @@ class Answer(db.Model, BasicModelMixin):
     def __unicode__(self):
         return '<%d,%s,%s>' % (self.id, self.task, self.option)
 
+class TemporalTaskAnswer(db.Model, BasicModelMixin):
+    id = db.Column(db.Integer, primary_key=True)
+
+    task = db.relationship('Task', lazy='select')
+    task_id = db.Column(db.Integer, db.ForeignKey('task.id'))
+
+    brief = db.Column(db.String(100))
+
+    attachment = db.relationship('Attachment', lazy='immediate')
+    attachment_id = db.Column(db.Integer, db.ForeignKey('attachment.id'))
+
+    type = db.Column(db.String(20))
+    created_on = db.Column(db.DateTime, default=datetime.datetime.now)
+
+    task_longitude = db.Column(GEO_NUMBER_TYPE, nullable=False)  # x
+    task_latitude = db.Column(GEO_NUMBER_TYPE, nullable=False)  # y
+
+    worker = db.relationship('User', lazy='select')
+    worker_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+    worker_profile = db.relationship("WorkerProfile", lazy='select')
+    worker_profile_id = db.Column(db.Integer, db.ForeignKey('worker_profile.id'))
+
+    def __unicode__(self):
+        return '<%d,%s,%s>' % (self.id, self.task, self.option)
+
+class TemporalTaskAnswerRating(db.Model, BasicModelMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    answer_id = db.Column(db.Integer, db.ForeignKey('temporal_task_answer.id'), nullable=False)
+    answer = db.relationship('TemporalTaskAnswer')
+    rater_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    rater = db.relationship('User')
+    value = db.Column(db.Float)
