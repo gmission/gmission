@@ -235,14 +235,20 @@ def read_assignment_result_from_file(current_time_string):
 
 
 def extract_temporal_task_answers_to_table():
-    try:
-        num_rows_deleted = TemporalTaskAnswer.query.delete()
-        db.session.commit()
-    except:
-        db.session.rollback()
+    # try:
+    #     num_rows_deleted = TemporalTaskAnswer.query.delete()
+    #     db.session.commit()
+    # except:
+    #     db.session.rollback()
+    latest_answer = TemporalTaskAnswer.query.order_by(TemporalTaskAnswer.created_on).limit(1).all()
 
-    first_temporal_task = Task.query.get(424)
-    tasks = Task.query.filter(Task.created_on >= first_temporal_task.created_on).all()
+    if len(latest_answer) == 0:
+        first_temporal_task = Task.query.get(424)
+        start_time = first_temporal_task.created_on
+    else:
+        start_time = latest_answer[0].created_on
+
+    tasks = Task.query.filter(Task.created_on > start_time).all()
     count = 0
     shouldCount = 0
     answerCount = 0
