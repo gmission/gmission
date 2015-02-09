@@ -148,7 +148,8 @@
             data:{ answer_id: answer_id },
             success: function(msg){
                 cleanAll();
-                $("#question-description").replaceWith( document.createTextNode(msg.brief));
+{#                alert(msg.brief);#}
+                $("#question-description").val(msg.brief);
                 $('#answer-id').val(msg.current_anwer_id);
                 $("#answer-pic").attr("src","../static/image/original/"+msg.pic_name);
                 createMarker(msg.task_lat, msg.task_lon, msg.location_content);
@@ -173,7 +174,7 @@
 
 
     <div id="answer">
-        <div>Question: <div id="question-description"></div></div>
+        <div>Question: <input id="question-description"/></div>
         <div id="img-div"><img id="answer-pic" src="../static/image/star_rate.gif" width="400px" height="400px"></div>
     </div>
 
