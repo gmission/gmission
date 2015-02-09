@@ -279,5 +279,5 @@ if __name__ == '__main__':
     # runTimes(0.5, 10, call_assign)
     # gen_testing_tasks()
     # sys.stdout.flush()
-    #gen_firebird_tasks()
-    run()
+    gen_firebird_tasks()
+    # run()
