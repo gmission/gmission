@@ -33,6 +33,10 @@ def profile_log(*l):
 def index():
     return render_template('index.html', config=app.config)
 
+@app.route('/rating')
+def rating():
+    return render_template('rating.html')
+
 @app.route('/assignWorkers')
 def assign_workers():
     task_controller.assign_temporal_task_to_workers()
@@ -51,11 +55,12 @@ def test():
     return "test OK"
 
 
+
 @app.route('/getAnswerMessage', methods=['POST'])
 def getPersonById():
     personId = request.form['value']
     print personId
-    return personId
+    return jsonify(a=personId)
 
 
 @app.route('/cleanTemporalTask')
