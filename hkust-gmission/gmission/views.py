@@ -53,7 +53,7 @@ def test():
 
 @app.route('/getAnswerMessage', methods=['POST'])
 def getPersonById():
-    personId = (int)(request.form['id'])
+    personId = (int)(request.form['value'])
     print personId
     return personId
 
