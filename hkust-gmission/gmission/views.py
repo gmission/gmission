@@ -50,6 +50,14 @@ def test():
     # task_controller.test()
     return "test OK"
 
+
+@app.route('/getAnswerMessage', methods=['POST'])
+def getPersonById():
+    personId = (int)(request.form['id'])
+    print personId
+    return personId
+
+
 @app.route('/cleanTemporalTask')
 def cleanTemporalTask():
     # for u in User.query.filter(User.id==49):
