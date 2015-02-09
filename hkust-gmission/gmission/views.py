@@ -57,10 +57,10 @@ def test():
     return "test OK"
 
 
-# @app.route('/prepareTemporalTaskAnswers')
-# def prepareTemporalTaskAnswers():
-#     task_controller.extract_temporal_task_answers_to_table()
-#     return "prepare OK"
+@app.route('/prepareTemporalTaskAnswers')
+def prepareTemporalTaskAnswers():
+    task_controller.extract_temporal_task_answers_to_table()
+    return "prepare OK"
 
 
 @app.route('/getAnswerMessage', methods=['POST'])
