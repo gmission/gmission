@@ -234,6 +234,63 @@ def read_assignment_result_from_file(current_time_string):
     return lines
 
 
+def extract_temporal_task_answers_to_table():
+    try:
+        num_rows_deleted = TemporalTaskAnswer.query.delete()
+        db.session.commit()
+    except:
+        db.session.rollback()
+
+    first_temporal_task = Task.query.get(424)
+    tasks = Task.query.filter(Task.created_on >= first_temporal_task.created_on).all()
+    count = 0
+    shouldCount = 0
+    answerCount = 0
+    for task in tasks:
+
+        temporal_workers_assignment_messages = Message.query.filter(Message.att_type == 'TemporalTask')\
+            .filter(Message.attachment == task.id).all()
+        for m in temporal_workers_assignment_messages:
+            fields = m.content.split(';')
+            temporal_worker_profile_id = fields[0]
+            worker_profile = WorkerProfile.query.get(temporal_worker_profile_id)
+            temporal_worker_latitude = worker_profile.latitude
+            temporal_workers_longitude = worker_profile.longitude
+            submit_message = Answer.query\
+                .filter(Answer.task_id == m.attachment)\
+                .filter(Answer.worker_id == m.receiver_id)\
+                .filter(Answer.created_on > m.created_on)\
+                .order_by(Answer.created_on).limit(1).all()
+            if len(submit_message) == 0:
+                print 'no submit message', count
+                count += 1
+                continue
+            else:
+                answer = submit_message[0]
+                next_assign_message = Message.query.filter(Message.att_type == 'TemporalTask')\
+                    .filter(Message.attachment == m.attachment).filter(Message.sender_id == m.sender_id)\
+                    .filter(Message.receiver_id == m.receiver_id).filter(Message.created_on > m.created_on)\
+                    .order_by(Message.created_on).limit(1).all()
+                print 'should have one', shouldCount
+                shouldCount += 1
+                if len(next_assign_message) == 0 or next_assign_message[0].created_on > answer.created_on:
+                    # detected one temporal task submitted answer
+                    print 'real answered', answerCount
+                    answerCount += 1
+                    temporal_answer = TemporalTaskAnswer(task_id=answer.task_id,
+                                                         brief=task.brief,
+                                                         attachment_id=answer.attachment_id,
+                                                         type=answer.type,
+                                                         task_latitude=answer.task.location.latitude,
+                                                         task_longitude=answer.task.location.longitude,
+                                                         worker_id=answer.worker_id,
+                                                         worker_profile_id=worker_profile.id)
+                    db.session.add(temporal_answer)
+
+                db.session.commit()
+
+
+
 def calibrate_temporal_task_worker_velocity(task):
     temporal_workers_assignment_messages = Message.query.filter(Message.att_type == 'TemporalTask')\
         .filter(Message.attachment == task.id).all()
