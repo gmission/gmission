@@ -88,7 +88,7 @@ def rateTemporalAnswer():
     value = request.form['value']
     rater = User.query.filter(User.email==worker_email).all()
     if len(rater) != 0:
-        rater_id = rater.id
+        rater_id = rater[0].id
     else:
         rater_id = 1
 
