@@ -112,7 +112,7 @@
             success: function(msg){
                 $('#next-answer-id').val(msg.next_answer_id);
                 if (msg.next_answer_id == '-1'){
-                    alert("Great! Thank you for attending this peer rating. You have finished All The Rating Task!!!")
+                    alert("Great! Thank you for attending this peer rating. You have finished All The Rating Tasks!!!")
                 } else {
                     goToAnswer();
                 }
@@ -162,6 +162,13 @@
         });
     }
 
+    function goToNextAnswer(){
+        var answer_id = $('#next-answer-id').val();
+        answer_id++;
+        $('#next-answer-id').val(answer_id);
+        goToAnswer();
+    }
+
     google.maps.event.addDomListener(window, 'load', initialize);
 
     </script>
@@ -188,7 +195,9 @@
             <li><a href="javascript:rateThisAnswer(2)"><span>Give it 2 stars</span></a></li>
             <li><a href="javascript:rateThisAnswer(1)"><span>Give it 1 star</span></a></li>
         </ul>
+
     </div>
+    <div><button type="button" onclick="goToNextAnswer();">Go To Next Answer</button></div>
 
     <div id="jumper">Go To Answer (Id):
         <label for="next-answer-id"></label><input type="text" id="next-answer-id" name="next-answer-id"/>
