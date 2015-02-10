@@ -365,6 +365,60 @@ def calibrate_worker_profile():
         db.session.commit()
 
 
+def configUserQuality():
+    temporal_answers = TemporalTaskAnswer.query.all()
+    answer_avg_rating_values = {}
+    print "answers count:", len(temporal_answers)
+    for answer in temporal_answers:
+        ratings = TemporalTaskAnswerRating.query.filter(TemporalTaskAnswerRating.answer_id==answer.id).all()
+        rating_values = list([rate.value for rate in ratings])
+        # print "ratings:", rating_values
+        rating_values.sort()
+        if len(rating_values) >= 3:
+            rating_values = rating_values[1:len(rating_values)-1]
+
+        answer_avg_rating_values[answer.id] = sum(rating_values) / float(len(rating_values))
+
+    answer_workers_id = list([answer.worker_id for answer in temporal_answers])
+    answer_workers_id = list(set(answer_workers_id))
+    answer_workers_id.sort()
+
+    for worker_id in answer_workers_id:
+        worker_quality_value = 0
+        answer_times = 0
+        for answer in temporal_answers:
+            if answer.worker_id == worker_id:
+                worker_quality_value += answer_avg_rating_values[answer.id]
+                answer_times += 1
+
+        worker_quality = WorkerQuality(worker_id=worker_id, value=(worker_quality_value/answer_times)/5)
+        db.session.add(worker_quality)
+
+    db.session.commit()
+
+
+def export_user_qualities(directory):
+    output_template = '{w.worker_id} {w.value}\n'
+    worker_qualities = WorkerQuality.query.all()
+    with open(directory+'/workers_quality.txt', 'a') as f:
+        for wq in worker_qualities:
+            f.write(output_template.format(w=wq))
+
+    f.close()
+
+
+def export_worker_profile_user_id_map(directory):
+    output_template = '{w.id} {w.worker_id}\n'
+    worker_profiles = WorkerProfile.query.all()
+    with open(directory+'/worker_profile_to_user.txt', 'a') as f:
+        for wq in worker_profiles:
+            f.write(output_template.format(w=wq))
+
+    f.close()
+
+
+
+
 DEFAULT_RELIABILITY = 0.9
 DEFAULT_VELOCITY = 0.0005
 def calculate_current_profile(user):

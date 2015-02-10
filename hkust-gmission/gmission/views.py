@@ -61,6 +61,15 @@ def prepareTemporalTaskAnswers():
     task_controller.extract_temporal_task_answers_to_table()
     return "prepare OK"
 
+
+@app.route('/configUserQuality')
+def configUserQuality():
+    task_controller.configUserQuality()
+    # task_controller.export_user_qualities('/GMission-Server/export-files/')
+    # task_controller.export_worker_profile_user_id_map('/GMission-Server/export-files/')
+    return "config OK"
+
+
 @app.route('/getAnswerMessage', methods=['POST'])
 def getTemporalAnswerById():
     answer_id = request.form['answer_id']
