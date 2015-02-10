@@ -52,8 +52,7 @@ def test():
     # task_controller.calibrate_worker_profile()
     # task_controller.export_temporal_task_results([424], 'test')
     # task_controller.test()
-    worker_answers = TemporalTaskAnswer.query.filter(TemporalTaskAnswer.worker_profile.worker_id==54).all()
-    print "worker 54 answered:", len(worker_answers)
+    # task_controller.calibrate_worker_profile()
     return "test OK"
 
 
@@ -122,19 +121,29 @@ def cleanTemporalTask():
 
 @app.route('/export')
 def export():
-    task_controller.export_temporal_task_results(range(424,429), 'random_1min')  #redo
-    task_controller.export_temporal_task_results(range(429,434), 'random_2min')
-    task_controller.export_temporal_task_results(range(434,439), 'random_3min')
-    task_controller.export_temporal_task_results(range(439,444), 'random_4min')
-    task_controller.export_temporal_task_results(range(541,546), 'greedy_1min')
-    task_controller.export_temporal_task_results(range(546,551), 'greedy_2min')
-    task_controller.export_temporal_task_results(range(551,556), 'greedy_3min')
-    task_controller.export_temporal_task_results(range(556,566), 'greedy_4min')
+    # task_controller.export_temporal_task_results(range(424,429), 'random_1min')  #redo
+    # task_controller.export_temporal_task_results(range(429,434), 'random_2min')
+    # task_controller.export_temporal_task_results(range(434,439), 'random_3min')
+    # task_controller.export_temporal_task_results(range(439,444), 'random_4min')
+    # task_controller.export_temporal_task_results(range(541,546), 'greedy_1min')
+    # task_controller.export_temporal_task_results(range(546,551), 'greedy_2min')
+    # task_controller.export_temporal_task_results(range(551,556), 'greedy_3min')
+    # task_controller.export_temporal_task_results(range(556,566), 'greedy_4min')
 
     task_controller.export_temporal_task_results(range(623,628), 'sampling_1min')
-    task_controller.export_temporal_task_results(range(601,606), 'sampling_2min')
-    task_controller.export_temporal_task_results(range(606,611), 'sampling_3min')  #redo
+    task_controller.export_temporal_task_results(range(707,712), 'sampling_2min')
+    task_controller.export_temporal_task_results(range(722,727), 'sampling_3min')
     task_controller.export_temporal_task_results(range(616,621), 'sampling_4min')
+
+    task_controller.export_temporal_task_results(range(732,737), 'dv_1min')
+    task_controller.export_temporal_task_results(range(737,742), 'dv_2min')
+    task_controller.export_temporal_task_results(range(742,747), 'dv_3min')
+    task_controller.export_temporal_task_results(range(747,752), 'dv_4min')
+
+    task_controller.export_temporal_task_results(range(752,757), 'ground_1min')
+    task_controller.export_temporal_task_results(range(757,762), 'ground_3min')
+    # task_controller.export_temporal_task_results(range(722,727), 'sampling_3min')
+    # task_controller.export_temporal_task_results(range(616,621), 'sampling_4min')
     return "export OK"
 
 

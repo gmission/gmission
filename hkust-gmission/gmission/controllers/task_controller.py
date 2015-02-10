@@ -351,10 +351,10 @@ def calibrate_worker_profile():
     worker_profiles = WorkerProfile.query.all()
     for w in worker_profiles:
         print "calibrating worker:", w.id
-        position = PositionTrace.query.filter(PositionTrace.user_id==w.worker_id)\
-            .filter(PositionTrace.created_on <= w.created_on).order_by(PositionTrace.created_on.desc()).limit(1).all()[0]
-        WorkerProfile.query.filter(WorkerProfile.id == w.id) \
-                    .update({'latitude': position.latitude, 'longitude': position.longitude}, synchronize_session=False)
+        # position = PositionTrace.query.filter(PositionTrace.user_id==w.worker_id)\
+        #     .filter(PositionTrace.created_on <= w.created_on).order_by(PositionTrace.created_on.desc()).limit(1).all()[0]
+        # WorkerProfile.query.filter(WorkerProfile.id == w.id) \
+        #             .update({'latitude': position.latitude, 'longitude': position.longitude}, synchronize_session=False)
         if w.min_angle == w.max_angle:
             WorkerProfile.query.filter(WorkerProfile.id == w.id) \
                 .update({'max_angle': w.min_angle + 2 * math.pi}, synchronize_session=False)

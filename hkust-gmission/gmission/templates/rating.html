@@ -162,6 +162,13 @@
         });
     }
 
+    function goToNextAnswer(){
+        var answer_id = $('#next-answer-id').val();
+        answer_id++;
+        $('#next-answer-id').val(answer_id);
+        goToAnswer();
+    }
+
     google.maps.event.addDomListener(window, 'load', initialize);
 
     </script>
@@ -174,7 +181,7 @@
 
 
     <div id="answer">
-        <div>Question: <input id="question-description"/></div>
+        <div>Question: <input id="question-description" size="50"/></div>
         <div id="img-div"><img id="answer-pic" src="../static/image/star_rate.gif" width="400px" height="400px"></div>
     </div>
 
@@ -188,7 +195,9 @@
             <li><a href="javascript:rateThisAnswer(2)"><span>Give it 2 stars</span></a></li>
             <li><a href="javascript:rateThisAnswer(1)"><span>Give it 1 star</span></a></li>
         </ul>
+
     </div>
+    <div><button type="button" onclick="goToNextAnswer();">Go To Next Answer</button></div>
 
     <div id="jumper">Go To Answer (Id):
         <label for="next-answer-id"></label><input type="text" id="next-answer-id" name="next-answer-id"/>
