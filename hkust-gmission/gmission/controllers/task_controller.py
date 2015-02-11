@@ -420,17 +420,21 @@ def export_worker_profile_user_id_map(directory):
 
 
 DEFAULT_RELIABILITY = 0.9
-DEFAULT_VELOCITY = 0.0005
+DEFAULT_VELOCITY = 0.000005
 def calculate_current_profile(user):
     traces = PositionTrace.query.order_by(PositionTrace.created_on.desc()).filter(PositionTrace.user_id==user.id).limit(20).all()
 
-
+    worker_quality = WorkerQuality.query.filter(WorkerQuality.worker_id==user.id).limit(1).all()
+    if len(worker_quality) == 0:
+        user_quality = worker_quality.value
+    else:
+        user_quality = DEFAULT_RELIABILITY
     worker_profile = WorkerProfile(longitude=0,
                                    latitude=0,
                                    min_angle=0,
                                    max_angle=0,
                                    velocity=DEFAULT_VELOCITY,
-                                   reliability=DEFAULT_RELIABILITY,
+                                   reliability=user_quality,
                                    worker_id=user.id)
 
     print "length of traces:", len(traces)
@@ -463,7 +467,7 @@ def calculate_current_profile(user):
             min_angle = arrival_angle
             # print "min_angle:", min_angle
 
-        velocity = 0.001
+        velocity = DEFAULT_VELOCITY
 
         distance = geo_distance(t.longitude, t.latitude, last_point.longitude, last_point.latitude)
         time_interval = (last_point.created_on - t.created_on).total_seconds()
@@ -480,20 +484,22 @@ def calculate_current_profile(user):
         min_angle += 2 * math.pi
 
 
-    last_profile = WorkerProfile.query.order_by(WorkerProfile.created_on.desc())\
-        .filter(WorkerProfile.worker_id==user.id).limit(1).all()
-
-    if len(last_profile) == 0:
-        worker_profile.reliability = DEFAULT_RELIABILITY
-    else:
-        worker_profile.reliability = last_profile[0].reliability
+    # last_profile = WorkerProfile.query.order_by(WorkerProfile.created_on.desc())\
+    #     .filter(WorkerProfile.worker_id==user.id).limit(1).all()
+    #
+    # if len(last_profile) == 0:
+    #     worker_profile.reliability = DEFAULT_RELIABILITY
+    # else:
+    #     worker_profile.reliability = last_profile[0].reliability
 
     worker_profile.max_angle = max_angle
     worker_profile.min_angle = min_angle
-    if len(velocities) == 0:
-        worker_profile.velocity = 0
-    else:
+    if len(velocities) != 0:
         worker_profile.velocity = float((max(velocities) + min(velocities))/2)
+
+    if worker_profile.velocity < DEFAULT_VELOCITY:
+        worker_profile.velocity = DEFAULT_VELOCITY
+
     worker_profile.longitude = end_point.longitude
     worker_profile.latitude = end_point.latitude
     worker_profile.created_on = end_point.created_on
