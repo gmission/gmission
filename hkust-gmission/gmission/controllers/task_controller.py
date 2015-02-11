@@ -425,8 +425,8 @@ def calculate_current_profile(user):
     traces = PositionTrace.query.order_by(PositionTrace.created_on.desc()).filter(PositionTrace.user_id==user.id).limit(20).all()
 
     worker_quality = WorkerQuality.query.filter(WorkerQuality.worker_id==user.id).limit(1).all()
-    if len(worker_quality) == 0:
-        user_quality = worker_quality.value
+    if len(worker_quality) != 0:
+        user_quality = worker_quality[0].value
     else:
         user_quality = DEFAULT_RELIABILITY
     worker_profile = WorkerProfile(longitude=0,
