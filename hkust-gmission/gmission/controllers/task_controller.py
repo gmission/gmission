@@ -556,7 +556,7 @@ def query_online_users():
 def query_opening_temporal_task():
     # assume every temporal task needs 1000 workers and other kind of task does not need 1000 workers
     opening_task = Task.query\
-        .filter(Task.status == 'open').filter(Task.required_answer_count==1000).all()
+        .filter(Task.status == 'open').filter(Task.brief.startswith('(ST)')).all()
     return opening_task
 
 

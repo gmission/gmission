@@ -69,7 +69,7 @@ class ReSTTask(Task, ReSTBase):
     @classmethod
     def before_post(cls, data):
         global BETA
-        BETA = data.pop('beta', 0.5)
+        BETA = data.pop('beta', -1)
         # print 'ReSTTask before_post'
         filter_location(data)
     @classmethod
@@ -82,7 +82,7 @@ class ReSTTask(Task, ReSTBase):
                     task_id=task.id)
         db.session.add(beta)
         db.session.commit()
-        if task.required_answer_count != 1000: # if equal 1000, that task is a temporal task
+        if BETA != -1: # if not equal -1, that task is a temporal task
             assign_task_to_workers(task)
 
 
