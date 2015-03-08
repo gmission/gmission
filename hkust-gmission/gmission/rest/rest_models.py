@@ -82,7 +82,7 @@ class ReSTTask(Task, ReSTBase):
                     task_id=task.id)
         db.session.add(beta)
         db.session.commit()
-        if BETA != -1: # if not equal -1, that task is a temporal task
+        if BETA == -1: # if not equal -1, that task is a temporal task
             assign_task_to_workers(task)
 
 
