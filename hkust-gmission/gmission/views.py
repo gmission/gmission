@@ -42,6 +42,12 @@ def assign_workers():
     task_controller.assign_temporal_task_to_workers()
     return "assignWorkers OK"
 
+@app.route('/refreshTaskStatus')
+def refresh_task_status():
+    task_controller.refresh_task_status()
+    return "refresh task status OK"
+
+
 @app.route('/test')
 def test():
     # for u in User.query.filter(User.id==49):
