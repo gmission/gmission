@@ -144,7 +144,9 @@ def save_and_push_msg(msg, commit=True):
 def send_request_messages(task, users):
     msg_type = 'task assignment'
     # scheduler = User.query.get(1)
-    msg_content = u'在"%s"有一个新任务!' % (task.location.name,)
+    msg_content_template = '{t.brief} ({t.location.name})'
+    #msg_content = u'在"%s"有一个新任务!' % (task.location.name,)
+    msg_content = msg_content_template.format(t=task)
     # msg_content = u'There is a new task at "%s"!' % (task.location.name,)
 
     for user in users:
