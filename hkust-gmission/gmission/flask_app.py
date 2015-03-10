@@ -18,7 +18,7 @@ stdout('going to run Flask at %s'%(ROOT))
 
 app = Flask(__name__)
 app.debug = False
-app.debug = True
+# app.debug = True
 
 
 cache_config = {'CACHE_TYPE': 'simple'}
