@@ -41,9 +41,10 @@ footer {
 <script>
 
     var goToNextHit = false;
+    var projectName = "/gmission";
     function goToHelpPage(){
         var email_address = $('#email_address').val();
-        var url = "http://"+window.location.host+"/taxonomy_help/"+email_address;
+        var url = "http://"+window.location.host+projectName+"/taxonomy_help/"+email_address;
         window.location = url;
     }
 
@@ -78,12 +79,12 @@ footer {
 
         $.ajax({
             type: 'POST',
-            url:"http://"+window.location.host+"/answer_hit",
+            url:"http://"+window.location.host+projectName+"/answer_hit",
             data:{ hit_number: hit_number, option: option_number, sub_option: sub_option, email_address: email_address },
             success: function(msg){
                 $('#notification').text('Submission OK. Jumping to the next hit...');
                 if(goToNextHit){
-                    var url = "http://"+window.location.host+"/taxonomy_hit/"+email_address+"/"+hit_number;
+                    var url = "http://"+window.location.host+projectName+"/taxonomy_hit/"+email_address+"/"+hit_number;
                     window.location = url;
                 }
 
