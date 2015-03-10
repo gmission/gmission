@@ -37,6 +37,39 @@ def index():
 def rating():
     return render_template('rating.html')
 
+
+@app.route('/taxonomy_help/<email>')
+def taxonomy_help(email):
+    return render_template('taxonomy_help.html', email=email)
+
+
+@app.route('/taxonomy_hit/<email>/<current_hit>')
+def taxonomy_hit(email, current_hit):
+    print email
+    print current_hit
+    if current_hit == "null":
+        current_hit = 0
+    else:
+        current_hit = int(current_hit)
+    return render_template('taxonomy_hit.html',
+                           email=email,
+                           credits=0,
+                           hit_number=current_hit+1,
+                           query_content='abc',
+                           parent_node='parent',
+                           target_node='target',
+                           children_node_list='children, abc, ddd')
+
+
+@app.route('/answer_hit', methods=['POST'])
+def answer_hit():
+    email = request.form['email_address']
+    option = request.form['option']
+    sub_option = request.form['sub_option']
+    hit_number = request.form['hit_number']
+    return "OK"
+
+
 @app.route('/assignWorkers')
 def assign_workers():
     task_controller.assign_temporal_task_to_workers()
