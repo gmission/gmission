@@ -4,6 +4,46 @@ __author__ = 'chenzhao'
 from base import *
 
 
+class Competition(db.Model, BasicModelMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    type = db.Column(db.String(20))
+    brief = db.Column(db.String(500))
+    url = db.Column(db.String(150))
+    status = db.Column(db.String(20), default='open')  # or closed
+    comments = db.Column(db.String(100))
+    begin_time = db.Column(db.DateTime, default=datetime.datetime.now)
+    end_time = db.Column(db.DateTime, default=lambda:datetime.datetime.now()+datetime.timedelta(days=1))
+    created_on = db.Column(db.DateTime, default=datetime.datetime.now)
+    hits = db.relationship('Hit', lazy='select')
+
+
+class Hit(db.Model, BasicModelMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    competition = db.relationship('Competition', lazy='select')
+    competition_id = db.Column(db.Integer, db.ForeignKey('competition.id'))
+    attachment_type = db.Column(db.String(20))
+    attachment_id = db.Column(db.Integer)
+    worker = db.relationship('User', lazy='select')
+    worker_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+    answer_content = db.Column(db.String(1000))
+    comments = db.Column(db.String(100))
+    credit = db.Column(db.Integer, default=1)
+    deadline = db.Column(db.DateTime, default=lambda:datetime.datetime.now()+datetime.timedelta(minutes=10))
+    status = db.Column(db.String(20), default='open')  # or assigned, finished
+
+
+class TaxonomyQuery(db.Model, BasicModelMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    number = db.Column(db.Integer)
+    query_node = db.Column(db.String(20))
+    target_node = db.Column(db.String(20))
+    parent = db.Column(db.String(120))
+    siblings = db.Column(db.String(500))
+    children = db.Column(db.String(900))
+    conclusion = db.Column(db.String(120))
+
+
 class Task(db.Model, BasicModelMixin):
     id = db.Column(db.Integer, primary_key=True)
     type = db.Column(db.String(20))
