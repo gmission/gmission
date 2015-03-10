@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Hits for Taxonomy</title>
+</head>
+<style>
+header {
+    background-color: #23527c;
+    color:white;
+    text-align:center;
+    padding:5px;
+}
+nav {
+    line-height:30px;
+    background-color:#eeeeee;
+    height:300px;
+    width:100px;
+    float:left;
+    padding:5px;
+}
+section {
+    width: 70%;
+    float:left;
+    padding:10px;
+}
+aside {
+    width: 30%;
+    float:right;
+    padding:10px;
+}
+footer {
+    background-color:black;
+    color:white;
+    clear:both;
+    text-align:center;
+    padding:5px;
+}
+</style>
+<script type="text/javascript" src="{{url_for('static',filename='js/jquery-2.1.1.min.js')}}"></script>
+<script>
+
+    var goToNextHit = false;
+    function goToHelpPage(){
+        var email_address = $('#email_address').val();
+        var url = "http://"+window.location.host+"/taxonomy_help/"+email_address;
+        window.location = url;
+    }
+
+    function submitAnswer(){
+        if (!$("input[name='option']:checked").val()){
+            $('#notification').text('*Please choose at least one option!');
+            return;
+        }
+        var option_number = $("input[name='option']:checked").val();
+        var sub_option = null;
+        if(option_number == '3'){
+            var child = $('#options1').val();
+            if(child.valueOf() == 'empty'.valueOf()){
+                $('#notification').text('*Please choose which child it is!');
+                return;
+            } else {
+                sub_option = child;
+            }
+        }
+
+        if(option_number == '4') {
+            var child = $('#options2').val();
+            if (child.valueOf() == 'empty'.valueOf()) {
+                $('#notification').text('*Please choose which child it is!');
+                return;
+            } else {
+                sub_option = child;
+            }
+        }
+        var email_address = $('#email_address').val();
+        var hit_number = $('#hit_number').val();
+
+        $.ajax({
+            type: 'POST',
+            url:"http://"+window.location.host+"/answer_hit",
+            data:{ hit_number: hit_number, option: option_number, sub_option: sub_option, email_address: email_address },
+            success: function(msg){
+                $('#notification').text('Submission OK. Jumping to the next hit...');
+                if(goToNextHit){
+                    var url = "http://"+window.location.host+"/taxonomy_hit/"+email_address+"/"+hit_number;
+                    window.location = url;
+                }
+
+
+            },
+            error: function(xhr, textStatus, errorThrown){
+                $('#notification').text('Submission Failed! Please check you network or try later!');
+            }
+        });
+
+    }
+
+    function submitAndGoToNextHit(){
+        goToNextHit = true;
+        submitAnswer();
+    }
+
+    function jumpToNextHit(){
+
+    }
+    $(document).ready(function() {
+        var children_list_text = '{{ children_node_list }}';
+        var children_list = children_list_text.split(",");
+
+        for (var i = 0; i < children_list.length; i++) {
+            $('#options1').append('<option value="'+ $.trim(children_list[i]) +'">'+ $.trim(children_list[i]) +'</option>');
+            $('#options2').append('<option value="'+ $.trim(children_list[i])+'">'+ $.trim(children_list[i]) +'</option>');
+        }
+
+    })
+</script>
+<body>
+<label for="email_address">Email:</label><input type="text" name="email_address" id="email_address" value="{{ email }}" disabled/>
+<label for="credits">Credits:</label><input type="text" name="credits" id="credits" value="{{ credits }}" disabled/>
+(If you do not know how to do this task, please see the help information first.<button onclick="goToHelpPage();">Help</button>)
+<br/>
+<hr/>
+<label for="hit_number">Hit Number:</label><input type="text" name="hit_number" id="hit_number" value="{{ hit_number }}" disabled/> <br/>
+Query: {{ query_content }} <br/>
+Parent Node: {{ parent_node }} <br/>
+Target Node: {{ target_node }} <br/>
+Children Nodes: {{ children_node_list }} <br/>
+
+<div id="options" name="options">
+    <b>Options:</b><br/>
+    <input type="radio" name="option" value="1">Ancestor of Target<br/>
+    <input type="radio" name="option" value="2">Sibling of Target<br/>
+    <input type="radio" name="option" value="3">Child of Target and parent of one of the children of Target.(
+    <select id="options1" name="options1">
+     <option value="empty"></option>
+    </select>
+    (which child))<br/>
+
+    <input type="radio" name="option" value="4">Descendant of one child of Target.(
+    <select id="options2" name="options2">
+        <option value="empty"></option>
+    </select>
+    (which child))<br/>
+
+
+</div>
+
+<hr>
+<div id="notification" name="notification" style="color: red"></div>
+<button style="margin-right: 10%" onclick="submitAnswer();">Submit</button> <button onclick="submitAndGoToNextHit();">Submit&Next</button>
+</body>
+</html>
