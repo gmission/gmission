@@ -41,7 +41,7 @@ footer {
 <script>
 
     var goToNextHit = false;
-    var projectName = "/gmission";
+    var projectName = "";
     function goToHelpPage(){
         var email_address = $('#email_address').val();
         var url = "http://"+window.location.host+projectName+"/taxonomy_help/"+email_address;
@@ -82,8 +82,13 @@ footer {
             url:"http://"+window.location.host+projectName+"/answer_hit",
             data:{ hit_number: hit_number, option: option_number, sub_option: sub_option, email_address: email_address },
             success: function(msg){
-                $('#notification').text('Submission OK. Jumping to the next hit...');
+                if(msg != 'OK'){
+                    alert(msg);
+                    $('#notification').text('Email Error... Please refresh this task to try again...');
+                }
                 if(goToNextHit){
+                    $('#notification').text('Submission OK. Jumping to the next hit...');
+
                     var url = "http://"+window.location.host+projectName+"/taxonomy_hit/"+email_address+"/"+hit_number;
                     window.location = url;
                 }
@@ -123,6 +128,7 @@ footer {
 <br/>
 <hr/>
 <label for="hit_number">Hit Number:</label><input type="text" name="hit_number" id="hit_number" value="{{ hit_number }}" disabled/> <br/>
+Hit Value: {{ hit_value }} <br/>
 Query: {{ query_content }} <br/>
 Parent Node: {{ parent_node }} <br/>
 Target Node: {{ target_node }} <br/>

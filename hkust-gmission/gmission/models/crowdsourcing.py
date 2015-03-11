@@ -9,6 +9,9 @@ class Competition(db.Model, BasicModelMixin):
     type = db.Column(db.String(20))
     brief = db.Column(db.String(500))
     url = db.Column(db.String(150))
+    founder = db.relationship('User', lazy='select')
+    founder_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
     status = db.Column(db.String(20), default='open')  # or closed
     comments = db.Column(db.String(100))
     begin_time = db.Column(db.DateTime, default=datetime.datetime.now)
@@ -42,6 +45,7 @@ class TaxonomyQuery(db.Model, BasicModelMixin):
     siblings = db.Column(db.String(500))
     children = db.Column(db.String(900))
     conclusion = db.Column(db.String(120))
+    status = db.Column(db.String(20), default='open')  # or assigned, finished
 
 
 class Task(db.Model, BasicModelMixin):
