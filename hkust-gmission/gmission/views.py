@@ -9,7 +9,7 @@ from flask_app import app, cache
 import rest
 from flask import render_template, request, redirect, jsonify, g
 from models import *
-from controllers import task_controller
+from controllers import task_controller, taxonomy_controller
 
 import json
 
@@ -43,31 +43,58 @@ def taxonomy_help(email):
     return render_template('taxonomy_help.html', email=email)
 
 
-@app.route('/taxonomy_hit/<email>/<current_hit>')
-def taxonomy_hit(email, current_hit):
-    print email
-    print current_hit
-    if current_hit == "null":
-        current_hit = 0
+@app.route('/check_timeout_hits')
+def check_timeout_hits():
+    taxonomy_controller.check_timeout_hits()
+    return 'Finish Checking timeout hits'
+
+
+@app.route('/jump_to_next_hit/<email>/<current_hit_id>')
+def jump_to_next_hit(email, current_hit_id):
+    current_hit = Hit.query.get(current_hit_id)
+    current_hit.status = 'open'
+    db.session.commit()
+    return taxonomy_hit(email, current_hit_id)
+
+@app.route('/taxonomy_hit/<email>/<current_hit_id>')
+def taxonomy_hit(email, current_hit_id):
+    worker = User.query.filter(User.email==email).first()
+    if worker is None:
+        return "Cannot find your email record... Please Check it again..."
+    if current_hit_id == "null":
+        next_hit = taxonomy_controller.fetch_next_hit(worker, -1)
     else:
-        current_hit = int(current_hit)
-    return render_template('taxonomy_hit.html',
-                           email=email,
-                           credits=0,
-                           hit_number=current_hit+1,
-                           query_content='abc',
-                           parent_node='parent',
-                           target_node='target',
-                           children_node_list='children, abc, ddd')
+        next_hit = taxonomy_controller.fetch_next_hit(worker, current_hit_id)
+
+    if next_hit is not None:
+        taxonomy_query = TaxonomyQuery.query.get(next_hit.attachment_id)
+
+        return render_template('taxonomy_hit.html',
+                               email=email,
+                               credits=worker.credit,
+                               hit_value=next_hit.credit,
+                               hit_number=next_hit.id,
+                               query_content=taxonomy_query.query_node,
+                               parent_node=taxonomy_query.parent,
+                               target_node=taxonomy_query.target_node,
+                               children_node_list=taxonomy_query.children)
+    else:
+        return "No tasks now... Please try later..."
 
 
 @app.route('/answer_hit', methods=['POST'])
 def answer_hit():
+
     email = request.form['email_address']
     option = request.form['option']
     sub_option = request.form['sub_option']
     hit_number = request.form['hit_number']
-    return "OK"
+
+    if sub_option != "":
+        return taxonomy_controller.answer_hit(hit_number, email, option+":"+sub_option)
+    else:
+        return taxonomy_controller.answer_hit(hit_number, email, option)
+
 
 
 @app.route('/assignWorkers')

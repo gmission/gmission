@@ -42,6 +42,7 @@ footer {
 
     var goToNextHit = false;
     var projectName = "/gmission";
+{#    var projectName = "";#}
     function goToHelpPage(){
         var email_address = $('#email_address').val();
         var url = "http://"+window.location.host+projectName+"/taxonomy_help/"+email_address;
@@ -56,12 +57,25 @@ footer {
         var option_number = $("input[name='option']:checked").val();
         var sub_option = null;
         if(option_number == '3'){
-            var child = $('#options1').val();
-            if(child.valueOf() == 'empty'.valueOf()){
-                $('#notification').text('*Please choose which child it is!');
+            var suboption_string = "";
+            for (var i = 0; i < checkbox_id_list.length; i++){
+                if ($('#'+checkbox_id_list[i]).is(':checked')){
+                    suboption_string += ',' + $('#'+checkbox_id_list[i]).val();
+                }
+            }
+
+
+            if(suboption_string.length == 0){
+                $('#notification').text('*Please choose at least one child option!');
                 return;
             } else {
-                sub_option = child;
+                suboption_string = suboption_string.substring(1)
+            }
+
+            if(suboption_string.indexOf('empty') != -1 && suboption_string.length > 'empty'.length){
+                $('#notification').text('*If you select "Sibling", do not select any other child more!');
+            } else {
+                sub_option = suboption_string;
             }
         }
 
@@ -82,8 +96,13 @@ footer {
             url:"http://"+window.location.host+projectName+"/answer_hit",
             data:{ hit_number: hit_number, option: option_number, sub_option: sub_option, email_address: email_address },
             success: function(msg){
-                $('#notification').text('Submission OK. Jumping to the next hit...');
+                if(msg != 'OK'){
+                    alert(msg);
+                    $('#notification').text('Email Error... Please refresh this task to try again...');
+                }
                 if(goToNextHit){
+                    $('#notification').text('Submission OK. Jumping to the next hit...');
+
                     var url = "http://"+window.location.host+projectName+"/taxonomy_hit/"+email_address+"/"+hit_number;
                     window.location = url;
                 }
@@ -103,16 +122,27 @@ footer {
     }
 
     function jumpToNextHit(){
-
+        var email_address = $('#email_address').val();
+        var hit_number = $('#hit_number').val();
+        var url = "http://"+window.location.host+projectName+"/jump_to_next_hit/"+email_address+"/"+hit_number;
+        window.location = url;
     }
+    var checkbox_id_list = ['checkbox_options1'];
     $(document).ready(function() {
         var children_list_text = '{{ children_node_list }}';
         var children_list = children_list_text.split(",");
 
+{#        $('#insert_position').replaceWith('<option value="'+ $.trim(children_list[i]) +'">'+ $.trim(children_list[i]) +'</option>');#}
+        var check_options_string = "";
         for (var i = 0; i < children_list.length; i++) {
-            $('#options1').append('<option value="'+ $.trim(children_list[i]) +'">'+ $.trim(children_list[i]) +'</option>');
-            $('#options2').append('<option value="'+ $.trim(children_list[i])+'">'+ $.trim(children_list[i]) +'</option>');
+            var child_content = $.trim(children_list[i]);
+            var checkbox_id = 'checkbox_options'+(i+2);
+            check_options_string += ' <input type="checkbox" id="'+checkbox_id+'" value="'+child_content+'" >'+child_content;
+{#            alert(check_options_string);#}
+            checkbox_id_list.push(checkbox_id);
+            $('#options2').append('<option value="'+ child_content+'">'+ child_content +'</option>');
         }
+        $('#insert_position').replaceWith(check_options_string);
 
     })
 </script>
@@ -123,6 +153,7 @@ footer {
 <br/>
 <hr/>
 <label for="hit_number">Hit Number:</label><input type="text" name="hit_number" id="hit_number" value="{{ hit_number }}" disabled/> <br/>
+Hit Value: {{ hit_value }} <br/>
 Query: {{ query_content }} <br/>
 Parent Node: {{ parent_node }} <br/>
 Target Node: {{ target_node }} <br/>
@@ -132,11 +163,9 @@ Children Nodes: {{ children_node_list }} <br/>
     <b>Options:</b><br/>
     <input type="radio" name="option" value="1">Ancestor of Target<br/>
     <input type="radio" name="option" value="2">Sibling of Target<br/>
-    <input type="radio" name="option" value="3">Child of Target and parent of one of the children of Target.(
-    <select id="options1" name="options1">
-     <option value="empty"></option>
-    </select>
-    (which child))<br/>
+    <input type="radio" name="option" value="3">Child of Target and parent of child(ren) of Target.(
+    <input type="checkbox" name="checkbox_options1" id="checkbox_options1" value="empty">Sibling
+    <div id="insert_position" ></div>(which child(ren), multi-choice allowed))<br/>
 
     <input type="radio" name="option" value="4">Descendant of one child of Target.(
     <select id="options2" name="options2">
@@ -149,6 +178,7 @@ Children Nodes: {{ children_node_list }} <br/>
 
 <hr>
 <div id="notification" name="notification" style="color: red"></div>
-<button style="margin-right: 10%" onclick="submitAnswer();">Submit</button> <button onclick="submitAndGoToNextHit();">Submit&Next</button>
+<button style="margin-right: 5%" onclick="submitAnswer();">Submit</button> <button style="margin-right: 5%" onclick="submitAndGoToNextHit();">Submit&Next</button>
+<button onclick="jumpToNextHit();">Skip</button>
 </body>
 </html>
