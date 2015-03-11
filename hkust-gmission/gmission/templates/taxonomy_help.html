@@ -39,7 +39,8 @@ footer {
 </style>
 <script type="text/javascript" src="{{url_for('static',filename='js/jquery-2.1.1.min.js')}}"></script>
 <script>
-    var projectName = "";
+    var projectName = "/gmission";
+{#    var projectName = "";#}
     function returnHitPage(){
         var email_address = $('#email-address').val();
         var url = "http://"+window.location.host+projectName+"/taxonomy_hit/"+email_address+"/null";

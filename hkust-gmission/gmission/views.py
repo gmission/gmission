@@ -43,15 +43,28 @@ def taxonomy_help(email):
     return render_template('taxonomy_help.html', email=email)
 
 
-@app.route('/taxonomy_hit/<email>/<current_hit>')
-def taxonomy_hit(email, current_hit):
+@app.route('/check_timeout_hits')
+def check_timeout_hits():
+    taxonomy_controller.check_timeout_hits()
+    return 'Finish Checking timeout hits'
+
+
+@app.route('/jump_to_next_hit/<email>/<current_hit_id>')
+def jump_to_next_hit(email, current_hit_id):
+    current_hit = Hit.query.get(current_hit_id)
+    current_hit.status = 'open'
+    db.session.commit()
+    return taxonomy_hit(email, current_hit_id)
+
+@app.route('/taxonomy_hit/<email>/<current_hit_id>')
+def taxonomy_hit(email, current_hit_id):
     worker = User.query.filter(User.email==email).first()
     if worker is None:
         return "Cannot find your email record... Please Check it again..."
-    if current_hit == "null":
-        next_hit = taxonomy_controller.fetch_first_hit(worker)
+    if current_hit_id == "null":
+        next_hit = taxonomy_controller.fetch_next_hit(worker, -1)
     else:
-        next_hit = taxonomy_controller.fetch_next_hit(worker, current_hit)
+        next_hit = taxonomy_controller.fetch_next_hit(worker, current_hit_id)
 
     if next_hit is not None:
         taxonomy_query = TaxonomyQuery.query.get(next_hit.attachment_id)

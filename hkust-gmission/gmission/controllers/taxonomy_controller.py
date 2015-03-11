@@ -34,12 +34,15 @@ def check_finish_taxonomy_query(query_id):
 
 
 def fetch_next_hit(assigned_worker, hit_number):
-    current_hit = Hit.query.get(hit_number)
+    # print hit_number
+    current_hit = Hit.query.filter(Hit.id >= hit_number).first()
     if current_hit is not None:
+        # print current_hit.attachment_id
         current_taxonomy_query = TaxonomyQuery.query.get(current_hit.attachment_id)
         while True:
-            next_taxonomy_query = TaxonomyQuery.query.filter(TaxonomyQuery.id > current_hit.attachment_id).filter(TaxonomyQuery.status == 'open').first()
+            next_taxonomy_query = TaxonomyQuery.query.filter(TaxonomyQuery.id > current_taxonomy_query.id).filter(TaxonomyQuery.status == 'open').first()
 
+            # print 'next_query', next_taxonomy_query.id
             if next_taxonomy_query is not None:
                 next_hit = Hit.query.filter(Hit.attachment_type == 'taxonomy').filter(Hit.attachment_id == next_taxonomy_query.id).filter(Hit.status=='open').first()
                 if next_hit is not None:
@@ -54,8 +57,14 @@ def fetch_next_hit(assigned_worker, hit_number):
                 return None
     return None
 
+def check_timeout_hits():
+    timeout_hits = Hit.query.filter(Hit.deadline < datetime.datetime.now()).filter(Hit.status=='assigned').all()
+    Hit.query.filter(Hit.deadline < datetime.datetime.now()).filter(Hit.status=='assigned').update({'status': 'open'}, synchronize_session=False)
+    db.session.commit()
+
 
 def fetch_first_hit(assigned_worker):
+    print 'first hit'
     next_query = TaxonomyQuery.query.filter(TaxonomyQuery.status=='open').first()
     if next_query is not None:
         next_hit = Hit.query.filter(Hit.status=='open').filter(Hit.attachment_type == 'taxonomy').filter(Hit.attachment_id == next_query.id).first()
@@ -66,6 +75,8 @@ def fetch_first_hit(assigned_worker):
             db.session.commit()
             return next_hit
         else:
+            print 'no opened hit'
             return None
     else:
+        print 'no opened query'
         return None
