@@ -207,15 +207,24 @@ def gen_testing_tasks():
                     credit=10, required_answer_count=1000, requester_id=1, location=location, beta=0.5)
     rest_post('task', new_task)
 
+
 def call_assign():
     # url_root = 'http://lccpu3.cse.ust.hk/gmission/'
     r = requests.get('http://lccpu3.cse.ust.hk/gmission/assignWorkers')
     print r.text#,datetime.now()
 
+
 def refresh_task_status():
     # url_root = 'http://lccpu3.cse.ust.hk/gmission/'
     r = requests.get('http://lccpu3.cse.ust.hk/gmission/refreshTaskStatus')
     print r.text#,datetime.now()
+
+
+def refresh_hit_status():
+    # url_root = 'http://lccpu3.cse.ust.hk/gmission/'
+    r = requests.get('http://lccpu3.cse.ust.hk/gmission/check_timeout_hits')
+    print r.text#,datetime.now()
+
 
 def run():
     c = CronTab(
@@ -224,6 +233,7 @@ def run():
         # Event(gen_testing_tasks, name='testing', min=[0, 15, 30, 45], hour=range(15, 19)),
         Event(call_assign, name='call_assign', min=range(0,61,1), hour=range(0, 25)),
         Event(refresh_task_status, name='refresh_task_status', min=range(0,61,1), hour=range(0, 25)),
+        Event(refresh_hit_status, name='refresh_hit_status', min=range(0,61,1), hour=range(0, 25)),
     )
     c.run()
     pass
