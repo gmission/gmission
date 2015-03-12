@@ -45,6 +45,14 @@ def fetch_next_hit(assigned_worker, hit_number):
             # print 'next_query', next_taxonomy_query.id
             if next_taxonomy_query is not None:
                 next_hit = Hit.query.filter(Hit.attachment_type == 'taxonomy').filter(Hit.attachment_id == next_taxonomy_query.id).filter(Hit.status=='open').first()
+                sibling_hits = Hit.query.filter(Hit.attachment_type == 'taxonomy').filter(Hit.attachment_id == next_taxonomy_query.id).filter(Hit.status!='open').all()
+                for sibling_hit in sibling_hits:
+                    if sibling_hit.worker_id == assigned_worker.id:
+                        current_taxonomy_query = next_taxonomy_query
+                        break
+                if current_taxonomy_query == next_taxonomy_query:
+                    break
+
                 if next_hit is not None:
                     next_hit.status = 'assigned'
                     next_hit.deadline = datetime.datetime.now() + datetime.timedelta(minutes=10)
