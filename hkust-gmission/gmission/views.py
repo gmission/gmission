@@ -61,10 +61,14 @@ def taxonomy_hit(email, current_hit_id):
     worker = User.query.filter(User.email==email).first()
     if worker is None:
         return "Cannot find your email record... Please Check it again..."
-    if current_hit_id == "null":
-        next_hit = taxonomy_controller.fetch_next_hit(worker, -1)
+    last_hit = taxonomy_controller.recover_ongoing_hit(worker)
+    if last_hit is None:
+        if current_hit_id == "null":
+                next_hit = taxonomy_controller.fetch_next_hit(worker, -1)
+        else:
+            next_hit = taxonomy_controller.fetch_next_hit(worker, current_hit_id)
     else:
-        next_hit = taxonomy_controller.fetch_next_hit(worker, current_hit_id)
+        next_hit = last_hit
 
     if next_hit is not None:
         taxonomy_query = TaxonomyQuery.query.get(next_hit.attachment_id)
