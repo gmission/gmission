@@ -88,3 +88,32 @@ def fetch_first_hit(assigned_worker):
     else:
         print 'no opened query'
         return None
+
+
+def recover_ongoing_hit(worker):
+    hit = Hit.query.filter(Hit.status=='assigned').filter(Hit.worker_id==worker.id)
+    return hit
+
+
+def create_query(number, parent, target, query_info, children, times):
+    query_record = TaxonomyQuery(number=number,
+                                 parent=parent,
+                                 query_node=query_info,
+                                 target_node=target,
+                                 children=children,
+                                 status='open'
+                                 )
+    db.session.add(query_record)
+    db.session.commit()
+
+    for i in range(1, times+1):
+        hit = Hit(competition_id=1,
+                  attachment_type='taxonomy',
+                  attachment_id=query_record.id,
+                  credit=1,
+                  status='open'
+                  )
+        db.session.add(hit)
+
+    db.session.commit()
+
