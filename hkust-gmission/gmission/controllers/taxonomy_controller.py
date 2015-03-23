@@ -91,7 +91,7 @@ def fetch_first_hit(assigned_worker):
 
 
 def recover_ongoing_hit(worker):
-    hit = Hit.query.filter(Hit.status=='assigned').filter(Hit.worker_id==worker.id)
+    hit = Hit.query.filter(Hit.status=='assigned').filter(Hit.worker_id==worker.id).first()
     return hit
 
 
