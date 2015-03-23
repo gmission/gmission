@@ -96,6 +96,30 @@ def answer_hit():
         return taxonomy_controller.answer_hit(hit_number, email, option)
 
 
+@app.route('/taxonomy_create', methods=['POST'])
+def taxonomy_create():
+    query_number = request.form['query_number']
+    parent_node_info = request.form['parent']
+    target_node_info = request.form['target']
+    query_node_info = request.form['query']
+    children_node_info = request.form['children']
+
+    return "OK"
+
+
+@app.route('/taxonomy_status_query/<query_number>')
+def taxonomy_status_query(query_number):
+
+    query = TaxonomyQuery.query.get(query_number)
+    if query is not None:
+        if query.status == 'finished':
+            return "FINISHED"
+        else:
+            return "OPEN"
+    else:
+        return "ERROR"
+
+
 
 @app.route('/assignWorkers')
 def assign_workers():
