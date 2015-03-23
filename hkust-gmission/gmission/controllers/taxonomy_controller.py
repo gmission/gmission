@@ -37,7 +37,7 @@ def fetch_next_hit(assigned_worker, hit_number):
     # print hit_number
     current_hit = Hit.query.filter(Hit.id >= hit_number).first()
     if current_hit is not None:
-        # print current_hit.attachment_id
+        print current_hit.attachment_id
         current_taxonomy_query = TaxonomyQuery.query.get(current_hit.attachment_id)
         while True:
             next_taxonomy_query = TaxonomyQuery.query.filter(TaxonomyQuery.id > current_taxonomy_query.id).filter(TaxonomyQuery.status == 'open').first()
@@ -62,6 +62,7 @@ def fetch_next_hit(assigned_worker, hit_number):
                 else:
                     current_taxonomy_query = next_taxonomy_query
             else:
+                print 'no next taxonomy_query'
                 return None
     return None
 

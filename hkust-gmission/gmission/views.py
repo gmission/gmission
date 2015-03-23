@@ -69,8 +69,6 @@ def taxonomy_hit(email, current_hit_id):
             next_hit = taxonomy_controller.fetch_next_hit(worker, -1)
         else:
             next_hit = taxonomy_controller.fetch_next_hit(worker, current_hit_id)
-
-        print next_hit.attachment_id
     else:
         next_hit = last_hit
 
