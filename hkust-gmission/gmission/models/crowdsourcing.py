@@ -38,7 +38,7 @@ class Hit(db.Model, BasicModelMixin):
 
 class TaxonomyQuery(db.Model, BasicModelMixin):
     id = db.Column(db.Integer, primary_key=True)
-    number = db.Column(db.Integer)
+    number = db.Column(db.String(100))
     query_node = db.Column(db.String(20))
     target_node = db.Column(db.String(20))
     parent = db.Column(db.String(120))
