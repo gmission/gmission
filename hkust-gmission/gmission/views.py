@@ -109,13 +109,13 @@ def taxonomy_create():
     target_node_info = request.form['target']
     query_node_info = request.form['query']
     children_node_info = request.form['children']
-    taxonomy_controller.create_query(query_number, parent_node_info, target_node_info, query_node_info, children_node_info, 5)
+    taxonomy_controller.create_query(query_number, parent_node_info, target_node_info, query_node_info, children_node_info, 6)
     return "OK"
 
 
 @app.route('/taxonomy_status_query/<query_number>')
 def taxonomy_status_query(query_number):
-
+    print query_number
     query = TaxonomyQuery.query.filter(TaxonomyQuery.number==query_number).first()
     if query is not None:
         if query.status == 'finished':
