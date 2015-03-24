@@ -116,7 +116,7 @@ def taxonomy_create():
 @app.route('/taxonomy_status_query/<query_number>')
 def taxonomy_status_query(query_number):
 
-    query = TaxonomyQuery.query.get(query_number)
+    query = TaxonomyQuery.query.filter(TaxonomyQuery.number==query_number).first()
     if query is not None:
         if query.status == 'finished':
             return "FINISHED"
@@ -124,6 +124,27 @@ def taxonomy_status_query(query_number):
             return "OPEN"
     else:
         return "ERROR"
+
+
+@app.route('/taxonomy_hits_query/<query_number>')
+def taxonomy_hits_query(query_number):
+    query = TaxonomyQuery.query.filter(TaxonomyQuery.number==query_number).first()
+    if query is not None:
+        hits = Hit.query.filter(Hit.attachment_id==query.number).all()
+        hit_string = ''
+        if len(hits) >= 2:
+            last_hit = hits.pop()
+        elif len(hits) == 1:
+            return hits[0].answer_content
+        else:
+            return 'Empty'
+        for hit in hits:
+            hit_string += hit.answer_content+'#'
+
+        hit_string += last_hit.answer_content
+        return hit_string
+    else:
+        return 'None'
 
 
 
