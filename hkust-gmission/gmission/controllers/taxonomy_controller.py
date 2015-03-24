@@ -6,7 +6,7 @@ from gmission.flask_app import app, ROOT
 import sys
 
 
-EACH_QUERY_HITS = 5
+EACH_QUERY_HITS = 6
 def answer_hit(hit_number, worker_email, answer_content):
 
     current_hit = Hit.query.get(hit_number)
