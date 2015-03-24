@@ -112,6 +112,7 @@ def create_query(number, parent, target, query_info, children, times):
                   attachment_type='taxonomy',
                   attachment_id=query_record.id,
                   credit=1,
+                  answer_content='Null',
                   status='open'
                   )
         db.session.add(hit)
