@@ -130,7 +130,7 @@ def taxonomy_status_query(query_number):
 def taxonomy_hits_query(query_number):
     query = TaxonomyQuery.query.filter(TaxonomyQuery.number==query_number).first()
     if query is not None:
-        hits = Hit.query.filter(Hit.attachment_id==query.number).all()
+        hits = Hit.query.filter(Hit.attachment_id==query.id).all()
         hit_string = ''
         if len(hits) >= 2:
             last_hit = hits.pop()
