@@ -132,13 +132,14 @@ footer {
         var children_list_text = '{{ children_node_list }}';
         var children_list = children_list_text.split(",");
 
-{#        $('#insert_position').replaceWith('<option value="'+ $.trim(children_list[i]) +'">'+ $.trim(children_list[i]) +'</option>');#}
         var check_options_string = "";
         for (var i = 0; i < children_list.length; i++) {
             var child_content = $.trim(children_list[i]);
             var checkbox_id = 'checkbox_options'+(i+2);
             check_options_string += ' <input type="checkbox" id="'+checkbox_id+'" value="'+child_content+'" >'+child_content;
-{#            alert(check_options_string);#}
+            if (i + 1 % 5 == 0) {
+            check_options_string += '<br/>';
+            }
             checkbox_id_list.push(checkbox_id);
             $('#options2').append('<option value="'+ child_content+'">'+ child_content +'</option>');
         }
