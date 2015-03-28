@@ -39,11 +39,11 @@ class Hit(db.Model, BasicModelMixin):
 class TaxonomyQuery(db.Model, BasicModelMixin):
     id = db.Column(db.Integer, primary_key=True)
     number = db.Column(db.String(100))
-    query_node = db.Column(db.String(20))
-    target_node = db.Column(db.String(20))
-    parent = db.Column(db.String(120))
-    siblings = db.Column(db.String(500))
-    children = db.Column(db.String(900))
+    query_node = db.Column(db.String(1000))
+    target_node = db.Column(db.String(1000))
+    parent = db.Column(db.String(1000))
+    siblings = db.Column(db.String(100))
+    children = db.Column(db.String(4000))
     conclusion = db.Column(db.String(120))
     status = db.Column(db.String(20), default='open')  # or assigned, finished
 
