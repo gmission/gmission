@@ -163,13 +163,12 @@ footer {
 <br/>
 <hr/>
 <label for="hit_number">Hit Number:</label><input type="text" name="hit_number" id="hit_number" value="{{ hit_number }}" disabled/> <br/>
-<div style="font-weight: bold;">
-Hit Value: {{ hit_value }} <br/>
-Query: {{ query_content }} <br/>
-Parent Node: {{ parent_node }} <br/>
-Target Node: {{ target_node }} <br/>
-Children Nodes: <div id="children_list_position"></div> <br/>
-</div>
+<font style="font-weight: bold;">Hit Value:</font> {{ hit_value }} <br/>
+<font style="font-weight: bold;">Query:</font> {{ query_content }} <br/>
+<font style="font-weight: bold;">Parent Node:</font> {{ parent_node }} <br/>
+<font style="font-weight: bold;">Target Node:</font> {{ target_node }} <br/>
+<font style="font-weight: bold;">Children Nodes:</font> <div id="children_list_position"></div> <br/>
+
 <div id="options" name="options">
     <b>Options:</b><br/>
     <input type="radio" name="option" value="1"><font color="red">Ancestor node of target node</font><br/>
