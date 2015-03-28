@@ -163,26 +163,27 @@ footer {
 <br/>
 <hr/>
 <label for="hit_number">Hit Number:</label><input type="text" name="hit_number" id="hit_number" value="{{ hit_number }}" disabled/> <br/>
+<div style="font-weight: bold;">
 Hit Value: {{ hit_value }} <br/>
 Query: {{ query_content }} <br/>
 Parent Node: {{ parent_node }} <br/>
 Target Node: {{ target_node }} <br/>
 Children Nodes: <div id="children_list_position"></div> <br/>
-
+</div>
 <div id="options" name="options">
     <b>Options:</b><br/>
-    <input type="radio" name="option" value="1">Ancestor node of target node<br/>
-    <input type="radio" name="option" value="2">Equivalent of target node<br/>
-    <input type="radio" name="option" value="3">Child of target node and parent of child(ren) of target node.(
+    <input type="radio" name="option" value="1"><font color="red">Ancestor node of target node</font><br/>
+    <input type="radio" name="option" value="2"><font color="red">Equivalent of target node</font><br/>
+    <input type="radio" name="option" value="3"><font color="red">Child of target node and parent of child(ren) of target node.(</font>
     <input type="checkbox" name="checkbox_options1" id="checkbox_options1" value="empty">Sibling
-    <div id="insert_position" ></div>(which child(ren), multi-choice allowed))<br/>
+    <div id="insert_position" ></div><font color="red">(which child(ren), multi-choice allowed))</font><br/>
 
-    <input type="radio" name="option" value="4">Descendant of one child node of target node.(
+    <input type="radio" name="option" value="4"><font color="red">Descendant of one child node of target node.(</font>
     <select id="options2" name="options2">
         <option value="empty"></option>
     </select>
-    (which child))<br/>
-    <input type="radio" name="option" value="5">Others (Not Ancestor nor descendant)<br/>
+    <font color="red">(which child))</font><br/>
+    <input type="radio" name="option" value="5"><font color="red">Others (Not Ancestor nor descendant)</font><br/>
 
 </div>
 
