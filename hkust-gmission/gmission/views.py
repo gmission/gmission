@@ -62,9 +62,10 @@ def taxonomy_hit(email, current_hit_id):
     if worker is None:
         return "Cannot find your email record... Please Check it again..."
     last_hit = taxonomy_controller.recover_ongoing_hit(worker)
-    # print 'last_hit'
+    print 'last_hit'
     # print 'current_hit_id',current_hit_id
     if last_hit is None:
+        print 'last is none'
         if current_hit_id == "null":
             next_hit = taxonomy_controller.fetch_next_hit(worker, -1)
         else:
@@ -75,6 +76,7 @@ def taxonomy_hit(email, current_hit_id):
     if next_hit is not None:
         taxonomy_query = TaxonomyQuery.query.get(next_hit.attachment_id)
 
+        print 'ok'
         return render_template('taxonomy_hit.html',
                                email=email,
                                credits=worker.credit,
@@ -90,12 +92,12 @@ def taxonomy_hit(email, current_hit_id):
 
 @app.route('/answer_hit', methods=['POST'])
 def answer_hit():
-
+    print 'here'
     email = request.form['email_address']
     option = request.form['option']
     sub_option = request.form['sub_option']
     hit_number = request.form['hit_number']
-
+    print "ok"
     if sub_option != "":
         return taxonomy_controller.answer_hit(hit_number, email, option+":"+sub_option)
     else:
@@ -130,21 +132,51 @@ def taxonomy_status_query(query_number):
 def taxonomy_hits_query(query_number):
     query = TaxonomyQuery.query.filter(TaxonomyQuery.number==query_number).first()
     if query is not None:
+        options = query.children.split(',')
         hits = Hit.query.filter(Hit.attachment_id==query.id).all()
         hit_string = ''
         if len(hits) >= 2:
             last_hit = hits.pop()
         elif len(hits) == 1:
-            return hits[0].answer_content
+            return answer_format(options, hits[0].answer_content)
         else:
             return 'Empty'
         for hit in hits:
-            hit_string += hit.answer_content+'#'
+            hit_string += answer_format(options, hit.answer_content)+'#'
 
-        hit_string += last_hit.answer_content
+        hit_string += answer_format(options, last_hit.answer_content)
         return hit_string
     else:
         return 'None'
+
+
+def answer_format(options, answer_content):
+    number = answer_content[0]
+    print(options)
+    if number == '3' or number == '4':
+        pre_option = answer_content[0:2]
+        sub_options = answer_content[2:].split(',')
+        for sub_option in sub_options:
+            index = 0
+            meet = False
+            for option in options:
+                if option == sub_option:
+                    meet = True
+                    pre_option += str(index)
+
+                index += 1
+
+            if not meet:
+                pre_option += '-1'
+
+            pre_option += ','
+        print pre_option
+        pre_option = pre_option[0: len(pre_option) - 1]
+
+        return pre_option
+    else:
+        return answer_content
+
 
 
 
