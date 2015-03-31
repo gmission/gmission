@@ -55,7 +55,7 @@ def fetch_next_hit(assigned_worker, hit_number):
 
                 if next_hit is not None:
                     next_hit.status = 'assigned'
-                    next_hit.deadline = datetime.datetime.now() + datetime.timedelta(minutes=10)
+                    next_hit.deadline = datetime.datetime.now() + datetime.timedelta(minutes=5)
                     next_hit.worker_id = assigned_worker.id
                     db.session.commit()
                     return next_hit
