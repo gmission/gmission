@@ -214,3 +214,10 @@ class ReSTBaiduPushInfo(BaiduPushInfo, ReSTBase):
         existings = BaiduPushInfo.query.filter(BaiduPushInfo.baidu_user_id == baidu_uid).update({'is_valid': False}, synchronize_session=False)
         pass
     pass
+
+
+class ReSTWoringRegin(BaiduPushInfo, ReSTBase):
+    @classmethod
+    def before_post(cls, data):
+        print data
+        pass
