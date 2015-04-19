@@ -216,7 +216,7 @@ class ReSTBaiduPushInfo(BaiduPushInfo, ReSTBase):
     pass
 
 
-class ReSTWoringRegin(BaiduPushInfo, ReSTBase):
+class ReSTWorkingRegion(WorkingRegion, ReSTBase):
     @classmethod
     def before_post(cls, data):
         print data
