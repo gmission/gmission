@@ -71,6 +71,7 @@ class ReSTTask(Task, ReSTBase):
         global BETA
         BETA = data.pop('beta', -1)
         # print 'ReSTTask before_post'
+        print data
         filter_location(data)
     @classmethod
     def after_post(cls, result=None):
@@ -219,5 +220,5 @@ class ReSTBaiduPushInfo(BaiduPushInfo, ReSTBase):
 class ReSTWorkingRegion(WorkingRegion, ReSTBase):
     @classmethod
     def before_post(cls, data):
-        print data
+        # print data
         pass
