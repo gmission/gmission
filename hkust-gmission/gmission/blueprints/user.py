@@ -48,7 +48,6 @@ def login():
         return jsonify(res=-1, msg='invalid login info')
 
 
-
 @user_blueprint.route('/register', methods=['POST'])
 def register():
     p = request.json
