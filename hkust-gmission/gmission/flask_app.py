@@ -7,7 +7,10 @@ from models import db
 from flask_debugtoolbar import DebugToolbarExtension
 from flask.ext.cache import Cache
 
-
+# encoding trick..
+import sys
+reload(sys)
+sys.setdefaultencoding('UTF8')
 # from werkzeug.contrib.profiler import ProfilerMiddleware
 
 
