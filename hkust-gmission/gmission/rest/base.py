@@ -9,7 +9,7 @@ import inspect
 class ReSTBase(object):
     @classmethod
     def universal_before_post(cls, data):
-        print 'Universal before_post'
+        # print 'Universal before_post'
         data.pop('id', None)
 
     @classmethod

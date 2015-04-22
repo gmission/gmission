@@ -95,14 +95,12 @@ def push_user_async(user):
         apply_push_task_for_user(info, user_dict)
 
 
-
 def push_message_async(message_obj):
-
     def apply_push_task_for_message(baidu_push_info, message_dict):
         if baidu_push_info.type=='android':
-            android_push_task.apply_async(('szww', message_dict, baidu_push_info.baidu_user_id))
+            android_push_task.apply_async(('gmissionhkust', message_dict, baidu_push_info.baidu_user_id))
         elif baidu_push_info.type=='ios':
-            ios_push_task.apply_async(('szww', message_dict['content'], message_dict, baidu_push_info.baidu_user_id))
+            ios_push_task.apply_async(('gmissionhkust', message_dict['content'], message_dict, baidu_push_info.baidu_user_id))
         push_msg_logger.info('sent to MQ %s %s', repr(message_dict), repr(baidu_push_info.baidu_user_id))
 
 
@@ -194,7 +192,7 @@ def send_answer_message(answer):
     m = Message(sender_id=answer.worker_id,
                 receiver_id=task.requester_id,
                 type='new answer noti',
-                content=u'"%s"有新回答!'%(task.brief, ),
+                content=u'A new answer for your task(%s).' % (task.brief, ),
                 # content=u'New Answer!',
                 att_type=task.__class__.__name__,
                 attachment=task.id)
