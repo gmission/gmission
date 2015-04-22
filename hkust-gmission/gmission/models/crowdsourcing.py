@@ -70,6 +70,8 @@ class Task(db.Model, BasicModelMixin):
     requester_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     answers = db.relationship('Answer', lazy='select')
+
+    audio_brief_id = db.Column(db.Integer, db.ForeignKey('attachment.id'))
     # answers = db.relationship('Answer', backref=db.backref('task', lazy='select'), lazy='select')
 
     def __unicode__(self):
@@ -98,8 +100,8 @@ class Answer(db.Model, BasicModelMixin):
 
     brief = db.Column(db.String(100))
 
-    attachment = db.relationship('Attachment', lazy='immediate')
     attachment_id = db.Column(db.Integer, db.ForeignKey('attachment.id'))
+    attachment = db.relationship('Attachment', lazy='immediate', foreign_keys=attachment_id)
 
     type = db.Column(db.String(20))
     accepted = db.Column(db.Boolean, default=False)
@@ -111,6 +113,7 @@ class Answer(db.Model, BasicModelMixin):
     worker = db.relationship('User', lazy='select')
     worker_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
+    audio_brief_id = db.Column(db.Integer, db.ForeignKey('attachment.id'))
     def __unicode__(self):
         return '<%d,%s,%s>' % (self.id, self.task, self.option)
 
