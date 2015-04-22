@@ -131,9 +131,15 @@ if ($platform=='android'){
 }else if ($platform=='ios'){
     if ($deployStatus=='production'){
         pushMessage_ios_production($user_id, $message);
+    }else if ($deployStatus=='developing'){
+        pushMessage_ios_developing($user_id, $message);
+    }else if ($deployStatus=='both'){
+        pushMessage_ios_developing($user_id, $message);
+        pushMessage_ios_production($user_id, $message);
     }else{
         pushMessage_ios_developing($user_id, $message);
     }
+
 }else{
     error_output ('INVALID PARAMETERS!');
 }
