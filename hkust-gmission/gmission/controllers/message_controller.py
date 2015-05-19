@@ -96,22 +96,21 @@ def push_user_async(user):
 
 
 def push_message_async(message_obj):
-    def apply_push_task_for_message(baidu_push_info, message_dict):
-        if baidu_push_info.type=='android':
-            android_push_task.apply_async(('gmissionhkust', message_dict, baidu_push_info.baidu_user_id))
-        elif baidu_push_info.type=='ios':
-            ios_push_task.apply_async(('gmissionhkust', message_dict['content'], message_dict, baidu_push_info.baidu_user_id))
-        push_msg_logger.info('sent to MQ %s %s', repr(message_dict), repr(baidu_push_info.baidu_user_id))
-
-
     bindlist = BaiduPushInfo.query.filter(BaiduPushInfo.user_id == message_obj.receiver_id,
                                           BaiduPushInfo.is_valid == True).all()
-    message_dict = dict(id=message_obj.id, type=message_obj.type, content=message_obj.content.encode('utf-8'),
+    android_message_dict = dict(id=message_obj.id, type=message_obj.type, content=message_obj.content.encode('utf-8'),
                 att_type=message_obj.att_type, attachment=message_obj.attachment, sender_id=message_obj.sender_id,
              receiver_id=message_obj.receiver_id, status=message_obj.status)
 
+    ios_alert = android_message_dict['content']
+    ios_message_dict = dict(type=message_obj.type, att=message_obj.attachment)
     for info in bindlist:
-        apply_push_task_for_message(info, message_dict)
+        if info.type == 'android':
+            android_push_task.apply_async(('gmissionhkust', android_message_dict, info.baidu_user_id))
+            push_msg_logger.info('sent to MQ %s %s', repr(android_message_dict), repr(info.baidu_user_id))
+        elif info.type == 'ios':
+            ios_push_task.apply_async(('gmissionhkust', ios_alert, ios_message_dict, info.baidu_user_id))
+            push_msg_logger.info('sent to MQ %s %s', repr(ios_message_dict), repr(info.baidu_user_id))
 
 
 def save_and_push_msg(msg, commit=True):
