@@ -143,8 +143,8 @@ def send_request_messages(task, users):
     # scheduler = User.query.get(1)
     msg_content_template = '{t.brief} ({t.location.name})'
     #msg_content = u'在"%s"有一个新任务!' % (task.location.name,)
-    msg_content = msg_content_template.format(t=task)
-    # msg_content = u'There is a new task at "%s"!' % (task.location.name,)
+    # msg_content = msg_content_template.format(t=task)
+    msg_content = u'A task(%s) at "%s".' % (task.brief, task.location.name,)  # to be a unicode str, starts with u
 
     for user in users:
         m = Message(type=msg_type,
@@ -156,6 +156,7 @@ def send_request_messages(task, users):
                     status='new')
         save_and_push_msg(m, False)
     db.session.commit()
+
 def save_and_push_temporal_task_msg(task, worker_prifile):
     msg_type = 'temporal task assignment'
     m = Message(type=msg_type,
@@ -186,12 +187,12 @@ def send_answer_comment_message(sender_id, receiver_id, answer_id, ans):
 
 
 def send_answer_message(answer):
-    print 'answer', answer.id
+    # print 'answer', answer.id
     task = answer.task
     m = Message(sender_id=answer.worker_id,
                 receiver_id=task.requester_id,
                 type='new answer noti',
-                content=u'A new answer for your task(%s).' % (task.brief, ),
+                content=u'An answer for your task(%s).' % (task.brief, ),
                 # content=u'New Answer!',
                 att_type=task.__class__.__name__,
                 attachment=task.id)
