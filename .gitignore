@@ -59,11 +59,11 @@ matlab-workspace
 export-files
 
 .idea
-.jpg
-.png
-.log
-.aac
-.ogg
-.3gp
+*.jpg
+*.png
+*.log
+*.aac
+*.ogg
+*.3gp
 *.pid
 .DS_Store
