@@ -159,7 +159,7 @@ def gen_campaign_daily_tasks():
                     credit=10, required_answer_count=5, requester_id=1, location=location)
     rest_post('task', new_task)
 
-    lat, lon = 22.33781, 7114.264134
+    lat, lon = 22.33781, 114.264134
     location = dict(name='Canteen LG1', longitude=lon, latitude=lat)
     new_task = dict(type='image', brief="[c]What's the menu of canteen on the LG1 today?",
                     begin_time=current_time, end_time=lunch_dinner_time_period_later,
@@ -281,15 +281,15 @@ def gen_firebird_tasks():
                     credit=10, required_answer_count=1000, requester_id=1, location=location, beta=0.3)
     rest_post('task', new_task)
 
+def test():
+    print 'testing task'
 
 def run():
     c = CronTab(
-        # Event(gen_taking_picture, name='firebird', min=[0, 30], hour=range(10, 23)),
-        # Event(gen_canteen_menus, name='menu', min=[0, 49], hour=[11, 17]),
-        Event(gen_campaign_daily_tasks(), name='campaign_daily_tasks_morning', min=[30], hour=[11]),
-        Event(gen_campaign_daily_tasks(), name='campaign_daily_tasks_afternoon', min=[30], hour=[17]),
-        Event(gen_campaign_hourly_tasks(), name='campaign_hourly_tasks', min=[0], hour=range(8, 22)),
-        # Event(call_assign, name='call testing', min=range(0,61,4), hour=range(15, 19)),
+        Event(gen_campaign_daily_tasks, name='campaign_daily_tasks_morning', min=[30], hour=[11]),
+        Event(gen_campaign_daily_tasks, name='campaign_daily_tasks_afternoon', min=[30], hour=[17]),
+        Event(gen_campaign_hourly_tasks, name='campaign_hourly_tasks', min=[0], hour=range(8, 22)),
+#        Event(test, name='test', min=[0,25,29], hour=range(8, 22)),
     )
     c.run()
     pass
