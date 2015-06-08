@@ -78,7 +78,7 @@ class Event(object):
         self.name = name
         self.args = args
         self.kwargs = kwargs
-        print 'new event:', name, 'mins:', min, 'hours:', hour, 'action:', action.__name__
+        print 'new event:', name, 'mins:', min, 'hours:', hour#, 'action:'#, action.__name__
         sys.stdout.flush()
 
     def matchtime(self, t):
