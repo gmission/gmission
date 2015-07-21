@@ -37,6 +37,44 @@ def index():
 def rating():
     return render_template('rating.html')
 
+
+@app.route('/test')
+def test():
+    # for u in User.query.filter(User.id==49):
+    #     return str(task_controller.query_online_users())
+    # task = Task.query.filter(Task.id == '435').limit(1).all()
+    # task_controller.calibrate_temporal_task_worker_velocity(task[0])
+    # return str(task_controller.write_available_worker_profiles_to_file(1))
+    # task_controller.calibrate_worker_profile()
+    # task_controller.export_temporal_task_results([424], 'test')
+    # task_controller.test()
+    # task_controller.calibrate_worker_profile()
+    return "test OK"
+
+
+def campaign_task_ranking():
+    result = db.engine.execute("select 10*count(distinct task.id), answer.worker_id, user.name from task join answer on task.id=answer.task_id join user on answer.worker_id=user.id where task.requester_id=1 and task.created_on>'2015-06-08' and user.email like '%%ust.hk' group by answer.worker_id order by sum(task.credit) desc; ")
+    return [{"name":row[2], "credit":row[0]} for row in result]
+
+
+@app.route('/hkust_campaign/<email>/<hit_id>')
+def hkust_statistic(email, hit_id):
+    print email, hit_id
+    if email=='*email*':  # from iOS
+        #ranking = [{"name":"CHEN Zhao", "credit":100}, {"name":"Messi", "credit":90}, {"name":"C. Ronaldo", "credit":70} ]
+        #return render_template("hkust_statistic.html", ranking=campaign_task_ranking())
+        pass
+    else:  # from android?
+        #return render_template("hkust_statistic.html")
+        pass
+
+    return render_template("hkust_statistic.html", ranking=campaign_task_ranking())
+    return "prepare OK"
+
+################################################################################
+############## experiment start
+
+
 ###########################For Mengrui's Experiments
 @app.route('/taxonomy_help/<email>')
 def taxonomy_help(email):
@@ -279,21 +317,6 @@ def assign_workers():
 def refresh_task_status():
     task_controller.refresh_task_status()
     return "refresh task status OK"
-
-
-@app.route('/test')
-def test():
-    # for u in User.query.filter(User.id==49):
-    #     return str(task_controller.query_online_users())
-    # task = Task.query.filter(Task.id == '435').limit(1).all()
-    # task_controller.calibrate_temporal_task_worker_velocity(task[0])
-    # return str(task_controller.write_available_worker_profiles_to_file(1))
-    # task_controller.calibrate_worker_profile()
-    # task_controller.export_temporal_task_results([424], 'test')
-    # task_controller.test()
-    # task_controller.calibrate_worker_profile()
-    return "test OK"
-
 
 @app.route('/prepareTemporalTaskAnswers')
 def prepareTemporalTaskAnswers():
