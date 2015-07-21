@@ -35,7 +35,7 @@ def check_finish_taxonomy_query(query_id):
 
 def fetch_next_hit(assigned_worker, hit_number):
     # print hit_number
-    current_hit = Hit.query.filter(Hit.id >= hit_number).first()
+    current_hit = Hit.query.filter(Hit.id >= hit_number).filter(Hit.attachment_type == 'taxonomy').first()
     if current_hit is not None:
         print current_hit.attachment_id
         current_taxonomy_query = TaxonomyQuery.query.get(current_hit.attachment_id)
@@ -51,7 +51,7 @@ def fetch_next_hit(assigned_worker, hit_number):
                         current_taxonomy_query = next_taxonomy_query
                         break
                 if current_taxonomy_query == next_taxonomy_query:
-                    break
+                    continue
 
                 if next_hit is not None:
                     next_hit.status = 'assigned'

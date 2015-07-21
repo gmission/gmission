@@ -156,7 +156,7 @@ if __name__ == '__main__':
     # drop_all_table()
     stdout('<<<<<<init db begin.')
     # check_db()
-    # init_db()
+    init_db()
     # init_data()
     stdout('>>>>>>init db done.')
     # raise Exception("error")
