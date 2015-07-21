@@ -8,7 +8,6 @@ import sys
 
 EACH_QUERY_HITS = 6
 def answer_hit(hit_number, worker_email, answer_content):
-
     current_hit = Hit.query.get(hit_number)
     worker = User.query.filter(User.email == worker_email).first()
     if worker is None:
@@ -20,47 +19,44 @@ def answer_hit(hit_number, worker_email, answer_content):
         current_hit.status = 'finished'
 
         db.session.commit()
-        check_finish_taxonomy_query(current_hit.attachment_id)
+        check_finish_recognization_query(current_hit.attachment_id)
         return "OK"
 
 
-def check_finish_taxonomy_query(query_id):
+def check_finish_recognization_query(query_id):
     finished_hits = Hit.query.filter(Hit.attachment_id == query_id).filter(Hit.status == "finished").all()
     if len(finished_hits) >= EACH_QUERY_HITS:
-        taxonomy_query = TaxonomyQuery.query.get(query_id)
-        taxonomy_query.status = 'finished'
+        recognization_query = RecognizationQuery.query.get(query_id)
+        recognization_query.status = 'finished'
 
         db.session.commit()
 
 
 def fetch_next_hit(assigned_worker, hit_number):
-    # print hit_number
-    current_hit = Hit.query.filter(Hit.id >= hit_number).filter(Hit.attachment_type == 'taxonomy').first()
+    print hit_number
+    current_hit = Hit.query.filter(Hit.id >= hit_number).filter(Hit.attachment_type == 'recognization').filter(Hit.status == 'open').first()
     if current_hit is not None:
-        print current_hit.attachment_id
-        current_taxonomy_query = TaxonomyQuery.query.get(current_hit.attachment_id)
+        current_recognization_query = RecognizationQuery.query.get(current_hit.attachment_id)
         while True:
-            next_taxonomy_query = TaxonomyQuery.query.filter(TaxonomyQuery.id > current_taxonomy_query.id).filter(TaxonomyQuery.status == 'open').first()
-
             # print 'next_query', next_taxonomy_query.id
-            if next_taxonomy_query is not None:
-                next_hit = Hit.query.filter(Hit.attachment_type == 'taxonomy').filter(Hit.attachment_id == next_taxonomy_query.id).filter(Hit.status=='open').first()
-                sibling_hits = Hit.query.filter(Hit.attachment_type == 'taxonomy').filter(Hit.attachment_id == next_taxonomy_query.id).filter(Hit.status!='open').all()
+            has_answered = False
+            if current_recognization_query is not None:
+                #next_hit cannot equal to None
+                next_hit = Hit.query.filter(Hit.attachment_type == 'recognization').filter(Hit.attachment_id == current_recognization_query.id).filter(Hit.status=='open').first()
+                sibling_hits = Hit.query.filter(Hit.attachment_type == 'recognization').filter(Hit.attachment_id == current_recognization_query.id).filter(Hit.status!='open').all()
+
                 for sibling_hit in sibling_hits:
                     if sibling_hit.worker_id == assigned_worker.id:
-                        current_taxonomy_query = next_taxonomy_query
+                        has_answered = True
                         break
-                if current_taxonomy_query == next_taxonomy_query:
-                    continue
-
-                if next_hit is not None:
+                if has_answered == True:
+                    current_recognization_query = RecognizationQuery.query.filter(RecognizationQuery.id > current_recognization_query.id).filter(RecognizationQuery.status == 'open').first()
+                else:
                     next_hit.status = 'assigned'
                     next_hit.deadline = datetime.datetime.now() + datetime.timedelta(minutes=5)
                     next_hit.worker_id = assigned_worker.id
                     db.session.commit()
                     return next_hit
-                else:
-                    current_taxonomy_query = next_taxonomy_query
             else:
                 print 'no next taxonomy_query'
                 return None
@@ -74,9 +70,9 @@ def check_timeout_hits():
 
 def fetch_first_hit(assigned_worker):
     print 'first hit'
-    next_query = TaxonomyQuery.query.filter(TaxonomyQuery.status=='open').first()
+    next_query = RecognizationQuery.query.filter(RecognizationQuery.status=='open').first()
     if next_query is not None:
-        next_hit = Hit.query.filter(Hit.status=='open').filter(Hit.attachment_type == 'taxonomy').filter(Hit.attachment_id == next_query.id).first()
+        next_hit = Hit.query.filter(Hit.status=='open').filter(Hit.attachment_type == 'recognization').filter(Hit.attachment_id == next_query.id).first()
         if next_hit is not None:
             next_hit.status = 'assigned'
             next_hit.deadline = datetime.datetime.now() + datetime.timedelta(minutes=10)
@@ -96,12 +92,10 @@ def recover_ongoing_hit(worker):
     return hit
 
 
-def create_query(number, parent, target, query_info, children, times):
-    query_record = TaxonomyQuery(number=number,
-                                 parent=parent,
-                                 query_node=query_info,
-                                 target_node=target,
-                                 children=children,
+def create_query(number, author_list, image_name, times):
+    query_record = RecognizationQuery(number=number,
+                                 author_list=author_list,
+                                 image_name=image_name,
                                  status='open'
                                  )
     db.session.add(query_record)
@@ -109,7 +103,7 @@ def create_query(number, parent, target, query_info, children, times):
 
     for i in range(1, times+1):
         hit = Hit(competition_id=1,
-                  attachment_type='taxonomy',
+                  attachment_type='recognization',
                   attachment_id=query_record.id,
                   credit=1,
                   answer_content='Null',

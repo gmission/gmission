@@ -48,6 +48,16 @@ class TaxonomyQuery(db.Model, BasicModelMixin):
     status = db.Column(db.String(20), default='open')  # or assigned, finished
 
 
+class RecognizationQuery(db.Model, BasicModelMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    number = db.Column(db.String(100))
+    author_list = db.Column(db.String(1000))
+    image_name = db.Column(db.String(1000))
+    conclusion = db.Column(db.String(120))
+    status = db.Column(db.String(20), default='open')  # or assigned, finished
+
+
+
 class Task(db.Model, BasicModelMixin):
     id = db.Column(db.Integer, primary_key=True)
     type = db.Column(db.String(20))

@@ -9,7 +9,7 @@ from flask_app import app, cache
 import rest
 from flask import render_template, request, redirect, jsonify, g
 from models import *
-from controllers import task_controller, taxonomy_controller
+from controllers import task_controller, taxonomy_controller, recognization_controller
 
 import json
 
@@ -75,6 +75,9 @@ def hkust_statistic(email, hit_id):
 ############## experiment start
 
 
+=======
+###########################For Mengrui's Experiments
+>>>>>>> 608bd7ed0a9888bcfdde39a20b41ecaf8a9affdf
 @app.route('/taxonomy_help/<email>')
 def taxonomy_help(email):
     return render_template('taxonomy_help.html', email=email)
@@ -185,6 +188,96 @@ def taxonomy_hits_query(query_number):
         return hit_string
     else:
         return 'None'
+
+
+#########//////////////////////For Yunfan's Experiments
+@app.route('/jump_to_next_recognization_hit/<email>/<current_hit_id>')
+def jump_to_next_recognization_hit(email, current_hit_id):
+    current_hit = Hit.query.get(current_hit_id)
+    current_hit.status = 'open'
+    db.session.commit()
+    return recognization_hit(email, current_hit_id)
+
+@app.route('/recognization_hit/<email>/<current_hit_id>')
+def recognization_hit(email, current_hit_id):
+    worker = User.query.filter(User.email==email).first()
+    if worker is None:
+        return "Cannot find your email record... Please Check it again..."
+    last_hit = recognization_controller.recover_ongoing_hit(worker)
+    # print 'last_hit'
+    print 'current_hit_id', current_hit_id
+    if last_hit is None:
+        # print 'last is none'
+        if current_hit_id == "null":
+            next_hit = recognization_controller.fetch_next_hit(worker, -1)
+        else:
+            next_hit = recognization_controller.fetch_next_hit(worker, current_hit_id)
+    else:
+        next_hit = last_hit
+
+    if next_hit is not None:
+        recognization_query = RecognizationQuery.query.get(next_hit.attachment_id)
+
+        print 'ok'
+        return render_template('recognization_hit.html',
+                               email=email,
+                               credits=worker.credit,
+                               hit_value=next_hit.credit,
+                               hit_number=next_hit.id,
+                               image_name=recognization_query.image_name,
+                               author_list=recognization_query.author_list,
+                               )
+    else:
+        return "No tasks now... Please try later..."
+
+
+@app.route('/recognization_answer_hit', methods=['POST'])
+def answer_recognization_hit():
+    print 'here'
+    email = request.form['email_address']
+    answer_content = request.form['answer_content']
+    hit_number = request.form['hit_number']
+    print "ok"
+    return recognization_controller.answer_hit(hit_number, email, answer_content)
+
+
+@app.route('/recognization_create', methods=['POST'])
+def recognization_create():
+    query_number = request.form['query_number']
+    author_list = request.form['author_list']
+    image_name = request.form['image_name']
+    recognization_controller.create_query(query_number, author_list, image_name, 6)
+    return "OK"
+
+
+@app.route('/recognization_status_query/<query_number>')
+def recognization_status_query(query_number):
+    print query_number
+    query = RecognizationQuery.query.filter(RecognizationQuery.number==query_number).first()
+    if query is not None:
+        if query.status == 'finished':
+            return "FINISHED"
+        else:
+            return "OPEN"
+    else:
+        return "ERROR"
+
+
+@app.route('/recognization_hits_query/<query_number>')
+def recognization_hits_query(query_number):
+    query = RecognizationQuery.query.filter(RecognizationQuery.number == query_number).first()
+    if query is not None:
+        hits = Hit.query.filter(Hit.attachment_id == query.id).all()
+        hit_string = query.author_list+"#"
+        if len(hits) == 0:
+            return 'Empty'
+        for hit in hits:
+            hit_string += hit.answer_content + '#'
+
+        return hit_string
+    else:
+        return 'None'
+######################Hit finish############################
 
 
 def answer_format(options, answer_content):
