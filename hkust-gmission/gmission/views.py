@@ -75,9 +75,7 @@ def hkust_statistic(email, hit_id):
 ############## experiment start
 
 
-=======
 ###########################For Mengrui's Experiments
->>>>>>> 608bd7ed0a9888bcfdde39a20b41ecaf8a9affdf
 @app.route('/taxonomy_help/<email>')
 def taxonomy_help(email):
     return render_template('taxonomy_help.html', email=email)
