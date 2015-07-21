@@ -270,7 +270,7 @@ def recognization_hits_query(query_number):
         if len(hits) == 0:
             return 'Empty'
         for hit in hits:
-            hit_string += hit.answer_content + '$'
+            hit_string += hit.answer_content + '|'
 
         return hit_string
     else:
