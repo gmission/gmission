@@ -228,7 +228,7 @@ def recognization_hits_query(query_number):
     query = RecognizationQuery.query.filter(RecognizationQuery.number == query_number).first()
     if query is not None:
         hits = Hit.query.filter(Hit.attachment_id == query.id).all()
-        hit_string = query.author_list+"#"
+        hit_string = query.image_name + "#"+query.author_list+"#"
         if len(hits) == 0:
             return 'Empty'
         for hit in hits:
