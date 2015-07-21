@@ -2,7 +2,7 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <title>Hits for Taxonomy</title>
+    <title>Hits for Recognizing Book Covers</title>
 </head>
 <style>
 header {
@@ -41,8 +41,8 @@ footer {
 <script>
     var radio_id_list = [];
     var goToNextHit = false;
-    var projectName = "/gmission";
-{#    var projectName = "";#}
+{#    var projectName = "/gmission";#}
+    var projectName = "";
 
     function submitAnswer(){
         var answer_content = '';
@@ -90,7 +90,7 @@ footer {
     function jumpToNextHit(){
         var email_address = $('#email_address').val();
         var hit_number = $('#hit_number').val();
-        var url = "http://"+window.location.host+projectName+"/jump_to_next_hit/"+email_address+"/"+hit_number;
+        var url = "http://"+window.location.host+projectName+"/jump_to_next_recognization_hit/"+email_address+"/"+hit_number;
         window.location = url;
     }
 
@@ -116,7 +116,7 @@ footer {
 <font style="font-weight: bold;">Hit Value:</font> {{ hit_value }} <br/>
 <font style="font-weight: bold;">Query:</font> Is(Are) the following author list(s) the correct complete author full name list? <br/>
 
-<img width="100%" src="../../static/image/original/{{ image_name }}.jpg"/><br/>
+<img width="30%" src="../../static/image/original/{{ image_name }}.jpg"/><br/>
 <div id="options" name="options">
     <b>Options:</b><br/>
     <div id="insert_position" ></div><br/>

@@ -100,9 +100,8 @@ def create_query(number, author_list, image_name, times):
                                  )
     db.session.add(query_record)
     db.session.commit()
-
     for i in range(1, times+1):
-        hit = Hit(competition_id=1,
+        hit = Hit(competition_id=3,
                   attachment_type='recognization',
                   attachment_id=query_record.id,
                   credit=1,
