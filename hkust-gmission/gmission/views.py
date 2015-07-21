@@ -244,7 +244,7 @@ def recognization_create():
     query_number = request.form['query_number']
     author_list = request.form['author_list']
     image_name = request.form['image_name']
-    recognization_controller.create_query(query_number, author_list, image_name, 6)
+    recognization_controller.create_query(query_number, author_list, image_name, 10)
     return "OK"
 
 
