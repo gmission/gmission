@@ -49,8 +49,9 @@ def fetch_next_hit(assigned_worker, hit_number):
                         has_answered = True
                         break
                 if has_answered == True:
-                    current_recognization_query = RecognizationQuery.query.filter(RecognizationQuery.id > current_recognization_query.id).filter(RecognizationQuery.status == 'open').first()
-                    if current_recognization_query is not None:
+                    current_recognization_query = RecognizationQuery.query.filter(RecognizationQuery.id > current_recognization_query.id).filter(RecognizationQuery.status == 'open').all()
+                    if len(current_recognization_query) != 0:
+                        current_recognization_query = current_recognization_query[0]
                         print 'next_query', current_recognization_query.id
                 else:
                     next_hit.status = 'assigned'
