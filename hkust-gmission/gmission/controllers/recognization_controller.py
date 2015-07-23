@@ -42,7 +42,9 @@ def fetch_next_hit(assigned_worker, hit_number):
             if current_recognization_query is not None:
                 #next_hit cannot equal to None
                 next_hit = Hit.query.filter(Hit.attachment_type == 'recognization').filter(Hit.attachment_id > current_recognization_query.id).filter(Hit.status=='open').first()
-                sibling_hits = Hit.query.filter(Hit.attachment_type == 'recognization').filter(Hit.attachment_id > current_recognization_query.id).filter(Hit.status!='open').all()
+                if next_hit is None:
+                    return None
+                sibling_hits = Hit.query.filter(Hit.attachment_type == 'recognization').filter(Hit.attachment_id == next_hit.attachment_id).filter(Hit.status!='open').all()
 
                 print 'next_query', current_recognization_query.id
 
