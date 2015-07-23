@@ -50,7 +50,8 @@ def fetch_next_hit(assigned_worker, hit_number):
                         break
                 if has_answered == True:
                     current_recognization_query = RecognizationQuery.query.filter(RecognizationQuery.id > current_recognization_query.id).filter(RecognizationQuery.status == 'open').first()
-                    print 'next_query', current_recognization_query.id
+                    if current_recognization_query is not None:
+                        print 'next_query', current_recognization_query.id
                 else:
                     next_hit.status = 'assigned'
                     next_hit.deadline = datetime.datetime.now() + datetime.timedelta(minutes=5)
