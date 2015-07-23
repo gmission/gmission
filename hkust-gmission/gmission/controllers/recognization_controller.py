@@ -44,6 +44,8 @@ def fetch_next_hit(assigned_worker, hit_number):
                 next_hit = Hit.query.filter(Hit.attachment_type == 'recognization').filter(Hit.attachment_id > current_recognization_query.id).filter(Hit.status=='open').first()
                 sibling_hits = Hit.query.filter(Hit.attachment_type == 'recognization').filter(Hit.attachment_id > current_recognization_query.id).filter(Hit.status!='open').all()
 
+                print 'next_query', current_recognization_query.id
+
                 for sibling_hit in sibling_hits:
                     if sibling_hit.worker_id == assigned_worker.id:
                         has_answered = True
@@ -52,7 +54,6 @@ def fetch_next_hit(assigned_worker, hit_number):
                     current_recognization_query = RecognizationQuery.query.filter(RecognizationQuery.id > current_recognization_query.id).filter(RecognizationQuery.status == 'open').all()
                     if len(current_recognization_query) != 0:
                         current_recognization_query = current_recognization_query[0]
-                        print 'next_query', current_recognization_query.id
                 else:
                     next_hit.status = 'assigned'
                     next_hit.deadline = datetime.datetime.now() + datetime.timedelta(minutes=5)
