@@ -211,6 +211,7 @@ def recognization_hit(email, current_hit_id):
             next_hit = recognization_controller.fetch_next_hit(worker, -1)
         else:
             next_hit = recognization_controller.fetch_next_hit(worker, current_hit_id)
+        print 'returned'
     else:
         next_hit = last_hit
 
