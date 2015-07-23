@@ -192,8 +192,9 @@ def taxonomy_hits_query(query_number):
 @app.route('/jump_to_next_recognization_hit/<email>/<current_hit_id>')
 def jump_to_next_recognization_hit(email, current_hit_id):
     current_hit = Hit.query.get(current_hit_id)
-    current_hit.status = 'open'
-    db.session.commit()
+    if current_hit is not None:
+        current_hit.status = 'open'
+        db.session.commit()
     return recognization_hit(email, current_hit_id)
 
 @app.route('/recognization_hit/<email>/<current_hit_id>')
@@ -202,10 +203,10 @@ def recognization_hit(email, current_hit_id):
     if worker is None:
         return "Cannot find your email record... Please Check it again..."
     last_hit = recognization_controller.recover_ongoing_hit(worker)
-    # print 'last_hit'
+    print 'last_hit'
     print 'current_hit_id', current_hit_id
     if last_hit is None:
-        # print 'last is none'
+        print 'last is none'
         if current_hit_id == "null":
             next_hit = recognization_controller.fetch_next_hit(worker, -1)
         else:

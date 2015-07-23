@@ -38,7 +38,7 @@ def fetch_next_hit(assigned_worker, hit_number):
     if current_hit is not None:
         current_recognization_query = RecognizationQuery.query.get(current_hit.attachment_id)
         while True:
-            # print 'next_query', next_taxonomy_query.id
+            print 'next_query', current_recognization_query.id
             has_answered = False
             if current_recognization_query is not None:
                 #next_hit cannot equal to None
@@ -88,7 +88,8 @@ def fetch_first_hit(assigned_worker):
 
 
 def recover_ongoing_hit(worker):
-    hit = Hit.query.filter(Hit.status=='assigned').filter(Hit.worker_id==worker.id).first()
+    print 'recovering ongoing hit'
+    hit = Hit.query.filter(Hit.status=='assigned').filter(Hit.attachment_type=='recognization').filter(Hit.worker_id==worker.id).first()
     return hit
 
 
