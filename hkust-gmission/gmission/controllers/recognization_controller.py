@@ -40,7 +40,6 @@ def fetch_next_hit(assigned_worker, hit_number):
         while True:
             has_answered = False
             if current_recognization_query is not None:
-                print 'next_query', current_recognization_query.id
                 #next_hit cannot equal to None
                 next_hit = Hit.query.filter(Hit.attachment_type == 'recognization').filter(Hit.attachment_id > current_recognization_query.id).filter(Hit.status=='open').first()
                 sibling_hits = Hit.query.filter(Hit.attachment_type == 'recognization').filter(Hit.attachment_id > current_recognization_query.id).filter(Hit.status!='open').all()
@@ -51,6 +50,7 @@ def fetch_next_hit(assigned_worker, hit_number):
                         break
                 if has_answered == True:
                     current_recognization_query = RecognizationQuery.query.filter(RecognizationQuery.id > current_recognization_query.id).filter(RecognizationQuery.status == 'open').first()
+                    print 'next_query', current_recognization_query.id
                 else:
                     next_hit.status = 'assigned'
                     next_hit.deadline = datetime.datetime.now() + datetime.timedelta(minutes=5)
