@@ -9,7 +9,7 @@ from flask_app import app, cache
 import rest
 from flask import render_template, request, redirect, jsonify, g
 from models import *
-from controllers import task_controller, taxonomy_controller, recognization_controller
+from controllers import task_controller, taxonomy_controller, recognization_controller, table_head_controller
 
 import json
 
@@ -279,6 +279,158 @@ def recognization_hits_query(query_number):
         return 'None'
 ######################Hit finish############################
 
+######################TableOpenProblem######################
+@app.route('/jump_to_next_table_head_hit/<email>/<current_hit_id>')
+def jump_to_next_table_head_hit(email, current_hit_id):
+    current_hit = Hit.query.get(current_hit_id)
+    if current_hit is not None:
+        current_hit.status = 'open'
+        db.session.commit()
+    return table_head_hit(email, current_hit_id)
+
+@app.route('/table_head_hit/<email>/<current_hit_id>')
+def table_head_hit(email, current_hit_id):
+    worker = User.query.filter(User.email==email).first()
+    if worker is None:
+        return "Cannot find your email record... Please Check it again..."
+    last_hit = table_head_controller.recover_ongoing_hit(worker)
+    print 'last_hit'
+    print 'current_hit_id', current_hit_id
+    if last_hit is None:
+        print 'last is none'
+        if current_hit_id == "null":
+            next_hit = table_head_controller.fetch_next_hit(worker, -1)
+        else:
+            next_hit = table_head_controller.fetch_next_hit(worker, current_hit_id)
+        print 'returned'
+    else:
+        next_hit = last_hit
+
+    if next_hit is not None:
+        table_head_query = TableHeadQuery.query.get(next_hit.attachment_id)
+
+        print 'ok'
+        return render_template('table_head_hit.html',
+                               email=email,
+                               credits=worker.credit,
+                               hit_value=next_hit.credit,
+                               hit_number=next_hit.id,
+                               table_content=table_head_query.table_content
+                               )
+    else:
+        return "No tasks now... Please try later..."
+
+
+@app.route('/table_head_answer_hit', methods=['POST'])
+def answer_table_head_hit():
+    print 'here'
+    email = request.form['email_address']
+    answer_content = request.form['answer_content']
+    hit_number = request.form['hit_number']
+    print "ok"
+    return table_head_controller.answer_hit(hit_number, email, answer_content)
+
+
+@app.route('/table_head_answer_create', methods=['POST'])
+def table_head_create():
+    query_number = request.form['query_number']
+    table_content = request.form['table_content']
+    table_head_controller.create_query(query_number, table_content, 3)
+    return "OK"
+
+
+@app.route('/table_head_status_query/<query_number>')
+def table_head_status_query(query_number):
+    print query_number
+    query = TableHeadQuery.query.filter(TableHeadQuery.number==query_number).first()
+    if query is not None:
+        if query.status == 'finished':
+            return "FINISHED"
+        else:
+            return "OPEN"
+    else:
+        return "ERROR"
+
+
+@app.route('/table_head_hits_query/<query_number>')
+def table_head_hits_query(query_number):
+    query = TableHeadQuery.query.filter(TableHeadQuery.number == query_number).first()
+    if query is not None:
+        hits = Hit.query.filter(Hit.attachment_id == query.id).all()
+        if len(hits) == 0:
+            return 'Empty'
+        hit_string = ""
+        for hit in hits:
+            hit_string += hit.answer_content + '|'
+
+        return hit_string
+    else:
+        return 'None'
+###########################################################
+
+######################TableCloseProblem######################
+@app.route('/jump_to_next_table_head_hit_c/<email>/<current_hit_id>')
+def jump_to_next_table_head_hit_c(email, current_hit_id):
+    current_hit = Hit.query.get(current_hit_id)
+    if current_hit is not None:
+        current_hit.status = 'open'
+        db.session.commit()
+    return table_head_hit_c(email, current_hit_id)
+
+@app.route('/table_head_hit_c/<email>/<current_hit_id>')
+def table_head_hit_c(email, current_hit_id):
+    worker = User.query.filter(User.email==email).first()
+    if worker is None:
+        return "Cannot find your email record... Please Check it again..."
+    last_hit = table_head_controller.recover_ongoing_hit_c(worker)
+    print 'last_hit'
+    print 'current_hit_id', current_hit_id
+    if last_hit is None:
+        print 'last is none'
+        if current_hit_id == "null":
+            next_hit = table_head_controller.fetch_next_hit_c(worker, -1)
+        else:
+            next_hit = table_head_controller.fetch_next_hit_c(worker, current_hit_id)
+        print 'returned'
+    else:
+        next_hit = last_hit
+
+    if next_hit is not None:
+        table_head_query = TableHeadQuery.query.get(next_hit.attachment_id)
+
+        print 'ok'
+        return render_template('table_head_hit_c.html',
+                               email=email,
+                               credits=worker.credit,
+                               hit_value=next_hit.credit,
+                               hit_number=next_hit.id,
+                               table_content=table_head_query.table_content,
+                               conclusion=table_head_query.conclusion
+                               )
+    else:
+        return "No tasks now... Please try later..."
+
+
+@app.route('/table_head_answer_hit_c', methods=['POST'])
+def answer_table_head_hit_c():
+    print 'here'
+    email = request.form['email_address']
+    answer_content = request.form['answer_content']
+    hit_number = request.form['hit_number']
+    print "ok"
+    return table_head_controller.answer_hit_c(hit_number, email, answer_content)
+
+
+@app.route('/table_head_answer_create_c', methods=['POST'])
+def table_head_create_c():
+    query_number = request.form['query_number']
+    table_content = request.form['table_content']
+    conclusion = request.form['conclusion']
+    table_head_controller.create_query(query_number, table_content, conclusion, 3)
+    return "OK"
+
+
+##########################################################
 
 def answer_format(options, answer_content):
     number = answer_content[0]

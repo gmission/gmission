@@ -56,6 +56,12 @@ class RecognizationQuery(db.Model, BasicModelMixin):
     conclusion = db.Column(db.String(120))
     status = db.Column(db.String(20), default='open')  # or assigned, finished
 
+class TableHeadQuery(db.Model, BasicModelMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    number = db.Column(db.String(100))
+    table_content = db.Column(db.String(1000))
+    conclusion = db.Column(db.String(120))
+    status = db.Column(db.String(20), default='open')  # or assigned, finished
 
 
 class Task(db.Model, BasicModelMixin):
