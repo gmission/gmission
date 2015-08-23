@@ -426,7 +426,7 @@ def table_head_create_c():
     query_number = request.form['query_number']
     table_content = request.form['table_content']
     conclusion = request.form['conclusion']
-    table_head_controller.create_query(query_number, table_content, conclusion, 3)
+    table_head_controller.create_query_c(query_number, table_content, conclusion, 3)
     return "OK"
 
 
