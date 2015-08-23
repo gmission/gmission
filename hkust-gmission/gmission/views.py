@@ -331,7 +331,7 @@ def answer_table_head_hit():
     return table_head_controller.answer_hit(hit_number, email, answer_content)
 
 
-@app.route('/table_head_answer_create', methods=['POST'])
+@app.route('/table_head_create', methods=['POST'])
 def table_head_create():
     query_number = request.form['query_number']
     table_content = request.form['table_content']
@@ -421,7 +421,7 @@ def answer_table_head_hit_c():
     return table_head_controller.answer_hit_c(hit_number, email, answer_content)
 
 
-@app.route('/table_head_answer_create_c', methods=['POST'])
+@app.route('/table_head_create_c', methods=['POST'])
 def table_head_create_c():
     query_number = request.form['query_number']
     table_content = request.form['table_content']
