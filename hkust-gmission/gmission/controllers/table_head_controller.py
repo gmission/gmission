@@ -35,9 +35,9 @@ def check_finish_table_head_query(query_id):
 def fetch_next_hit(assigned_worker, hit_number):
     print hit_number
     if hit_number == -1:
-        current_hit = Hit.query.filter(Hit.id > hit_number).filter(Hit.attachment_type == 'table_head').filter(Hit.status == 'open').first()
+        current_hit = Hit.query.filter(Hit.id > hit_number).filter(Hit.attachment_type == 'table_head').first()
     else:
-        current_hit = Hit.query.filter(Hit.id == hit_number).filter(Hit.attachment_type == 'table_head').filter(Hit.status == 'open').first()
+        current_hit = Hit.query.filter(Hit.id == hit_number).filter(Hit.attachment_type == 'table_head').first()
 
     if current_hit is not None:
         current_table_head_query = TableHeadQuery.query.get(current_hit.attachment_id)
