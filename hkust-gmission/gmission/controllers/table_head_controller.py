@@ -72,23 +72,23 @@ def fetch_next_hit(assigned_worker, hit_number):
     return None
 
 
-def fetch_first_hit(assigned_worker):
-    print 'first hit'
-    next_query = TableHeadQuery.query.filter(TableHeadQuery.status=='open').first()
-    if next_query is not None:
-        next_hit = Hit.query.filter(Hit.status=='open').filter(Hit.attachment_type == 'table_head').filter(Hit.attachment_id == next_query.id).first()
-        if next_hit is not None:
-            next_hit.status = 'assigned'
-            next_hit.deadline = datetime.datetime.now() + datetime.timedelta(minutes=10)
-            next_hit.worker_id = assigned_worker.id
-            db.session.commit()
-            return next_hit
-        else:
-            print 'no opened hit'
-            return None
-    else:
-        print 'no opened query'
-        return None
+# def fetch_first_hit(assigned_worker):
+#     print 'first hit'
+#     next_query = TableHeadQuery.query.filter(TableHeadQuery.status=='open').first()
+#     if next_query is not None:
+#         next_hit = Hit.query.filter(Hit.status=='open').filter(Hit.attachment_type == 'table_head').filter(Hit.attachment_id == next_query.id).first()
+#         if next_hit is not None:
+#             next_hit.status = 'assigned'
+#             next_hit.deadline = datetime.datetime.now() + datetime.timedelta(minutes=10)
+#             next_hit.worker_id = assigned_worker.id
+#             db.session.commit()
+#             return next_hit
+#         else:
+#             print 'no opened hit'
+#             return None
+#     else:
+#         print 'no opened query'
+#         return None
 
 
 def recover_ongoing_hit(worker):
@@ -138,7 +138,9 @@ def answer_hit_c(hit_number, worker_email, answer_content):
 
 def fetch_next_hit_c(assigned_worker, hit_number):
     print hit_number
-    current_hit = Hit.query.filter(Hit.id >= hit_number).filter(Hit.attachment_type == 'table_head_c').filter(Hit.status == 'open').first()
+    current_hit = Hit.query.filter(Hit.id == hit_number).filter(Hit.attachment_type == 'table_head_c').first()
+    if  current_hit is None:
+        current_hit = Hit.query.filter(Hit.id > hit_number).filter(Hit.attachment_type == 'table_head_c').first()
     if current_hit is not None:
         current_table_head_query = TableHeadQuery.query.get(current_hit.attachment_id)
         while True:
@@ -172,23 +174,23 @@ def fetch_next_hit_c(assigned_worker, hit_number):
     return None
 
 
-def fetch_first_hit_c(assigned_worker):
-    print 'first hit'
-    next_query = TableHeadQuery.query.filter(TableHeadQuery.status=='open').first()
-    if next_query is not None:
-        next_hit = Hit.query.filter(Hit.status=='open').filter(Hit.attachment_type == 'table_head_c').filter(Hit.attachment_id == next_query.id).first()
-        if next_hit is not None:
-            next_hit.status = 'assigned'
-            next_hit.deadline = datetime.datetime.now() + datetime.timedelta(minutes=10)
-            next_hit.worker_id = assigned_worker.id
-            db.session.commit()
-            return next_hit
-        else:
-            print 'no opened hit'
-            return None
-    else:
-        print 'no opened query'
-        return None
+# def fetch_first_hit_c(assigned_worker):
+#     print 'first hit'
+#     next_query = TableHeadQuery.query.filter(TableHeadQuery.status=='open').first()
+#     if next_query is not None:
+#         next_hit = Hit.query.filter(Hit.status=='open').filter(Hit.attachment_type == 'table_head_c').filter(Hit.attachment_id == next_query.id).first()
+#         if next_hit is not None:
+#             next_hit.status = 'assigned'
+#             next_hit.deadline = datetime.datetime.now() + datetime.timedelta(minutes=10)
+#             next_hit.worker_id = assigned_worker.id
+#             db.session.commit()
+#             return next_hit
+#         else:
+#             print 'no opened hit'
+#             return None
+#     else:
+#         print 'no opened query'
+#         return None
 
 
 def recover_ongoing_hit_c(worker):
