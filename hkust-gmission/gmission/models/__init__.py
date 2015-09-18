@@ -9,19 +9,9 @@ __author__ = 'chenzhao'
 from geo import *
 from user import *
 from trace import *
-from moment import *
-from checkin import *
-from message import *
-from comment import *
 from payment import *
-from harmony import *
-from feedback import *
 from attachment import *
 from crowdsourcing import *
-from worker import *
-
-
-from thing import *
-
+from campaign import *
 
 

@@ -14,7 +14,7 @@ def all_models():
 
 
 def init_admin():
-    admin = Admin(app, name=u"深圳世界之窗")
+    admin = Admin(app, name=u"gMission Admin Control Panel")
     for model in all_models():
         admin.add_view(ModelView(model, db.session, name=model.__name__))
 

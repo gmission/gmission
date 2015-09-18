@@ -37,11 +37,15 @@ celery:
 
 
 localmysql:
-  build: ./mysql
+  image: tutum/mysql:latest
+  environment:
+    MYSQL_USER: "csp_team"
+    MYSQL_PASS: "csp2014hkust"
+    ON_CREATE_DB: "gmission_hkust"
   ports:
     - "3306:3306"
   volumes:
-    - ./mysql/data/:/var/lib/mysql/
+    - /mysql/data/:/var/lib/mysql/
 
 
 redis: # some redis warnings ignored..

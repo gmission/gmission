@@ -1,6 +1,5 @@
 __author__ = 'chenzhao'
 
-
 from gmission.models import *
 from gmission.flask_app import app, db, stdout
 import sys
@@ -11,7 +10,7 @@ from import_data import clear_and_import_all
 
 def check_db():
     tried_times = 0
-    while tried_times<30:
+    while tried_times < 30:
         try:
             with db.engine.connect() as conn:
                 stdout('db is ready.')
@@ -42,8 +41,8 @@ def drop_all_table():
         for fk in inspector.get_foreign_keys(table_name):
             if not fk['name']:
                 continue
-            fks.append( ForeignKeyConstraint((),(),name=fk['name']) )
-        t = Table(table_name,metadata,*fks)
+            fks.append(ForeignKeyConstraint((), (), name=fk['name']))
+        t = Table(table_name, metadata, *fks)
         tbs.append(t)
         all_fks.extend(fks)
 
@@ -58,8 +57,8 @@ def drop_all_table():
 
 def init_roles():
     requester = get_or_create(Role, name='requester', description='who can ask', )
-    worker    = get_or_create(Role, name='worker',    description='who can answer', )
-    admin     = get_or_create(Role, name='admin',     description='who can do anything', )
+    worker = get_or_create(Role, name='worker', description='who can answer', )
+    admin = get_or_create(Role, name='admin', description='who can do anything', )
     return requester, worker, admin
 
 
@@ -72,12 +71,12 @@ def init_users():
         #      ('zhaoziyuan1991@gmail.com', '111111', 'Ziyuan', [admin, worker, requester]),
         #      ('haidaoxiaofei@gmail.com', '111111', 'Cheng Peng', [admin, worker, requester]),
         #      ('lxia@ust.hk', '111111', 'Leihao', [admin, worker, requester]),
-             ('test1@xxx.com', '111111', 'Testing NO.1', [worker, requester]),
-             ('test2@xxx.com', '111111', 'Testing NO.2', [worker, requester]),
-             ('test3@xxx.com', '111111', 'Testing NO.3', [worker, requester]),
-             ('test4@xxx.com', '111111', 'Testing NO.4', [worker, requester]),
-             ('test5@xxx.com', '111111', 'Testing NO.5', [worker, requester]),
-             ]
+        ('test1@xxx.com', '111111', 'Testing NO.1', [worker, requester]),
+        ('test2@xxx.com', '111111', 'Testing NO.2', [worker, requester]),
+        ('test3@xxx.com', '111111', 'Testing NO.3', [worker, requester]),
+        ('test4@xxx.com', '111111', 'Testing NO.4', [worker, requester]),
+        ('test5@xxx.com', '111111', 'Testing NO.5', [worker, requester]),
+    ]
     for email, password, name, roles in users:
         user = get_or_create(User, email=email, password=password, name=name)
         for role in roles:
@@ -115,7 +114,7 @@ def create_user_for_each_phone():
         #      ('redmi9@ust.hk', '111111', 'redmi9', [worker, requester]),
         #      ('backup1@ust.hk', '111111', 'backup1', [worker, requester]),
         #      ('backup2@ust.hk', '111111', 'backup2', [worker, requester]),
-             ]
+    ]
     for email, password, name, roles in users:
         user = get_or_create(User, email=email, password=password, name=name)
         for role in roles:
@@ -124,28 +123,13 @@ def create_user_for_each_phone():
 
 
 def init_assign_messages():
-    msgs = [()]
-    scheduler = User.query.get(1)
-    for i, user in enumerate(User.query):
-        if i > 10:
-            break
-        for location in ['LG1', 'LTA', 'CS Office']:
-            m = Message(type='indoor request assign',
-                        content='There a request in %s you can answer!'%(location, ),
-                        att_type='IndoorTaskRequest',
-                        attachment='1',
-                        sender=scheduler,
-                        receiver=user)
-            db.session.add(m)
-            db.session.flush()
-            print m, 'created'
-    db.session.commit()
+    pass
 
 
 def init_data():
     init_users()
-    #clear_and_import_all()
-    #init_assign_messages()
+    # clear_and_import_all()
+    # init_assign_messages()
 
 
 def init_db():
@@ -155,11 +139,10 @@ def init_db():
 if __name__ == '__main__':
     # drop_all_table()
     stdout('<<<<<<init db begin.')
-    # check_db()
+    check_db()
     init_db()
     # init_data()
     stdout('>>>>>>init db done.')
     # raise Exception("error")
     # clear_and_import_all()
     pass
-

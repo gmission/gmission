@@ -27,7 +27,7 @@ app.debug = False
 cache_config = {'CACHE_TYPE': 'simple'}
 if is_production():
     cache_config = {'CACHE_TYPE': 'redis',
-                    'CACHE_KEY_PREFIX': 'GMISSION_SZWW-',  # important
+                    'CACHE_KEY_PREFIX': 'GMISSION-',  # important
                     'CACHE_REDIS_URL': 'redis://@docker-redis:6379/0'}
 
 stdout('Flask cache:', cache_config)
