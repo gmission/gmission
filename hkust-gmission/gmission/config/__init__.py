@@ -57,7 +57,7 @@ def config_common(app, root_path):
     app.config['GMISSION_LOGS_DIR'] = os.path.join(root_path, 'logs')
 
     # app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://csp_team:csp2014hkust@127.0.0.1:3306/gmission_hkust'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://csp_team:csp2014hkust@docker-mysql/gmission_hkust'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://csp_team:csp2014hkust@docker-mysql:3308/gmission_hkust'
 
 
     FP_PATH = os.path.join(root_path, 'static', 'fp_collection')
