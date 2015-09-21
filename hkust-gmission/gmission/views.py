@@ -17,6 +17,7 @@ app.register_blueprint(blueprints.video_bp, url_prefix='/video')
 app.register_blueprint(blueprints.audio_bp, url_prefix='/audio')
 # flask_app.register_blueprint(blueprints._bp,     url_prefix='/portal')
 app.register_blueprint(blueprints.shortcut_bp, url_prefix='/shortcut')
+app.register_blueprint(blueprints.shortcut_sd, url_prefix='/definitions')
 
 rest.ReSTManager.init_rest(app)
 

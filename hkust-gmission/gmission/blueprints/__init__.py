@@ -13,7 +13,7 @@ __author__ = 'chenzhao'
 
 from user import user_blueprint as user_bp
 from shortcut import shortcut_blueprint as shortcut_bp
-
+from schemadefinition import schemadefinition_blueprint as shortcut_sd
 from image import image_blueprint as image_bp
 from video import video_blueprint as video_bp
 from audio import audio_blueprint as audio_bp

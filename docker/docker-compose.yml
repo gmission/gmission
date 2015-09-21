@@ -9,7 +9,8 @@
 
 
 gmissionbyuwsgi:
-  image: chenzhao/gmission
+    # image: chenzhao/gmission
+  image: freeznet/gmission
   links:
     - localmysql:docker-mysql
     - redis:docker-redis
