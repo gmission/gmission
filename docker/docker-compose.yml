@@ -36,7 +36,7 @@ gmissionbyuwsgi:
 #   working_dir: /GMission-Server/services
 #   command: celery -A push_msg.task worker
 
-async_jobs:
+asyncjobs:
   image: freeznet/gmission
   links:
     - redis:docker-redis
