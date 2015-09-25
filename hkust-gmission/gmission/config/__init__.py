@@ -5,6 +5,9 @@ import sys
 import socket
 import os.path
 
+APP_SECRET_KEY = 'gMissionForHKUSTSecretKey'
+APP_AUTH_HEADER_PREFIX = 'gMission'
+
 
 def stdout(*lst):
     print '[' + ' '.join(sys.argv) + ']' + ' '.join(map(str, lst))
@@ -42,6 +45,9 @@ def config_common(app, root_path):
     app.json_encoder = json_encoder.CustomJSONEncoder
 
     app.secret_key = 'blabla'
+    app.config['SECRET_KEY'] = APP_SECRET_KEY
+    app.config['APP_AUTH_HEADER_PREFIX'] = APP_AUTH_HEADER_PREFIX
+
     app.config['WTF_CSRF_ENABLED'] = False
     app.config['SECURITY_TOKEN_AUTHENTICATION_KEY'] = 'UserAuthToken'
     app.config['SECURITY_TOKEN_AUTHENTICATION_HEADER'] = 'X-Xuewen-User-Auth-Token'

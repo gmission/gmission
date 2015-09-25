@@ -1,9 +1,8 @@
+from gmission.blueprints.user import jwt_auth
+
 __author__ = 'chenzhao'
 
-
-
 import inspect
-
 
 
 class ReSTBase(object):
@@ -13,12 +12,26 @@ class ReSTBase(object):
         data.pop('id', None)
 
     @classmethod
+    @jwt_auth()
+    def check_user_token(cls, **kw):
+        return True
+
+    @classmethod
     def processor_name_mapping(cls, prefix):
+        exclude_list = []
         processors = {}
+        processors_fields = ['GET_SINGLE', 'GET_MANY', 'PATCH_SINGLE', 'PATCH_MANY', 'PUT_SINGLE', 'PUT_MANY', 'POST',
+                             'DELETE']
         for raw_method in inspect.getmembers(cls, predicate=inspect.ismethod):
             name, method = raw_method
             if name.startswith(prefix):
-                processors[name[len(prefix)+1:].upper()] = [method.__get__(cls), ]
+                processors[name[len(prefix) + 1:].upper()] = [method.__get__(cls), ]
+
+        if cls.__name__ not in exclude_list and prefix == 'before':
+            for key in processors_fields:
+                preprocessor = processors.get(key, [])
+                preprocessor.insert(0, cls.check_user_token)
+                processors[key] = preprocessor
         return processors
 
     @classmethod

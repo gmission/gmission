@@ -140,6 +140,7 @@ if __name__ == '__main__':
     # drop_all_table()
     stdout('<<<<<<init db begin.')
     check_db()
+    drop_all_table()
     init_db()
     # init_data()
     stdout('>>>>>>init db done.')

@@ -10,7 +10,7 @@ RUN \
   echo "IdentityFile /repo-key" >> /etc/ssh/ssh_config && \
   echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
 
-RUN pip install uwsgi flask pymysql python-dateutil SQLAlchemy flask-sqlalchemy flask-security flask-restless flask-cache flask-babelex flask-mail flask-debugtoolbar MySQL-Python redis celery alembic Pillow termcolor alchemyjsonschema flask-admin
+RUN pip install uwsgi flask pymysql python-dateutil SQLAlchemy flask-sqlalchemy flask-security flask-restless flask-cache flask-babelex flask-mail flask-debugtoolbar MySQL-Python redis celery alembic Pillow termcolor alchemyjsonschema flask-admin Flask-HTTPAuth
 
 # Run git clone https://github.com/mattupstate/flask-jwt && cd flask-jwt && pip install .
 # Run git clone https://github.com/mrjoes/flask-admin && cd flask-admin && pip install .
@@ -26,5 +26,7 @@ ADD ./run.sh /run.sh
 ADD ./uwsgi.ini /uwsgi.ini
 
 RUN chmod 755 /*.sh
+
+RUN apt-get install -y 
 
 CMD /run.sh

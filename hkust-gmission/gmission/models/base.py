@@ -5,7 +5,6 @@ import re
 import hashlib
 from flask.ext.sqlalchemy import SQLAlchemy
 from sqlalchemy.schema import UniqueConstraint
-
 from sqlalchemy.orm import backref
 
 db = SQLAlchemy()

@@ -1,78 +1,85 @@
+from gmission.config import APP_AUTH_HEADER_PREFIX
+from gmission.flask_app import GMissionError, app
+
 __author__ = 'CHEN Zhao'
 
-from functools import wraps
-from sqlalchemy.exc import IntegrityError
 from flask import Blueprint, url_for, session, request, redirect, g, jsonify, json, abort, render_template
-from flask.ext.security import auth_token_required, current_user
-from flask.ext.restless import ProcessingException
-
+from gmission.models import *
+from functools import wraps
 
 user_blueprint = Blueprint('user', __name__, template_folder='templates')
 
-# from gmission.models.basic_models import *
-from gmission.models import *
 
-@auth_token_required
-def check_user(data=None, **kw):
-    # if 'user_id' in kw:
-    #     if current_user.id != kw['user_id']:
-    #         raise ProcessingException(description='Not authenticated!')
-    pass
-
-
-def add_credit(result=None, **kw):
-    # print result
-    # print kw
-    # user = User.query.get(result['worker_id'])
-    # task = Task.query.get(result['task_id'])
-    # print user, task
-    # task.requester
-    # user.credit += 10
-    pass
+def verify_password(username_or_token, password):
+    user = User.verify_auth_token(username_or_token)
+    if not user:
+        user = User.query.filter_by(username=username_or_token).first()
+        if not user or not user.verify_password(password):
+            return False
+    g.user = user
+    return True
 
 
-@user_blueprint.route('/login', methods=['POST'])
-def login():
-    p = request.json
-    print 'login new_request', p
-    if 'email' in p:
-        user = User.query.filter_by(email=p['email'], password=p['password']).first()
-    elif 'name' in p:
-        user = User.query.filter_by(name=p['name'], password=p['password']).first()
-    else:
-        return jsonify(res=-1, msg='invalid login info')
-    if user:
-        return jsonify(res=0, token=user.get_auth_token(), name=user.name, expire='2099-01-01 00:00:00', id=user.id, email=user.email, credit=user.credit, roles=user.get_roles())
-    else:
-        return jsonify(res=-1, msg='invalid login info')
+def jwt_auth():
+    """
+    View decorator that requires a valid JWT token to be present in the request
+    """
+
+    def wrapper(fn):
+        @wraps(fn)
+        def decorator(*args, **kwargs):
+            jwt_verify()
+            return fn(*args, **kwargs)
+
+        return decorator
+
+    return wrapper
+
+
+def jwt_verify():
+    auth = request.headers.get('Authorization', None)
+    if auth is None:
+        raise GMissionError('Authorization Required', 'Authorization header was missing', 401)
+    auth_header_prefix = app.config['APP_AUTH_HEADER_PREFIX']
+
+    parts = auth.split()
+    # print 'jwt', parts
+    if parts[0].lower() != auth_header_prefix.lower():
+        raise GMissionError('Invalid JWT header', 'Unsupported authorization type')
+    elif len(parts) == 1:
+        raise GMissionError('Invalid JWT header', 'Token missing')
+    elif len(parts) > 2:
+        raise GMissionError('Invalid JWT header', 'Token contains spaces')
+
+    g.user = user = User.verify_auth_token(parts[1])
+
+    if user is None:
+        raise GMissionError('Invalid JWT', 'User does not exist')
 
 
 @user_blueprint.route('/register', methods=['POST'])
-def register():
-    p = request.json
-    # print 'register new_request', p
-    role_worker = user_datastore.find_role('worker')
-    role_requester = user_datastore.find_role('requester')
-    user = User(email=p['email'], password=p['password'], name=p['name'], roles=[role_worker, role_requester])
-    try:
-        db.session.add(user)
-        db.session.commit()
-        # send_reg_email_async(user)
-        return jsonify(res=0, token=user.get_auth_token(), name=user.name, expire='2099-01-01 00:00:00', id=user.id, email=user.email, credit=user.credit, roles=user.get_roles())
-    except Exception as e:
-        db.session.rollback()
-        if isinstance(e, IntegrityError):
-            return jsonify(res=-1, msg='duplicate entry')
-        else:
-            raise e
-    finally:
-        db.session.close()
-
-@user_blueprint.route('/refresh', methods=['POST'])
-def refresh():
-    p = request.json
-    if 'id' in p:
-        user = User.query.filter_by(id=p['id']).first()
-    return jsonify(res=0, token=user.get_auth_token(), name=user.name, expire='2099-01-01 00:00:00', id=user.id, email=user.email, credit=user.credit, roles=user.get_roles())
+def new_user():
+    username = request.json.get('username')
+    password = request.json.get('password')
+    email = request.json.get('email')
+    if username is None or password is None or email is None:
+        abort(400)  # missing arguments
+    if User.query.filter_by(username=username).first() is not None:
+        abort(400)  # existing user
+    if User.query.filter_by(email=email).first() is not None:
+        abort(400)  # existing email
+    user = User(username=username, email=email)
+    user.hash_password(password)
+    db.session.add(user)
+    db.session.commit()
+    return jsonify(user.get_json(password=True))
 
 
+@user_blueprint.route('/auth', methods=['POST'])
+def get_auth_token():
+    username = request.json.get('username')
+    password = request.json.get('password')
+    if verify_password(username, password):
+        token = g.user.generate_auth_token(3600)
+        return jsonify({'token': token.decode('ascii'), 'duration': 3600})
+    abort(400)
