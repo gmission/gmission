@@ -1,4 +1,4 @@
-from gmission.config import APP_AUTH_HEADER_PREFIX
+from gmission.controllers.user_controller import send_user_auth_email, get_id_from_user_auth_hashid
 from gmission.flask_app import GMissionError, app
 
 __author__ = 'CHEN Zhao'
@@ -72,6 +72,7 @@ def new_user():
     user.hash_password(password)
     db.session.add(user)
     db.session.commit()
+    send_user_auth_email(user)
     return jsonify(user.get_json(password=True))
 
 
@@ -83,3 +84,20 @@ def get_auth_token():
         token = g.user.generate_auth_token(3600)
         return jsonify({'token': token.decode('ascii'), 'duration': 3600})
     abort(400)
+
+
+@user_blueprint.route('/email_verify/<hashid>', methods=['GET'])
+def user_email_verify(hashid):
+    if hashid is None:
+        return render_template('email_confirm.html', result='Error request.')
+    userid = get_id_from_user_auth_hashid(hashid)
+    if userid == 0:
+        return render_template('email_confirm.html', result='Error request.')
+    user = User.query.get(userid)
+    if user is None:
+        return render_template('email_confirm.html', result='Error request.')
+    if user.active:
+        return render_template('email_confirm.html', result='Your email address has been confirmed already.')
+    user.active = True
+    db.session.commit()
+    return render_template('email_confirm.html', result='Thanks, Your email address has been confirmed.')

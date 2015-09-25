@@ -25,7 +25,7 @@ class User(db.Model, UserMixin, BasicModelMixin):
     email = db.Column(db.String(255), unique=True, nullable=False)
     password = db.Column(db.String(255))  # encrypt later
     credit = db.Column(db.Integer, default=0)
-    active = db.Column(db.Boolean())
+    active = db.Column(db.Boolean(), default=False)
     created_on = db.Column(db.DateTime, default=datetime.datetime.now)
     iat = db.Column(db.Integer, default=0)
     roles = db.relationship('Role', secondary=roles_users, backref=db.backref('users', lazy='dynamic'))

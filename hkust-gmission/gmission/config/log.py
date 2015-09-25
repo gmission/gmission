@@ -57,12 +57,12 @@ def set_admin_logger(app, logs_path):
 def set_push_msg_logger(app, logs_path):
     profiling_formatter = logging.Formatter('%(asctime)s %(message)s')
 
-    profiling_log_file = os.path.join(logs_path, 'GMissionPushMsg.log')
+    profiling_log_file = os.path.join(logs_path, 'GMissionAsyncJobs.log')
 
     profiling_handler = RotatingFileHandler(profiling_log_file, maxBytes=10000000, backupCount=1)
     profiling_handler.setFormatter(profiling_formatter)
 
-    logger = logging.getLogger('GMissionPushMsg')
+    logger = logging.getLogger('GMissionAsyncJobs')
     logger.setLevel(logging.DEBUG)
     if not logger.handlers:
         logger.addHandler(profiling_handler)

@@ -21,11 +21,23 @@ gmissionbyuwsgi:
   working_dir: /GMission-Server/hkust-gmission
   command: uwsgi --ini ../docker/gmission_by_uwsgi/uwsgi.ini
   ports:
-    - "9090:9090"
+    - "9091:9090"
 
 
-celery:
-  image: chenzhao/gmission
+# celery:
+#   image: chenzhao/gmission
+#   links:
+#     - redis:docker-redis
+#     - phppush:docker-php-push
+#   volumes:
+#     - ../:/GMission-Server
+#   environment:
+#     - C_FORCE_ROOT=true
+#   working_dir: /GMission-Server/services
+#   command: celery -A push_msg.task worker
+
+async_jobs:
+  image: freeznet/gmission
   links:
     - redis:docker-redis
     - phppush:docker-php-push
@@ -34,7 +46,7 @@ celery:
   environment:
     - C_FORCE_ROOT=true
   working_dir: /GMission-Server/services
-  command: celery -A push_msg.task worker
+  command: celery -A async_jobs.tasks worker
 
 
 localmysql:
@@ -44,18 +56,20 @@ localmysql:
     MYSQL_PASS: "csp2014hkust"
     ON_CREATE_DB: "gmission_hkust"
   ports:
-    - "3306:3306"
+    - "3308:3306"
   volumes:
     - /mysql/data/:/var/lib/mysql/
 
 
 redis: # some redis warnings ignored..
   image: redis
+  ports:
+    - "6380:6379"
 
 
 phppush:
   image: tutum/apache-php
   ports:
-    - "9898:80"
+    - "9899:80"
   volumes:
     - ../PHP-push:/app
