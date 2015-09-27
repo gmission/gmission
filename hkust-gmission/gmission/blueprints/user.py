@@ -6,6 +6,7 @@ __author__ = 'CHEN Zhao'
 from flask import Blueprint, url_for, session, request, redirect, g, jsonify, json, abort, render_template
 from gmission.models import *
 from functools import wraps
+import time
 
 user_blueprint = Blueprint('user', __name__, template_folder='templates')
 
@@ -63,11 +64,11 @@ def new_user():
     password = request.json.get('password')
     email = request.json.get('email')
     if username is None or password is None or email is None:
-        abort(400)  # missing arguments
+        raise GMissionError('Invalid', 'missing arguments')
     if User.query.filter_by(username=username).first() is not None:
-        abort(400)  # existing user
+        raise GMissionError('Invalid', 'existing user')
     if User.query.filter_by(email=email).first() is not None:
-        abort(400)  # existing email
+        raise GMissionError('Invalid', 'existing email')
     user = User(username=username, email=email)
     user.hash_password(password)
     db.session.add(user)
@@ -83,16 +84,18 @@ def get_auth_token():
     if verify_password(username, password):
         token = g.user.generate_auth_token(3600)
         return jsonify({'token': token.decode('ascii'), 'duration': 3600})
-    abort(400)
+    raise GMissionError('Invalid', 'invalid username or password')
 
 
 @user_blueprint.route('/email_verify/<hashid>', methods=['GET'])
 def user_email_verify(hashid):
     if hashid is None:
         return render_template('email_confirm.html', result='Error request.')
-    userid = get_id_from_user_auth_hashid(hashid)
+    userid, expiretime = get_id_from_user_auth_hashid(hashid)
     if userid == 0:
         return render_template('email_confirm.html', result='Error request.')
+    if int(time.time()) > expiretime:
+        return render_template('email_confirm.html', result='This link is expired.')
     user = User.query.get(userid)
     if user is None:
         return render_template('email_confirm.html', result='Error request.')
