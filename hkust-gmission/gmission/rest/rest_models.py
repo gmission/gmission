@@ -68,7 +68,7 @@ class ReSTAnswer(Answer, ReSTBase):
         # send_answer_message(answer)
         refresh_task_status()
         # Prof. Chen wants workers to be paid at once:
-        pay(answer.task.requester, answer.worker, answer, answer.task.credit)
+        pay(answer.hit.requester, answer.worker, answer, answer.hit.credit)
 
     @classmethod
     def after_get_many(cls, search_params=None, **kwargs):
