@@ -38,6 +38,11 @@ def jwt_auth():
 
 
 def jwt_verify():
+    # check priv table
+    # priv = priv_table[url, method]
+    # if priv == nothing required:
+    #      return True
+    # else:
     auth = request.headers.get('Authorization', None)
     if auth is None:
         raise GMissionError('Authorization Required', 'Authorization header was missing', 401)
@@ -57,6 +62,8 @@ def jwt_verify():
     if user is None:
         raise GMissionError('Invalid JWT', 'User does not exist')
 
+    # check user by table rules or callback
+    # return priv(user)
 
 @user_blueprint.route('/register', methods=['POST'])
 def new_user():
