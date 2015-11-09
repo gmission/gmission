@@ -52,6 +52,11 @@ class ReSTHIT(HIT, ReSTBase):
 
 
 class ReSTAnswer(Answer, ReSTBase):
+    #@priv_GET
+    #def priv(cls, url, user):
+        #return user == answer.hit.requester or user.role == admin
+
+
     @classmethod
     def before_post(cls, data):
         # print 'ReSTAnswer before_post'
