@@ -83,7 +83,10 @@ def get_auth_token():
     password = request.json.get('password')
     if verify_password(username, password):
         token = g.user.generate_auth_token(3600 * 24 * 30)
-        return jsonify({'token': token.decode('ascii'), 'duration': 3600 * 24 * 30})
+        userdict = g.user.get_json()
+        ret = userdict.copy()
+        ret.update({'token': token.decode('ascii'), 'duration': 3600 * 24 * 30})
+        return jsonify(ret)
     raise GMissionError('Invalid', 'invalid username or password')
 
 
