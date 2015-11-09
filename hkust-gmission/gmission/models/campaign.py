@@ -8,8 +8,11 @@ __author__ = 'rui'
 
 class Campaign(db.Model, BasicModelMixin):
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(64))
+    title = db.Column(db.String(64), unique=True)
+    brief = db.Column(db.TEXT)
     status = db.Column(db.String(20), default='open')  # or closed
+    icon_id = db.Column(db.Integer, db.ForeignKey('attachment.id'))
+    icon = db.relationship('Attachment', foreign_keys=icon_id)
 
     hits = db.relationship('HIT', lazy='select')
 
