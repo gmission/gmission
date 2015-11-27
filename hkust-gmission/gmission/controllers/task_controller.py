@@ -27,7 +27,7 @@ def check_expired():
     expired_requests = HIT.query.filter_by(status='open') \
         .filter(HIT.end_time <= datetime.datetime.now()).all()
     for expired_request in expired_requests:
-        # print 'close expired', expired_request.id, expired_request.task.brief
+        # print 'close expired', expired_request.id, expired_request.task.title
         close_task_and_pay_workers(expired_request)
         # fail_related_assignment(expired_request)
 
@@ -36,7 +36,7 @@ def check_enough_answer():
     print 'check_enough_answer'
     for request in HIT.query.filter_by(status='open').all():
         if len(request.answers) >= request.required_answer_count:
-            # print 'close enough answer', request.id, request.task.brief
+            # print 'close enough answer', request.id, request.task.title
             close_task_and_pay_workers(request)
 
 

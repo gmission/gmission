@@ -7,7 +7,8 @@ class HIT(db.Model, BasicModelMixin):
     __tablename__ = 'hit'
     id = db.Column(db.Integer, primary_key=True)
     type = db.Column(db.String(20))
-    brief = db.Column(db.String(500))
+    title = db.Column(db.String(500))
+    description = db.Column(db.TEXT)
 
     attachment_id = db.Column(db.Integer, db.ForeignKey('attachment.id'))
     attachment = db.relationship('Attachment', foreign_keys=attachment_id)

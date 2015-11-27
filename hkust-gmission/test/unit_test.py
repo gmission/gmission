@@ -432,14 +432,14 @@ def new_text_task():
     requester = rest_post('user', users[1]).json()
 
     location = dict(name='testlocation', longitude=110, latitude=119)
-    options = [{'type': 'text', 'brief':'text answer %d'%(i), "worker_id":requester['id']} for i in range(3)]
+    options = [{'type': 'text', 'title':'text answer %d'%(i), "worker_id":requester['id']} for i in range(3)]
 
     new_task = dict(type='text', brief='test new choice task', requester_id=requester['id'], location=location, answers=options)
 
     task_j = rest_post('task', new_task).json()
     answers_of_task = rest_get_list('answer', dict(task_id=task_j['id']))
     for opt in options:
-        assert opt['brief'] in [a['brief'] for a in answers_of_task]
+        assert opt['title'] in [a['title'] for a in answers_of_task]
     # print task_j
 
     return True
@@ -453,7 +453,7 @@ def put_existing_answer():
     worker_j = rest_post('user', worker).json()
 
     location = dict(name='testlocation', longitude=110, latitude=119)
-    # options = [{'type': 'text', 'brief':'text answer %d'%(i), "worker_id":requester['id']} for i in range(3)]
+    # options = [{'type': 'text', 'title':'text answer %d'%(i), "worker_id":requester['id']} for i in range(3)]
 
     new_task = dict(type='text', brief='test new text task', requester_id=requester['id'], location=location)
 
@@ -466,12 +466,12 @@ def put_existing_answer():
     r = rest_post('answer', answer)
     answer_j = r.json()
     assert answer_j['task_id'] == task_j['id']
-    assert answer_j['brief'] == answer['brief']
+    assert answer_j['title'] == answer['title']
 
-    answer['brief'] = 'modified text answer'
+    answer['title'] = 'modified text answer'
     r = rest_put('answer', answer_j['id'] ,answer)
     answer_j = r.json()
-    assert answer_j['brief'] == answer['brief']
+    assert answer_j['title'] == answer['title']
 
     answers_of_task = rest_get_list('answer', dict(task_id=task_j['id']))
     # print task_j
