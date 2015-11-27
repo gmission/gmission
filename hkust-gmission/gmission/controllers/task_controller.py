@@ -13,6 +13,8 @@ from gmission.controllers.payment_controller import pay_image, pay_choice
 from gmission.models import *
 import subprocess
 
+campaign_role_owner = get_or_create(CampaignRole, id=1, name='owner', description='owner')
+campaign_role_participant = get_or_create(CampaignRole, id=2, name='participant', description='participant')
 
 def refresh_task_status():
     check_expired()
@@ -27,7 +29,7 @@ def check_expired():
     for expired_request in expired_requests:
         # print 'close expired', expired_request.id, expired_request.task.brief
         close_task_and_pay_workers(expired_request)
-        fail_related_assignment(expired_request)
+        # fail_related_assignment(expired_request)
 
 
 def check_enough_answer():
@@ -49,7 +51,7 @@ def close_task_and_pay_workers(task):
 
 
 def assign_task_to_workers(task):
-    assign_task_to_all_nearby_workers(task)
+    # assign_task_to_all_nearby_workers(task)
     pass
 
 #

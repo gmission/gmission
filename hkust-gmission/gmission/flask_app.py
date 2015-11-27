@@ -3,10 +3,9 @@ __author__ = 'chenzhao'
 import os.path
 from flask import Flask, jsonify
 from config import config, is_production, stdout
-from models import db
+from models import db, get_or_create, Role
 from flask_debugtoolbar import DebugToolbarExtension
 from flask.ext.cache import Cache
-
 # encoding trick..
 import sys
 

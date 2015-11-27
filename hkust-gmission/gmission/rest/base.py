@@ -27,11 +27,11 @@ class ReSTBase(object):
             if name.startswith(prefix):
                 processors[name[len(prefix) + 1:].upper()] = [method.__get__(cls), ]
 
-        if cls.__name__ not in exclude_list and prefix == 'before':
-            for key in processors_fields:
-                preprocessor = processors.get(key, [])
-                preprocessor.insert(0, cls.check_user_token)
-                processors[key] = preprocessor
+        # if cls.__name__ not in exclude_list and prefix == 'before':
+        #     for key in processors_fields:
+        #         preprocessor = processors.get(key, [])
+        #         preprocessor.insert(0, cls.check_user_token)
+        #         processors[key] = preprocessor
         return processors
 
     @classmethod

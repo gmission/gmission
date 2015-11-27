@@ -1,3 +1,4 @@
+from gmission.controllers.privilege_controller import priv_table, role_everyone, init_priv_table, role_guest
 from gmission.controllers.user_controller import send_user_auth_email, get_id_from_user_auth_hashid
 from gmission.flask_app import GMissionError, app
 
@@ -29,7 +30,7 @@ def jwt_auth():
     def wrapper(fn):
         @wraps(fn)
         def decorator(*args, **kwargs):
-            jwt_verify()
+            # jwt_verify()
             return fn(*args, **kwargs)
 
         return decorator
@@ -37,33 +38,38 @@ def jwt_auth():
     return wrapper
 
 
+@app.before_request
 def jwt_verify():
     # check priv table
-    # priv = priv_table[url, method]
-    # if priv == nothing required:
-    #      return True
-    # else:
-    auth = request.headers.get('Authorization', None)
-    if auth is None:
-        raise GMissionError('Authorization Required', 'Authorization header was missing', 401)
-    auth_header_prefix = app.config['APP_AUTH_HEADER_PREFIX']
+    init_priv_table()
+    priv = priv_table[(request.url_rule.rule, request.method)]
+    for role in priv.allow_roles:
+        print role
+    if priv and role_guest in priv.allow_roles:
+        return
+    else:
+        auth = request.headers.get('Authorization', None)
+        if auth is None:
+            raise GMissionError('Authorization Required', 'Authorization header was missing', 401)
+        auth_header_prefix = app.config['APP_AUTH_HEADER_PREFIX']
 
-    parts = auth.split()
-    # print 'jwt', parts
-    if parts[0].lower() != auth_header_prefix.lower():
-        raise GMissionError('Invalid JWT header', 'Unsupported authorization type')
-    elif len(parts) == 1:
-        raise GMissionError('Invalid JWT header', 'Token missing')
-    elif len(parts) > 2:
-        raise GMissionError('Invalid JWT header', 'Token contains spaces')
+        parts = auth.split()
+        # print 'jwt', parts
+        if parts[0].lower() != auth_header_prefix.lower():
+            raise GMissionError('Invalid JWT header', 'Unsupported authorization type')
+        elif len(parts) == 1:
+            raise GMissionError('Invalid JWT header', 'Token missing')
+        elif len(parts) > 2:
+            raise GMissionError('Invalid JWT header', 'Token contains spaces')
 
-    g.user = user = User.verify_auth_token(parts[1])
+        g.user = user = User.verify_auth_token(parts[1])
 
-    if user is None:
-        raise GMissionError('Invalid JWT', 'User does not exist')
+        if user is None:
+            raise GMissionError('Invalid JWT', 'User does not exist')
 
-    # check user by table rules or callback
-    # return priv(user)
+        # check user by table rules or callback
+        return priv.check(user)
+
 
 @user_blueprint.route('/register', methods=['POST'])
 def new_user():

@@ -33,7 +33,6 @@ def schema_definition_list():
 
 
 @schemadefinition_blueprint.route('/<model_name>', methods=['GET'])
-@jwt_auth()
 def generate_schema_definition(model_name):
     model = looking_for_class_by_name(model_name)
     if model:

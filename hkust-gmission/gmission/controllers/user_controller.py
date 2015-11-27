@@ -9,10 +9,11 @@ import time
 
 hashids = Hashids(salt=APP_SECRET_KEY, min_length=32)
 
-HASHID_EXPIRE_TIME = 60 * 60 * 24 * 2 # 2 days
+HASHID_EXPIRE_TIME = 60 * 60 * 24 * 2  # 2 days
+
 
 def generate_user_auth_hashid(id):
-    hashid = hashids.encode(id, int(time.time())+HASHID_EXPIRE_TIME)
+    hashid = hashids.encode(id, int(time.time()) + HASHID_EXPIRE_TIME)
     return hashid
 
 
