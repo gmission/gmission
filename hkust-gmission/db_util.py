@@ -126,7 +126,13 @@ def init_assign_messages():
     pass
 
 
+def init_user_roles():
+    user_role_admin = get_or_create(Role, name='admin', description='who can do anything')
+    user_role_user = get_or_create(Role, name='user', description='user')
+
+
 def init_data():
+    init_user_roles()
     init_users()
     # clear_and_import_all()
     # init_assign_messages()
@@ -142,7 +148,7 @@ if __name__ == '__main__':
     check_db()
     # drop_all_table()
     init_db()
-    # init_data()
+    init_data()
     stdout('>>>>>>init db done.')
     # raise Exception("error")
     # clear_and_import_all()

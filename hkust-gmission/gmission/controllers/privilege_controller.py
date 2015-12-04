@@ -9,8 +9,8 @@ from gmission.models import get_or_create, Role
 
 __author__ = 'rui'
 
-admin = get_or_create(Role, name='admin', description='who can do anything')
-user = get_or_create(Role, name='user', description='user')
+# admin = get_or_create(Role, name='admin', description='who can do anything')
+# user = get_or_create(Role, name='user', description='user')
 role_admin = 'admin'
 role_user = 'user'
 role_everyone = [role_admin, role_user]
