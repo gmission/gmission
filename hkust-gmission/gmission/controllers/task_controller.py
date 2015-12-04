@@ -13,8 +13,6 @@ from gmission.controllers.payment_controller import pay_image, pay_choice
 from gmission.models import *
 import subprocess
 
-campaign_role_owner = get_or_create(CampaignRole, id=1, name='owner', description='owner')
-campaign_role_participant = get_or_create(CampaignRole, id=2, name='participant', description='participant')
 
 def refresh_task_status():
     check_expired()

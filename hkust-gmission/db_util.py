@@ -129,11 +129,13 @@ def init_assign_messages():
 def init_user_roles():
     user_role_admin = get_or_create(Role, name='admin', description='who can do anything')
     user_role_user = get_or_create(Role, name='user', description='user')
+    campaign_role_owner = get_or_create(CampaignRole, id=1, name='owner', description='owner')
+    campaign_role_participant = get_or_create(CampaignRole, id=2, name='participant', description='participant')
 
 
 def init_data():
     init_user_roles()
-    init_users()
+    # init_users()
     # clear_and_import_all()
     # init_assign_messages()
 
