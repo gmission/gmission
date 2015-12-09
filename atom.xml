@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[gMission - an open sourced spatial crowdsourcing platform]]></title>
-  <link href="http://gmission.github.io/home/atom.xml" rel="self"/>
-  <link href="http://gmission.github.io/home/"/>
-  <updated>2015-12-09T21:18:11+08:00</updated>
-  <id>http://gmission.github.io/home/</id>
+  <link href="http://gmission.github.io/gmission/atom.xml" rel="self"/>
+  <link href="http://gmission.github.io/gmission/"/>
+  <updated>2015-12-09T21:19:13+08:00</updated>
+  <id>http://gmission.github.io/gmission/</id>
   <author>
     <name><![CDATA[]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Get Started]]></title>
-    <link href="http://gmission.github.io/home/14496572606271.html"/>
+    <link href="http://gmission.github.io/gmission/14496572606271.html"/>
     <updated>2015-12-09T18:34:20+08:00</updated>
-    <id>http://gmission.github.io/home/14496572606271.html</id>
+    <id>http://gmission.github.io/gmission/14496572606271.html</id>
     <content type="html"><![CDATA[
 <p>If this is the first time you&rsquo;re trying to start your own gMission, then you should read our getting started tutorial.</p>
 
@@ -39,9 +39,9 @@
   
   <entry>
     <title type="html"><![CDATA[Getting Involved]]></title>
-    <link href="http://gmission.github.io/home/14496571135539.html"/>
+    <link href="http://gmission.github.io/gmission/14496571135539.html"/>
     <updated>2015-12-09T18:31:53+08:00</updated>
-    <id>http://gmission.github.io/home/14496571135539.html</id>
+    <id>http://gmission.github.io/gmission/14496571135539.html</id>
     <content type="html"><![CDATA[
 <ul>
 <li>Post an issue or feature request at the <a href="https://github.com/gmission/gmission/issues">Issue Tracker</a></li>
@@ -54,9 +54,9 @@
   
   <entry>
     <title type="html"><![CDATA[First steps with gMission]]></title>
-    <link href="http://gmission.github.io/home/first_steps_with_gmission.html"/>
+    <link href="http://gmission.github.io/gmission/first_steps_with_gmission.html"/>
     <updated>2015-12-09T18:37:27+08:00</updated>
-    <id>http://gmission.github.io/home/first_steps_with_gmission.html</id>
+    <id>http://gmission.github.io/gmission/first_steps_with_gmission.html</id>
     <content type="html"><![CDATA[
 <p>gMission is a open source crowdsourcing platform. It is easy to use so that you can get started without learning the full complexities of the problem it solves. </p>
 
@@ -129,9 +129,9 @@ cd gmission_client_py_demo
   
   <entry>
     <title type="html"><![CDATA[Next steps]]></title>
-    <link href="http://gmission.github.io/home/next_steps.html"/>
+    <link href="http://gmission.github.io/gmission/next_steps.html"/>
     <updated>2015-12-09T21:12:00+08:00</updated>
-    <id>http://gmission.github.io/home/next_steps.html</id>
+    <id>http://gmission.github.io/gmission/next_steps.html</id>
     <content type="html"><![CDATA[
 
 ]]></content>
