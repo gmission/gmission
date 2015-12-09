@@ -1,0 +1,246 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+    
+  First steps with gMission - gMission - an open sourced spatial crowdsourcing platform
+  
+  </title>
+ <meta name="description" content="an open sourced spatial crowdsourcing platform">
+ <link href="atom.xml" rel="alternate" title="gMission - an open sourced spatial crowdsourcing platform" type="application/atom+xml">
+    <link rel="stylesheet" href="asset/css/foundation.min.css" />
+    <link rel="stylesheet" href="asset/css/docs.css" />
+
+    <script src="asset/js/vendor/modernizr.js"></script>
+    <script src="asset/js/vendor/jquery.js"></script>
+    <script src="asset/highlightjs/highlight.pack.js"></script>
+    <link href="asset/highlightjs/styles/github.css" media="screen, projection" rel="stylesheet" type="text/css">
+    <script>hljs.initHighlightingOnLoad();</script>
+    
+  </head>
+  <body class="antialiased hide-extras">
+    
+    <div class="marketing off-canvas-wrap" data-offcanvas>
+      <div class="inner-wrap">
+
+
+<nav class="top-bar docs-bar hide-for-small" data-topbar>
+
+<div id="header">
+    <h1><a href="index.html">gMission - an open sourced spatial crowdsourcing platform</a></h1>
+</div>
+
+</nav>
+        <nav class="tab-bar show-for-small">
+  <a href="javascript:void(0)" class="left-off-canvas-toggle menu-icon">
+    <span> &nbsp; gMission - an open sourced spatial crowdsourcing platform</span>
+  </a>
+</nav>
+
+<aside class="left-off-canvas-menu">
+      <ul class="off-canvas-list">
+      <li><a href="index.html">Home</a></li>
+      
+        <li class="divider"></li>
+        <li><label>About</label></li>
+
+          
+            <li><a title="Get Started" href="14496572606271.html">Get Started</a></li>
+          
+            <li><a title="Getting Involved" href="14496571135539.html">Getting Involved</a></li>
+          
+
+      
+        <li class="divider"></li>
+        <li><label>Tutorial</label></li>
+
+          
+            <li><a title="First steps with gMission" href="first_steps_with_gmission.html">First steps with gMission</a></li>
+          
+            <li><a title="Next steps" href="next_steps.html">Next steps</a></li>
+          
+
+      
+      </ul>
+    </aside>
+
+<a class="exit-off-canvas" href="#"></a>
+
+        <section id="main-content" role="main" class="scroll-container">
+
+          <div class="row">
+            <div class="large-3 medium-3 columns">
+              <div class="hide-for-small">
+                <div class="sidebar">
+                <nav>
+                  <ul id="side-nav" class="side-nav">
+
+                    
+                      <li class="side-title"><span>About</span></li>
+                        
+                          <li><a title="Get Started" href="14496572606271.html">Get Started</a></li>
+                        
+                          <li><a title="Getting Involved" href="14496571135539.html">Getting Involved</a></li>
+                        
+
+                    
+                      <li class="side-title"><span>Tutorial</span></li>
+                        
+                          <li><a title="First steps with gMission" href="first_steps_with_gmission.html">First steps with gMission</a></li>
+                        
+                          <li><a title="Next steps" href="next_steps.html">Next steps</a></li>
+                        
+
+                    
+                  </ul>
+                </nav>
+                </div>
+              </div>
+            </div>
+            <div class="large-9 medium-9 columns">
+
+ <div class="markdown-body">
+<h1>First steps with gMission</h1>
+
+<p>gMission is a open source crowdsourcing platform. It is easy to use so that you can get started without learning the full complexities of the problem it solves. </p>
+
+<p>In this tutorial you will learn the absolute bascis of using gMission. You will learn about;</p>
+
+<ul>
+<li>Installing docker.</li>
+<li>Installing gMission.</li>
+<li>Start gMission backend service.</li>
+<li>Run gMission client demo.</li>
+</ul>
+
+<p>gMission may seem daunting at first - but don’t worry - this tutorial will get you started in no time. It is deliberately kept simple, so to not confuse you with advanced features. After you have finished this tutorial it’s a good idea to browse the rest of the documentation, for example the Next Steps tutorial, which will showcase gMission&rsquo;s capabilities.</p>
+
+<h2>Installation</h2>
+
+<p>You can install gMission by following steps.</p>
+
+<h3>Installing docker</h3>
+
+<p>gMission&rsquo;s backend service is built with Python and Flask, it is packed with docker for fast deployment. Before using gMission, please make sure your machine has Docker installed. If you already have Docker, please move to next step.</p>
+
+<p>Please follow <a href="https://docs.docker.com">Docker Docs</a> to install docker, if you are using OS X and Windows, please remember to install VirtualBox and Docker Machine.</p>
+
+<p>In order to start gMission&rsquo;s service, we also need to install <a href="https://docs.docker.com/compose/install/">Docker Compose</a>.</p>
+
+<h3>Installing gMission</h3>
+
+<p>Once docker installed, we can get gMission backend source code from Github repo.</p>
+
+<pre><code>git clone https://github.com/gmission/gmission
+</code></pre>
+
+<h3>Starting gMission</h3>
+
+<p>Then enter gmission/docker directory and start gMission with docker-compose command</p>
+
+<pre><code>cd gmission/docker
+docker-compose up
+</code></pre>
+
+<p>if all services started with no error, you can check the status of gMission by curl gMission&rsquo;s API, note that gMission will listen on port <code>9090</code>.</p>
+
+<pre><code>curl http://localhost:9090/
+</code></pre>
+
+<p>if you get <code>gMission running</code> shown, it means you have your own gMission service started.</p>
+
+<h3>Run gMission client demo.</h3>
+
+<ul>
+<li><p>python version</p>
+
+<pre><code>git clone https://github.com/gmission/gmission_client_py_demo
+cd gmission_client_py_demo
+</code></pre>
+
+<p>edit <code>demo.py</code>, change line <a href="https://github.com/gmission/gmission_client_py_demo/blob/master/demo.py#L20">#20</a> and fill your own gMission backend&rsquo;s endpoint like</p>
+
+<pre><code>client = GmissionClient(&#39;http://localhost:9090/&#39;)
+</code></pre>
+
+<p>save and run it with <code>python demo.py</code>, the script will create a demo user, some sample campaign and HIT tasks with answers.</p></li>
+<li><p>Android version</p></li>
+<li><p>iOS version</p></li>
+</ul>
+
+
+</div>
+
+<br /><br />
+<hr />
+
+<div class="row clearfix">
+  <div class="large-6 columns">
+	<div class="text-left" style="padding:15px 0px;">
+		
+	        <a href="14496571135539.html"  title="Previous Post: Getting Involved">&laquo; Getting Involved</a>
+	    
+	</div>
+  </div>
+  <div class="large-6 columns">
+	<div class="text-right" style="padding:15px 0px;">
+		
+	        <a href="next_steps.html" 
+	        title="Next Post: Next steps">Next steps &raquo;</a>
+	    
+	</div>
+  </div>
+</div>
+
+<div class="row">
+<div style="padding:0px 0.93em;" class="share-comments">
+
+</div>
+</div>
+<script type="text/javascript">
+	$(function(){
+		var currentURL = 'first_steps_with_gmission.html';
+		$('#side-nav a').each(function(){
+			if($(this).attr('href') == currentURL){
+				$(this).parent().addClass('active');
+			}
+		});
+	});
+</script>  
+</div></div>
+
+
+<div class="page-bottom">
+  <div class="row">
+  <hr />
+  <div class="small-9 columns">
+  <p class="copyright">Copyright &copy; 2015
+Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a>,&nbsp; 
+Theme used <a target="_blank" href="http://github.com">GitHub CSS</a>.</p>
+  </div>
+  <div class="small-3 columns">
+  <p class="copyright text-right"><a href="#header">TOP</a></p>
+  </div>
+   
+  </div>
+</div>
+
+        </section>
+      </div>
+    </div>
+    
+    
+    <script src="asset/js/foundation.min.js"></script>
+    <script src="asset/js/foundation/foundation.offcanvas.js"></script>
+    <script>
+      $(document).foundation();
+
+     
+    </script>
+    
+
+
+  </body>
+</html>

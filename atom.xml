@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[gMission - an open sourced spatial crowdsourcing platform]]></title>
+  <link href="http://gmission.github.io/home/atom.xml" rel="self"/>
+  <link href="http://gmission.github.io/home/"/>
+  <updated>2015-12-09T21:18:11+08:00</updated>
+  <id>http://gmission.github.io/home/</id>
+  <author>
+    <name><![CDATA[]]></name>
+    
+  </author>
+  <generator uri="http://www.mweb.im">MWeb</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Get Started]]></title>
+    <link href="http://gmission.github.io/home/14496572606271.html"/>
+    <updated>2015-12-09T18:34:20+08:00</updated>
+    <id>http://gmission.github.io/home/14496572606271.html</id>
+    <content type="html"><![CDATA[
+<p>If this is the first time you&rsquo;re trying to start your own gMission, then you should read our getting started tutorial.</p>
+
+<ul>
+<li><p><a href="first_steps_with_gmission.html">First steps with gMission</a>  </p>
+
+<blockquote>
+<p>Tutorial teaching you the bare minimum needed to get started with gMission.`</p>
+</blockquote></li>
+<li><p><a href="next_steps.html">Next steps</a></p>
+
+<blockquote>
+<p>A more complete overview, showing more features.`</p>
+</blockquote></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Getting Involved]]></title>
+    <link href="http://gmission.github.io/home/14496571135539.html"/>
+    <updated>2015-12-09T18:31:53+08:00</updated>
+    <id>http://gmission.github.io/home/14496571135539.html</id>
+    <content type="html"><![CDATA[
+<ul>
+<li>Post an issue or feature request at the <a href="https://github.com/gmission/gmission/issues">Issue Tracker</a></li>
+<li>View the <a href="https://github.com/gmission/gmission">Source</a></li>
+<li>Contribute your code with a <a href="https://github.com/gmission/gmission/pulls">Pull Request</a></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[First steps with gMission]]></title>
+    <link href="http://gmission.github.io/home/first_steps_with_gmission.html"/>
+    <updated>2015-12-09T18:37:27+08:00</updated>
+    <id>http://gmission.github.io/home/first_steps_with_gmission.html</id>
+    <content type="html"><![CDATA[
+<p>gMission is a open source crowdsourcing platform. It is easy to use so that you can get started without learning the full complexities of the problem it solves. </p>
+
+<p>In this tutorial you will learn the absolute bascis of using gMission. You will learn about;</p>
+
+<ul>
+<li>Installing docker.</li>
+<li>Installing gMission.</li>
+<li>Start gMission backend service.</li>
+<li>Run gMission client demo.</li>
+</ul>
+
+<p>gMission may seem daunting at first - but don’t worry - this tutorial will get you started in no time. It is deliberately kept simple, so to not confuse you with advanced features. After you have finished this tutorial it’s a good idea to browse the rest of the documentation, for example the Next Steps tutorial, which will showcase gMission&rsquo;s capabilities.</p>
+
+<h2>Installation</h2>
+
+<p>You can install gMission by following steps.</p>
+
+<h3>Installing docker</h3>
+
+<p>gMission&rsquo;s backend service is built with Python and Flask, it is packed with docker for fast deployment. Before using gMission, please make sure your machine has Docker installed. If you already have Docker, please move to next step.</p>
+
+<p>Please follow <a href="https://docs.docker.com">Docker Docs</a> to install docker, if you are using OS X and Windows, please remember to install VirtualBox and Docker Machine.</p>
+
+<p>In order to start gMission&rsquo;s service, we also need to install <a href="https://docs.docker.com/compose/install/">Docker Compose</a>.</p>
+
+<h3>Installing gMission</h3>
+
+<p>Once docker installed, we can get gMission backend source code from Github repo.</p>
+
+<pre><code>git clone https://github.com/gmission/gmission
+</code></pre>
+
+<h3>Starting gMission</h3>
+
+<p>Then enter gmission/docker directory and start gMission with docker-compose command</p>
+
+<pre><code>cd gmission/docker
+docker-compose up
+</code></pre>
+
+<p>if all services started with no error, you can check the status of gMission by curl gMission&rsquo;s API, note that gMission will listen on port <code>9090</code>.</p>
+
+<pre><code>curl http://localhost:9090/
+</code></pre>
+
+<p>if you get <code>gMission running</code> shown, it means you have your own gMission service started.</p>
+
+<h3>Run gMission client demo.</h3>
+
+<ul>
+<li><p>python version</p>
+
+<pre><code>git clone https://github.com/gmission/gmission_client_py_demo
+cd gmission_client_py_demo
+</code></pre>
+
+<p>edit <code>demo.py</code>, change line <a href="https://github.com/gmission/gmission_client_py_demo/blob/master/demo.py#L20">#20</a> and fill your own gMission backend&rsquo;s endpoint like</p>
+
+<pre><code>client = GmissionClient(&#39;http://localhost:9090/&#39;)
+</code></pre>
+
+<p>save and run it with <code>python demo.py</code>, the script will create a demo user, some sample campaign and HIT tasks with answers.</p></li>
+<li><p>Android version</p></li>
+<li><p>iOS version</p></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Next steps]]></title>
+    <link href="http://gmission.github.io/home/next_steps.html"/>
+    <updated>2015-12-09T21:12:00+08:00</updated>
+    <id>http://gmission.github.io/home/next_steps.html</id>
+    <content type="html"><![CDATA[
+
+]]></content>
+  </entry>
+  
+</feed>
