@@ -1,17 +1,11 @@
 # -*- coding: utf-8 -*-
 __author__ = 'chenzhao'
 
-import datetime, time
-from gmission.controllers.geo_controller import geo_distance
-import math
+from gmission.controllers.message_controller import send_request_messages
 import dateutil
 import dateutil.tz
-import errno
-import os
-from sets import Set
 from gmission.controllers.payment_controller import pay_image, pay_choice
 from gmission.models import *
-import subprocess
 
 
 def refresh_task_status():
@@ -49,10 +43,9 @@ def close_task_and_pay_workers(task):
 
 
 def assign_task_to_workers(task):
-    # assign_task_to_all_nearby_workers(task)
+    assign_task_to_all_possible_workers(task)
     pass
 
-#
 # def assign_task_to_knn_workers(task, k_in_knn=10):
 #     """:type task:Task"""
 #     location = task.location
@@ -61,6 +54,11 @@ def assign_task_to_workers(task):
 #     users = [u for u in get_nearest_n_users(lo, la, k_in_knn + 1) if u.id != task.requester_id][:k_in_knn]
 #     # users = [u for u in User.query.all() if u.id!=task.requester_id]
 #     # send_request_messages(task, users)
+
+
+def assign_task_to_all_possible_workers(task):
+    users = [u for u in User.query.all() if u!=task.requester]
+    send_request_messages(task, users)
 
 
 def query_online_users():
@@ -76,8 +74,15 @@ def query_online_users():
 #     print 'assign_task_to_all_nearby_workers: location', location
 #     lo, la = location.longitude, location.latitude
 #     users = [u for u in get_nearby_users(lo, la) if u != task.requester]
-#     # send_request_messages(task, users)
+#     send_request_messages(task, users)
 #     pass
+
+
+def credit_process(task):
+    user = task.requester
+    credit = task.credit
+    user.credit -= credit
+    db.session.commit()
 
 
 def local_datetime(dt_string):

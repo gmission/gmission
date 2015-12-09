@@ -129,8 +129,10 @@ def init_assign_messages():
 def init_user_roles():
     user_role_admin = get_or_create(Role, name='admin', description='who can do anything')
     user_role_user = get_or_create(Role, name='user', description='user')
-    campaign_role_owner = get_or_create(CampaignRole, id=1, name='owner', description='owner')
-    campaign_role_participant = get_or_create(CampaignRole, id=2, name='participant', description='participant')
+    campaign_role_owner = get_or_create(CampaignRole, name='owner', description='owner')
+    campaign_role_participant = get_or_create(CampaignRole, name='participant', description='participant')
+    print user_role_admin, user_role_user, campaign_role_owner, campaign_role_participant
+    db.session.commit()
 
 
 def init_data():
@@ -145,7 +147,7 @@ def init_db():
 
 
 if __name__ == '__main__':
-    # drop_all_table()
+    drop_all_table()
     stdout('<<<<<<init db begin.')
     check_db()
     # drop_all_table()

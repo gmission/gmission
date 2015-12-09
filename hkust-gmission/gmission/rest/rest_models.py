@@ -1,12 +1,12 @@
 from gmission.controllers.geo_controller import filter_location
+from gmission.controllers.message_controller import send_answer_message
 
 __author__ = 'chenzhao'
-
 
 from .base import ReSTBase
 from werkzeug.exceptions import Conflict
 from gmission.models import *
-from gmission.controllers.task_controller import refresh_task_status, assign_task_to_workers
+from gmission.controllers.task_controller import refresh_task_status, assign_task_to_workers, credit_process
 from gmission.controllers.payment_controller import pay
 
 
@@ -39,38 +39,49 @@ class ReSTAttachment(Attachment, ReSTBase):
     pass
 
 
-class ReSTHIT(HIT, ReSTBase):
+class ReSTMessage(Message, ReSTBase):
+    pass
 
+
+class ReSTBaiduPushInfo(BaiduPushInfo, ReSTBase):
+    pass
+
+
+class ReSTHIT(HIT, ReSTBase):
     @classmethod
     def before_post(cls, data):
-        # print 'ReSTTask before_post'
         filter_location(data)
+
     @classmethod
     def after_post(cls, result=None):
+        hit = HIT.query.get(result['id'])
+        assign_task_to_workers(hit)
+        credit_process(hit)
         pass
-        # print 'ReSTTask after_post'
 
 
 class ReSTAnswer(Answer, ReSTBase):
-    #@priv_GET
-    #def priv(cls, url, user):
-        #return user == answer.hit.requester or user.role == admin
+    # @priv_GET
+    # def priv(cls, url, user):
+    # return user == answer.hit.requester or user.role == admin
 
 
     @classmethod
     def before_post(cls, data):
         # print 'ReSTAnswer before_post'
         filter_location(data)
-                # data['status'] = 'open'
+        # data['status'] = 'open'
+
     @classmethod
     def before_put_single(cls, instance_id=None, data=None):
         # print 'ReSTAnswer before_put'
         filter_location(data)
+
     @classmethod
     def after_post(cls, result):
         # print 'ReSTAnswer after_post'
         answer = Answer.query.get(result['id'])
-        # send_answer_message(answer)
+        send_answer_message(answer)
         refresh_task_status()
         # Prof. Chen wants workers to be paid at once:
         pay(answer.hit.requester, answer.worker, answer, answer.hit.credit)
@@ -86,6 +97,7 @@ class ReSTLocation(Location, ReSTBase):
     def before_post(cls, data):
         pass
         # print 'ReSTLocation before_post'
+
     @classmethod
     def after_post(cls, **kw):
         pass

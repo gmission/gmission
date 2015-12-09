@@ -44,19 +44,6 @@ def test():
     return jsonify(func_list)
 
 
-@app.route('/marauders-map')
-def marauders_map():
-    users = User.query.all()
-
-    user_traces = {}
-    # for u in User.query.all()[:50]:
-    for u in User.query.filter(User.id == 36):
-        traces = PositionTrace.query.filter_by(user=u).all()
-        user_traces[u.id] = [(t.longitude, t.latitude) for t in traces]
-
-    return render_template('marauders_map.html', users=users, user_traces=json.dumps(user_traces))
-
-
 def is_cached_url(url):
     return url.endswith('/rest/location')
 

@@ -115,4 +115,13 @@ def init_priv_table():
 
         push_priv_rule('/rest/user_last_position', ['GET', 'POST', 'PUT', 'DELETE'], priv(role=[role_admin]))
         push_priv_rule('/rest/user_last_position/<instid>', ['GET','POST', 'PUT', 'DELETE'], priv(role=[role_admin]))
+
+        push_priv_rule('/rest/baidu_push_info', ['GET'], priv(role=[role_admin], skip_with_query=True))
+        push_priv_rule('/rest/baidu_push_info', ['POST', 'PUT', 'DELETE'], priv(role=role_everyone))
+        push_priv_rule('/rest/baidu_push_info/<instid>', ['GET', 'POST', 'PUT', 'DELETE'], priv(role=role_everyone))
+
+        push_priv_rule('/rest/message', ['GET'], priv(role=[role_admin], skip_with_query=True))
+        push_priv_rule('/rest/message', ['POST', 'PUT', 'DELETE'], priv(role=[role_admin]))
+        push_priv_rule('/rest/message/<instid>', ['GET','POST', 'PUT', 'DELETE'], priv(role=role_everyone))
+
         priv_table_inited = True

@@ -43,8 +43,6 @@ def jwt_verify():
     # check priv table
     init_priv_table()
     priv = priv_table[(request.url_rule.rule, request.method)]
-    for role in priv.allow_roles:
-        print role
     if priv and role_guest in priv.allow_roles:
         return
     else:

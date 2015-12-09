@@ -60,14 +60,14 @@ def filter_location(data):
         # print 'location_id provided, pop location'
         data.pop('location', None)
         return
-    if 'location' in data:
-        # print 'location provided'
-        uc_keys = ['name', 'longitude','latitude']
-        existing_location = Location.query.filter_by(**dict(zip(uc_keys, map(data['location'].get, uc_keys)))).first()
-        # print 'existing location', existing_location
-        if existing_location:
-            data.pop('location', None)
-            data['location_id'] = existing_location.id
+    # if 'location' in data:
+    #     # print 'location provided'
+    #     uc_keys = ['name', 'longitude','latitude']
+    #     existing_location = Location.query.filter_by(**dict(zip(uc_keys, map(data['location'].get, uc_keys)))).first()
+    #     # print 'existing location', existing_location
+    #     if existing_location:
+    #         data.pop('location', None)
+    #         data['location_id'] = existing_location.id
 
 
 if __name__ == '__main__':
