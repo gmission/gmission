@@ -60,7 +60,7 @@ def filter_datetime(message_dict):
 def ios_push_task(alert, payload_dict, baidu_user_id):
     filter_datetime(payload_dict)
     logger.info('applying ios push task: %s', ','.join(map(repr, [alert, payload_dict, baidu_user_id])))
-    message_dict = {"aps": {"alert": alert, "sound": "default", "badge": 1}, 'payload': payload_dict, 'app_name': app}
+    message_dict = {"aps": {"alert": alert, "sound": "default", "badge": 1}, 'payload': payload_dict}
 
     push_by_native('ios', message_dict, baidu_user_id)
     logger.info('applying ios push task: %s done', ','.join(map(repr, [alert, payload_dict, baidu_user_id])))

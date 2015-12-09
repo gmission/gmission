@@ -60,12 +60,12 @@ def send_request_messages(task, users):
 
 
 def send_answer_message(answer):
-    task = answer.task
+    hit = answer.hit
     m = Message(sender_id=answer.worker_id,
-                receiver_id=task.requester_id,
+                receiver_id=hit.requester_id,
                 type='new answer noti',
                 # content=u'"%s"有新回答!' % (task.brief,),
                 content=u'New answer received!',
-                att_type=task.__class__.__name__,
-                attachment=task.id)
+                att_type=hit.__class__.__name__,
+                attachment=hit.id)
     save_and_push_msg(m)

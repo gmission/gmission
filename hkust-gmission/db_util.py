@@ -5,8 +5,6 @@ from gmission.flask_app import app, db, stdout
 import sys
 import time
 
-from import_data import clear_and_import_all
-
 
 def check_db():
     tried_times = 0
@@ -147,7 +145,7 @@ def init_db():
 
 
 if __name__ == '__main__':
-    drop_all_table()
+    # drop_all_table()
     stdout('<<<<<<init db begin.')
     check_db()
     # drop_all_table()
