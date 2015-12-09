@@ -122,3 +122,7 @@ class ReSTUserLastPosition(UserLastPosition, ReSTBase):
     def after_post(cls, **kw):
         pass
         # print 'ReSTPositionTrace after_post'
+
+
+class ReSTSelection(Selection, ReSTBase):
+    pass
