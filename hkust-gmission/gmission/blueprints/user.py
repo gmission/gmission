@@ -43,9 +43,8 @@ def jwt_verify():
     # check priv table
     init_priv_table()
     priv = priv_table[(request.url_rule.rule, request.method)]
-    if priv and role_guest in priv.allow_roles:
-        return
-    else:
+
+    try:
         auth = request.headers.get('Authorization', None)
         if auth is None:
             raise GMissionError('Authorization Required', 'Authorization header was missing', 401)
@@ -67,6 +66,11 @@ def jwt_verify():
 
         # check user by table rules or callback
         return priv.check(user)
+    except GMissionError as err:
+        if priv and role_guest in priv.allow_roles:
+            return
+        else:
+            raise err
 
 
 @user_blueprint.route('/register', methods=['POST'])
@@ -118,3 +122,9 @@ def user_email_verify(hashid):
     user.active = True
     db.session.commit()
     return render_template('email_confirm.html', result='Thanks, Your email address has been confirmed.')
+
+
+@user_blueprint.route('/credit/campaign/<campaign_id>', methods=['GET'])
+def user_credit_campaign_log(campaign_id):
+    credit = [transaction.credit for transaction in db.session.query(CreditTransaction).all() if transaction.campaign_id == int(campaign_id) and transaction.worker_id == g.user.id]
+    return jsonify({'credit': sum(credit)})

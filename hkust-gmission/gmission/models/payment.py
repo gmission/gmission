@@ -7,6 +7,8 @@ class CreditTransaction(db.Model, BasicModelMixin):
     id = db.Column(db.Integer, primary_key=True)
     credit = db.Column(db.Integer, nullable=False)
 
+    campaign_id = db.Column(db.Integer)
+    hit_id = db.Column(db.Integer)
     answer_id = db.Column(db.Integer)
 
     worker_id = db.Column(db.Integer, db.ForeignKey('user.id'))

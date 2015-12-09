@@ -127,4 +127,6 @@ def init_priv_table():
         push_priv_rule('/rest/selection', ['GET', 'POST', 'PUT', 'DELETE'], priv(role=role_everyone))
         push_priv_rule('/rest/selection/<instid>', ['GET', 'POST', 'PUT', 'DELETE'], priv(role=role_everyone))
 
+        push_priv_rule('/user/credit/campaign/<campaign_id>', ['GET'], priv(role=role_everyone))
+
         priv_table_inited = True

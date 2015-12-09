@@ -8,7 +8,9 @@ def log_payment(requester, worker, answer, credit):
     ct = CreditTransaction(credit=credit,
                            requester=requester,
                            worker=worker,
-                           answer_id=answer.id)
+                           answer_id=answer.id,
+                           hit_id=answer.hit_id,
+                           campaign_id=answer.hit.campaign_id)
     db.session.add(ct)
 
 
