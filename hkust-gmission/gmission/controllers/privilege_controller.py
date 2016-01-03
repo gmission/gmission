@@ -108,7 +108,7 @@ def init_priv_table():
         push_priv_rule('/rest/position_trace/<instid>', ['GET','POST', 'PUT', 'DELETE'], priv(role=[role_admin]))
 
         push_priv_rule('/rest/role', ['GET', 'POST', 'PUT', 'DELETE'], priv(role=[role_admin]))
-        push_priv_rule('/rest/role/<instid>', ['GET','POST', 'PUT', 'DELETE'], priv(role=[role_admin]))
+        push_priv_rule('/rest/role/<instid>', ['GET','POST', 'PUT', 'DELETE'], priv(role=role_everyone))
 
         push_priv_rule('/rest/user', ['GET', 'POST', 'PUT', 'DELETE'], priv(role=[role_admin]))
         push_priv_rule('/rest/user/<instid>', ['GET','POST', 'PUT', 'DELETE'], priv(role=[role_admin]))
