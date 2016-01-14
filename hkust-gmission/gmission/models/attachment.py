@@ -10,3 +10,4 @@ class Attachment(db.Model, BasicModelMixin):
     value = db.Column(db.String(100))
     parent_id = db.Column(db.Integer, db.ForeignKey('attachment.id'))
     children = db.relationship('Attachment', backref=db.backref("parent", remote_side=id), lazy='select')
+    created_on = db.Column(db.DateTime, default=datetime.datetime.now)

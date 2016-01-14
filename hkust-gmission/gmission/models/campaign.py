@@ -33,3 +33,4 @@ class CampaignUser(db.Model, BasicModelMixin):
     campaign_id = db.Column(db.Integer, db.ForeignKey('campaign.id'))
     role = db.relationship('CampaignRole')
     role_id = db.Column(db.Integer, db.ForeignKey('campaign_role.id'))
+    created_on = db.Column(db.DateTime, default=datetime.datetime.now)

@@ -26,13 +26,14 @@ priv_table_inited = False
 
 
 class Privilege(object):
-    def __init__(self, allow_roles=[], callback=None, skip_with_query=False):
+    def __init__(self, allow_roles=[], pre_callback=None, post_callback=None, skip_with_query=False):
         self.allow_roles = allow_roles
-        self.callback = callback
+        self.pre_callback = pre_callback
+        self.post_callback = post_callback
         self.skip_with_query = skip_with_query
 
     def is_deny_all(self):
-        return self.allow_roles == [] and self.callback is None
+        return self.allow_roles == [] and self.pre_callback is None
 
     def check(self, user):
         role_pass = True
@@ -52,8 +53,8 @@ class Privilege(object):
         if not role_pass:
             raise GMissionError('Invalid JWT', 'User don\'t have privilege', 401)
 
-        if self.callback is not None:
-            return self.callback(user)
+        if self.pre_callback is not None:
+            return self.pre_callback(user)
 
 
 def push_priv_rule(rule, method, priv):

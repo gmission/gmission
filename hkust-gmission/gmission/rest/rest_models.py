@@ -6,7 +6,8 @@ __author__ = 'chenzhao'
 from .base import ReSTBase
 from werkzeug.exceptions import Conflict
 from gmission.models import *
-from gmission.controllers.task_controller import refresh_task_status, assign_task_to_workers, credit_process
+from gmission.controllers.task_controller import refresh_task_status, assign_task_to_workers, credit_process, \
+    push_worker_to_campaign_user
 from gmission.controllers.payment_controller import pay
 
 
@@ -85,6 +86,7 @@ class ReSTAnswer(Answer, ReSTBase):
         refresh_task_status()
         # Prof. Chen wants workers to be paid at once:
         pay(answer.hit.requester, answer.worker, answer, answer.hit.credit)
+        push_worker_to_campaign_user(answer)
 
     @classmethod
     def after_get_many(cls, search_params=None, **kwargs):

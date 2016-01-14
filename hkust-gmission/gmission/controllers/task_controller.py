@@ -93,5 +93,18 @@ def local_datetime(dt_string):
         dt = dt.astimezone(dateutil.tz.tzlocal())
     return dt
 
+
+def push_worker_to_campaign_user(answer):
+    if answer is None:
+        return
+    if answer.hit.campaign is None:
+        return
+    users = CampaignUser.query.filter(CampaignUser.campaign_id == answer.hit.campaign_id).filter(CampaignUser.user_id == answer.worker_id).all()
+    if len(users) > 0:
+        return
+    role = get_or_create(CampaignRole, name='participant', description='participant')
+    campaignuser = get_or_create(CampaignUser, user_id=answer.worker_id, campaign_id=answer.hit.campaign_id, role_id=role.id)
+    return
+
 if __name__ == '__main__':
     check_expired()

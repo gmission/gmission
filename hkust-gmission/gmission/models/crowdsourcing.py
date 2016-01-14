@@ -71,3 +71,5 @@ class Selection(db.Model, BasicModelMixin):
     hit_id = db.Column(db.Integer, db.ForeignKey('hit.id'))
 
     brief = db.Column(db.String(100))
+
+    created_on = db.Column(db.DateTime, default=datetime.datetime.now)

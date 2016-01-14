@@ -64,7 +64,7 @@ def jwt_verify():
         if user is None:
             raise GMissionError('Invalid JWT', 'User does not exist')
 
-        # check user by table rules or callback
+        # check user by table rules or pre_callback
         return priv.check(user)
     except GMissionError as err:
         if priv and role_guest in priv.allow_roles:
