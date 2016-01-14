@@ -73,8 +73,8 @@ def init_priv_table():
         push_priv_rule('/video/upload', ['GET', 'POST'], priv(role=role_everyone))
         #
         push_priv_rule('/rest/answer', ['GET'], priv(role=[role_admin], skip_with_query=True))
-        push_priv_rule('/rest/answer', ['POST', 'PUT', 'DELETE'], priv(role=role_everyone))
-        push_priv_rule('/rest/answer/<instid>', ['GET', 'POST', 'PUT', 'DELETE'], priv(role=role_everyone))
+        push_priv_rule('/rest/answer', ['POST', 'PUT', 'PATCH', 'DELETE'], priv(role=role_everyone))
+        push_priv_rule('/rest/answer/<instid>', ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'], priv(role=role_everyone))
 
         push_priv_rule('/rest/attachment', ['GET'], priv(role=[role_admin], skip_with_query=True))
         push_priv_rule('/rest/attachment', ['POST', 'PUT', 'DELETE'], priv(role=role_everyone))
