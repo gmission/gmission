@@ -47,6 +47,7 @@ class Privilege(object):
                     if roleobj in user.roles:
                         role_pass = True
                         break
+        print request.query_string, request.method, self.skip_with_query
         if request.query_string and request.method == 'GET' and self.skip_with_query:
             role_pass = True
 
