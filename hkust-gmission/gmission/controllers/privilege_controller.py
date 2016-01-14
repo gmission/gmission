@@ -17,8 +17,8 @@ role_everyone = [role_admin, role_user]
 role_guest = None  # no need login
 
 
-def priv(role=[role_guest], callback=None, skip_with_query=False):
-    return Privilege(role, callback, skip_with_query)
+def priv(role=[role_guest], pre_callback=None, post_callback=None, skip_with_query=False):
+    return Privilege(role, pre_callback, post_callback, skip_with_query)
 
 
 priv_table = defaultdict(priv)
@@ -47,7 +47,6 @@ class Privilege(object):
                     if roleobj in user.roles:
                         role_pass = True
                         break
-        print request.query_string, request.method, self.skip_with_query
         if request.query_string and request.method == 'GET' and self.skip_with_query:
             role_pass = True
 
