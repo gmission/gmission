@@ -12,7 +12,7 @@ import gmail
 from baidu_push import Channel
 from logging.handlers import RotatingFileHandler
 
-push_key = ('LQpGHpuTYA0lkjQj6zY3ZVfB', 'kkwpcFMTsKhdECYMbEOl7NF1hG2OGd4x')
+#push_key = ('LQpGHpuTYA0lkjQj6zY3ZVfB', 'kkwpcFMTsKhdECYMbEOl7NF1hG2OGd4x')
 
 
 def make_celery_logger(logs_path):
@@ -40,6 +40,7 @@ celery_app = celery.Celery(broker=CELERY_BROKER_URL)
 celery_app.conf.CELERY_ACCEPT_CONTENT = ['pickle', 'json', 'msgpack', 'yaml']
 
 logger = make_celery_logger(os.path.dirname(__file__))
+logger.info('async tasks reloading...')
 
 
 @celery_app.task()
@@ -62,16 +63,36 @@ def ios_push_task(alert, payload_dict, baidu_user_id):
     logger.info('applying ios push task: %s', ','.join(map(repr, [alert, payload_dict, baidu_user_id])))
     message_dict = {"aps": {"alert": alert, "sound": "default", "badge": 1}, 'payload': payload_dict}
 
-    push_by_native('ios', message_dict, baidu_user_id)
-    logger.info('applying ios push task: %s done', ','.join(map(repr, [alert, payload_dict, baidu_user_id])))
+    push_by_php('ios', message_dict, baidu_user_id)
+    #push_by_native('ios', message_dict, baidu_user_id)
+    #logger.info('applying ios push task: %s done', ','.join(map(repr, [alert, payload_dict, baidu_user_id])))
 
 
 @celery_app.task()
 def android_push_task(payload_dict, baidu_user_id):
     filter_datetime(payload_dict)
     logger.info('applying android push task: %s', ','.join(map(repr, [payload_dict, baidu_user_id])))
-    push_by_native('android', payload_dict, baidu_user_id)
-    logger.info('applying android push task: %s done', ','.join(map(repr, [payload_dict, baidu_user_id])))
+    push_by_php('ios', message_dict, baidu_user_id)
+    #push_by_native('android', payload_dict, baidu_user_id)
+    #logger.info('applying android push task: %s done', ','.join(map(repr, [payload_dict, baidu_user_id])))
+
+def push_by_php(platform, payload_dict, baidu_user_id):
+    app = 'gmission'
+    push_url = 'http://docker-php-push/push.php'
+
+    params = dict(app=app, platform=platform, message=json.dumps(payload_dict), user_id=baidu_user_id)
+    if platform=='android':
+        msgkey = str(random.randint(10000000, 999999999))  # useful only if platform == 'android':
+        params['message_key'] = msgkey
+    elif platform=='ios':
+        params['deploy_status'] = 'both' #'production' # 'developing'
+    r = requests.get(push_url, params=params)
+    print r.url
+    if r.status_code != 200:
+        logger.info('async push task failed: %s', ','.join(map(repr, [app, platform, payload_dict, baidu_user_id])))
+    else:
+        logger.info('async push task succeeded: %s', ','.join(map(repr, [app, platform, payload_dict, baidu_user_id])))
+    print r.text
 
 
 def push_by_native(platform, payload_dict, baidu_user_id):
@@ -86,7 +107,7 @@ def push_by_native_inner(channel, platform, payload_dict, baidu_user_id):
     if platform == 'ios':
         optional[Channel.DEVICE_TYPE] = Channel.DEVICE_IOS
         optional[Channel.MESSAGE_TYPE] = Channel.PUSH_NOTIFICATION
-        optional['deploy_status'] = 2
+        optional['deploy_status'] = 1
     else:
         optional[Channel.DEVICE_TYPE] = Channel.DEVICE_ANDRIOD
         optional[Channel.MESSAGE_TYPE] = Channel.PUSH_MESSAGE
