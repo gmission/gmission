@@ -104,6 +104,7 @@ def push_worker_to_campaign_user(answer):
         return
     role = get_or_create(CampaignRole, name='participant', description='participant')
     campaignuser = get_or_create(CampaignUser, user_id=answer.worker_id, campaign_id=answer.hit.campaign_id, role_id=role.id)
+    db.session.commit()
     return
 
 if __name__ == '__main__':
