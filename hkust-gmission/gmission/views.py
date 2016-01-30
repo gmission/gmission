@@ -54,8 +54,15 @@ def is_cached_url(url):
 #     profile_log(request.path, 'crab', time.time() - g.request_start_time)
 #
 #
-# @app.after_request
-# def after_request(response):
+@app.after_request
+def after_request(response):
+    try:
+        if request.method == 'HEAD' and 'num_results' in response.data:
+            count = json.loads(response.data)['num_results']
+            response.headers.add('GMISSION-Count', str(count))
+    except:
+        pass
+    return response
 #     # resp_brief = response.data[:200] if 'json' in response.mimetype else ''
 #     # print "[After request:%s %s, %d, %s, %s]" % \
 #     #       (request.method, request.url, response.status_code, response.mimetype, resp_brief)

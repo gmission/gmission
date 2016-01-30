@@ -6,7 +6,6 @@ from gmission.models import *
 from .base import ReSTBase
 from gmission.flask_app import db, app
 
-
 REST_PREFIX = '/rest'
 
 
@@ -23,10 +22,11 @@ class ReSTManager(object):
             if inspect.isclass(model_cls) and issubclass(model_cls, db.Model):
                 # print model_cls
                 if model_cls not in ReSTBase.__subclasses__():
-                    ReSTManager.rest_models.append(type('ReST'+model_cls.__name__, (model_cls, ReSTBase), {}))
+                    ReSTManager.rest_models.append(type('ReST' + model_cls.__name__, (model_cls, ReSTBase), {}))
 
         cls.manager = restless.APIManager(app, flask_sqlalchemy_db=db,
-                                                      preprocessors=ReSTBase.universal_preprocessors())
+                                          preprocessors=ReSTBase.universal_preprocessors(),
+                                          postprocessors=ReSTBase.universal_postprocessors())
         for rest_class in ReSTBase.__subclasses__():
             cls.manager.create_api(rest_class, methods=['GET', 'POST', 'PUT', 'DELETE'],
                                                url_prefix=REST_PREFIX,
