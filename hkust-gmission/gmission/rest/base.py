@@ -1,3 +1,5 @@
+from flask import request
+
 from gmission.blueprints.user import jwt_auth
 
 __author__ = 'chenzhao'
@@ -10,6 +12,13 @@ class ReSTBase(object):
     def universal_before_post(cls, data):
         # print 'Universal before_post'
         data.pop('id', None)
+
+    @classmethod
+    def universal_after_get_many(cls, result=None, search_params=None, **kwargs):
+        if request.method == 'HEAD':
+            if result is not None:
+                result.pop('objects', [])
+        pass
 
     @classmethod
     @jwt_auth()
@@ -37,6 +46,11 @@ class ReSTBase(object):
     @classmethod
     def universal_preprocessors(cls):
         prefix = 'universal_before'
+        return ReSTBase.processor_name_mapping(prefix)
+
+    @classmethod
+    def universal_postprocessors(cls):
+        prefix = 'universal_after'
         return ReSTBase.processor_name_mapping(prefix)
 
     @classmethod
