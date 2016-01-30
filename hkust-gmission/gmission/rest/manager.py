@@ -31,6 +31,7 @@ class ReSTManager(object):
             cls.manager.create_api(rest_class, methods=['GET', 'POST', 'PUT', 'DELETE'],
                                                url_prefix=REST_PREFIX,
                                                results_per_page=None,
+                                               allow_functions=True,
                                                exclude_columns=rest_class.rest_exclude_columns(),
                                                collection_name=rest_class.urlname(),
                                                preprocessors=rest_class.rest_preprocessors(),
