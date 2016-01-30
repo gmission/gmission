@@ -16,7 +16,7 @@ gmissionbyuwsgi:
     - redis:docker-redis
   volumes:
     - ../:/GMission-Server
-    - /etc/timezone:/etc/timezone:ro
+    - /etc/localtime:/etc/localtime:ro
       #- /home/bigstone/MATLAB2014/:/matlab-home
       #- /home/bigstone/workspace/matlab/geocrowdMatlab/:/Matlab-Scripts
   working_dir: /GMission-Server/hkust-gmission
@@ -44,7 +44,7 @@ asyncjobs:
     - phppush:docker-php-push
   volumes:
     - ../:/GMission-Server
-    - /etc/timezone:/etc/timezone:ro
+    - /etc/localtime:/etc/localtime:ro
   environment:
     - C_FORCE_ROOT=true
   working_dir: /GMission-Server/services
@@ -61,7 +61,7 @@ localmysql:
     - "3308:3306"
   volumes:
     - /mysql/data/:/var/lib/mysql/
-    - /etc/timezone:/etc/timezone:ro
+    - /etc/localtime:/etc/localtime:ro
 
 
 redis: # some redis warnings ignored..
@@ -69,7 +69,7 @@ redis: # some redis warnings ignored..
   ports:
     - "6380:6379"
   volumes:
-    - /etc/timezone:/etc/timezone:ro
+    - /etc/localtime:/etc/localtime:ro
 
 
 phppush:
@@ -78,4 +78,4 @@ phppush:
     - "9899:80"
   volumes:
     - ../PHP-push:/app
-    - /etc/timezone:/etc/timezone:ro
+    - /etc/localtime:/etc/localtime:ro
