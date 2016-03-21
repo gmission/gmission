@@ -10,7 +10,7 @@
 
 gmissionbyuwsgi:
     # image: chenzhao/gmission
-  image: freeznet/gmission
+  image: haidaoxiaofei/gmission
   links:
     - localmysql:docker-mysql
     - redis:docker-redis
@@ -38,7 +38,7 @@ gmissionbyuwsgi:
 #   command: celery -A push_msg.task worker
 
 asyncjobs:
-  image: freeznet/gmission
+  image: haidaoxiaofei/gmission
   links:
     - redis:docker-redis
     - phppush:docker-php-push
