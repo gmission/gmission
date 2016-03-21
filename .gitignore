@@ -67,3 +67,4 @@ export-files
 *.3gp
 *.pid
 .DS_Store
+services/bundler/examples
