@@ -11,7 +11,7 @@
 gmissionbyuwsgi:
   image: haidaoxiaofei/gmission
   links:
-    - testlocalmysql:testdocker-mysql
+    - localmysql:docker-mysql
     - redis:docker-redis
   volumes:
     - ../:/GMission-Server
@@ -50,7 +50,7 @@ asyncjobs:
   command: celery -A async_jobs.tasks worker
 
 
-testlocalmysql:
+localmysql:
   image: tutum/mysql:latest
   environment:
     MYSQL_USER: "csp_team"
