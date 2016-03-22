@@ -55,6 +55,8 @@ def config_common(app, root_path):
     app.config['GMISSION_IMAGE_UPLOAD_DIR'] = os.path.join(root_path, 'static', 'image', 'original')
     app.config['GMISSION_IMAGE_THUMB_DIR'] = os.path.join(root_path, 'static', 'image', 'thumb')
 
+    app.config['GMISSION_3D_MODEL_DIR'] = os.path.join(root_path, 'static', '3d_model')
+
     app.config['GMISSION_VIDEO_UPLOAD_DIR'] = os.path.join(root_path, 'static', 'video', 'original')
     app.config['GMISSION_VIDEO_THUMB_DIR'] = os.path.join(root_path, 'static', 'video', 'thumb')
 

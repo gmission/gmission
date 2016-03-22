@@ -12,7 +12,7 @@ import gmail
 from baidu_push import Channel
 from logging.handlers import RotatingFileHandler
 
-#push_key = ('LQpGHpuTYA0lkjQj6zY3ZVfB', 'kkwpcFMTsKhdECYMbEOl7NF1hG2OGd4x')
+push_key = ('OLYzDQA0lCtvhxR8VKPoE19D', 'rUsfEY9sHrqpzqFVENqmoSyffpKMyUSc')
 
 
 def make_celery_logger(logs_path):
@@ -73,7 +73,7 @@ def android_push_task(payload_dict, baidu_user_id):
     filter_datetime(payload_dict)
     logger.info('applying android push task: %s', ','.join(map(repr, [payload_dict, baidu_user_id])))
     push_by_php('ios', message_dict, baidu_user_id)
-    #push_by_native('android', payload_dict, baidu_user_id)
+    push_by_native('android', payload_dict, baidu_user_id)
     #logger.info('applying android push task: %s done', ','.join(map(repr, [payload_dict, baidu_user_id])))
 
 def push_by_php(platform, payload_dict, baidu_user_id):

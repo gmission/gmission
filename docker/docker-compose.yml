@@ -9,7 +9,6 @@
 
 
 gmissionbyuwsgi:
-    # image: chenzhao/gmission
   image: haidaoxiaofei/gmission
   links:
     - localmysql:docker-mysql
@@ -22,7 +21,7 @@ gmissionbyuwsgi:
   working_dir: /GMission-Server/hkust-gmission
   command: uwsgi --ini ../docker/gmission_by_uwsgi/uwsgi.ini
   ports:
-    - "9091:9090"
+    - "9092:9090"
 
 
 # celery:
