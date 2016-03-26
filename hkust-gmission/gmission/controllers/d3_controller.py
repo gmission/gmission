@@ -7,7 +7,7 @@ import os, sys
 
 service_path = os.path.join(ROOT, '../../services')
 sys.path.append(service_path)
-from async_jobs.reconstructor import *
+from bundler.reconstructor import *
 
 def rebuild_3d_sparse_model(hit_id):
     answers = Answer.query.filter(Answer.hit_id == hit_id).filter(Answer.type == '3d').all()
