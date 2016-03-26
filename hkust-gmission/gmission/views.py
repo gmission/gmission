@@ -47,7 +47,13 @@ def test():
 
 @app.route('/3d_request_direction/<hit_id>')
 def request_direction(hit_id):
-    d3_controller.rebuild_3d_sparse_model(hit_id)
+    print hit_id
+    return d3_controller.calculate_next_best_direction(hit_id)
+
+
+@app.route('/build_3d_sparse_models')
+def rebuild_3d_models():
+    d3_controller.rebuild_3d_sparse_models()
     return 'good'
 
 
