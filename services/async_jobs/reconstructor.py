@@ -13,8 +13,12 @@ def find_final_ply_file(model_dir_name):
     model_dir_path = os.path.join(MODELS_ROOT_DIR_PATH, model_dir_name)
     p = subprocess.Popen('ls '+model_dir_path+'/bundle/*.ply', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     currentMaxNumber = 0
-    choosenFile = ''
+    choosenFile = None
+
     for line in p.stdout.readlines():
+        print line
+        if line.find('ls') > -1:
+            break
         tmpNumber = int(line[line.rfind('points') + 6:line.rfind('.')])
         if currentMaxNumber < tmpNumber:
             currentMaxNumber = tmpNumber

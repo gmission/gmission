@@ -15,13 +15,17 @@ def rebuild_3d_sparse_model(hit_id):
     build_3d_model(hit_id)
     final_ply_file = find_final_ply_file(hit_id)
 
+    print 'ply_file', final_ply_file
+
+    if  final_ply_file is None:
+        return
+
     attachment = Attachment(name='a sparse 3D model',
                             type='3d',
                             value=final_ply_file)
     db.session.add(attachment)
     db.session.commit()
 
-    print 'attachment_id', attachment.id
 
-    HIT.query.filter(HIT.id == hit_id).update({'attachment_id', attachment.id}, synchronize_session=False)
+    HIT.query.filter(HIT.id == hit_id).update(dict(attachment_id=attachment.id))
     db.session.commit()

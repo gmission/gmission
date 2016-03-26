@@ -48,6 +48,7 @@ def test():
 @app.route('/3d_request_direction/<hit_id>')
 def request_direction(hit_id):
     d3_controller.rebuild_3d_sparse_model(hit_id)
+    return 'good'
 
 
 def is_cached_url(url):
