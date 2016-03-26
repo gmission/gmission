@@ -1,13 +1,15 @@
 __author__ = 'haidaoxiaofei'
 
 from base import *
+from crowdsourcing import *
+from message import *
 
 
 class Extra(db.Model, BasicModelMixin):
     id = db.Column(db.Integer, primary_key=True)
 
     hit_id = db.Column(db.Integer, db.ForeignKey('hit.id'), nullable=True)
-    hit = db.relationship('Hit', foreign_keys=hit_id)
+    hit = db.relationship('HIT', foreign_keys=hit_id)
 
     answer_id = db.Column(db.Integer, db.ForeignKey('answer.id'), nullable=True)
     answer = db.relationship('Answer', foreign_keys=answer_id)
