@@ -41,19 +41,15 @@ def rebuild_3d_sparse_model(hit_id):
 def calculate_next_best_direction(hit_id):
     answers = Answer.query.filter(Answer.hit_id == hit_id).filter(Answer.type == '3d').all()
     coordinates = [a.location.coordinate for a in answers]
-    print 'here'
     if len(coordinates) == 0:
-        print 'ok?'
-        return 'a'
+        return '0'
 
-    print 'not test'
 
     hit = HIT.query.get(hit_id)
     hit_coordinate = hit.location.coordinate
 
     received_directions = []
 
-    print 'after'
 
     for co in coordinates:
         direction = math.atan2(co.latitude - hit_coordinate.latitude, co.longitude - hit_coordinate.longitude)
