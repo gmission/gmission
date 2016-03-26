@@ -68,3 +68,4 @@ export-files
 *.pid
 .DS_Store
 services/bundler/examples
+hkust-gmission/gmission/static/3d_model/
