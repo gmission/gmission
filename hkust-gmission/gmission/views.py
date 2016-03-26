@@ -8,6 +8,7 @@ from flask_app import app, cache
 import rest
 from flask import render_template, request, redirect, jsonify, g
 from models import *
+from controllers import d3_controller
 
 import json
 
@@ -42,6 +43,11 @@ def test():
         if rule.endpoint != 'static':
             func_list[rule.rule] = app.view_functions[rule.endpoint].__doc__
     return jsonify(func_list)
+
+
+@app.route('/3d_request_direction/<hit_id>')
+def request_direction(hit_id):
+    d3_controller.rebuild_3d_sparse_model(hit_id)
 
 
 def is_cached_url(url):
