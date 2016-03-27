@@ -20,4 +20,6 @@ class Extra(db.Model, BasicModelMixin):
     message_id = db.Column(db.Integer, db.ForeignKey('message.id'), nullable=True)
     message = db.relationship('Message', foreign_keys=message_id)
 
+    content = db.Column(db.String(200))
+
     created_on = db.Column(db.DateTime, default=datetime.datetime.now)
