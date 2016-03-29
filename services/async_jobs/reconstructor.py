@@ -22,13 +22,19 @@ def find_final_ply_file(model_dir_name):
         tmpNumber = int(line[line.rfind('points') + 6:line.rfind('.')])
         if currentMaxNumber < tmpNumber:
             currentMaxNumber = tmpNumber
-            choosenFile = model_dir_name + 'bundle/'+line[line.rfind('points'):]
+            choosenFile = line[line.rfind('points'):]
+
+    choosenFile = choosenFile.strip()
     return choosenFile
 
 
 def build_3d_model(model_dir_name):
     model_dir_path = os.path.join(MODELS_ROOT_DIR_PATH, model_dir_name)
-    p = subprocess.Popen('bash /GMission-Server/services/bundler/RunBundler.sh', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=model_dir_path)
+
+    my_env = os.environ
+    my_env["LD_LIBRARY_PATH"] = "/GMission-Server/services/bundler/bin"
+
+    p = subprocess.Popen('bash /GMission-Server/services/bundler/RunBundler.sh', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=model_dir_path, env=my_env)
     p.wait()
     # for line in p.stdout.readlines():
     #     print line

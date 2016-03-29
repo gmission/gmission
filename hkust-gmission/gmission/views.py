@@ -8,7 +8,8 @@ from flask_app import app, cache
 import rest
 from flask import render_template, request, redirect, jsonify, g
 from models import *
-from controllers import d3_controller
+from gmission.controllers import d3_controller
+
 
 import json
 
@@ -19,6 +20,7 @@ app.register_blueprint(blueprints.audio_bp, url_prefix='/audio')
 # flask_app.register_blueprint(blueprints._bp,     url_prefix='/portal')
 app.register_blueprint(blueprints.shortcut_bp, url_prefix='/shortcut')
 app.register_blueprint(blueprints.shortcut_sd, url_prefix='/definitions')
+app.register_blueprint(blueprints.d3_bp, url_prefix='/d3')
 
 rest.ReSTManager.init_rest(app)
 
@@ -45,16 +47,7 @@ def test():
     return jsonify(func_list)
 
 
-@app.route('/3d_request_direction/<hit_id>')
-def request_direction(hit_id):
-    print hit_id
-    return d3_controller.calculate_next_best_direction(hit_id)
 
-
-@app.route('/build_3d_sparse_models')
-def rebuild_3d_models():
-    d3_controller.rebuild_3d_sparse_models()
-    return 'good'
 
 
 def is_cached_url(url):

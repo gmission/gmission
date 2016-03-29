@@ -17,3 +17,4 @@ from schemadefinition import schemadefinition_blueprint as shortcut_sd
 from image import image_blueprint as image_bp
 from video import video_blueprint as video_bp
 from audio import audio_blueprint as audio_bp
+from three_dimension_model import d3_blueprint as d3_bp

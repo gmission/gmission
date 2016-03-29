@@ -42,6 +42,7 @@ def jwt_auth():
 def jwt_verify():
     # check priv table
     init_priv_table()
+    print request.url_rule
     priv = priv_table[(request.url_rule.rule, request.method)]
 
     try:

@@ -11,13 +11,13 @@ from async_jobs.reconstructor import *
 
 def rebuild_3d_sparse_models():
     for hit in HIT.query.filter(HIT.type == '3d').filter(HIT.status == 'open').all():
-        rebuild_3d_sparse_model(hit.id)
+        rebuild_3d_sparse_model(str(hit.id))
 
 
 
 def rebuild_3d_sparse_model(hit_id):
     answers = Answer.query.filter(Answer.hit_id == hit_id).filter(Answer.type == '3d').all()
-    prepare_images(hit_id, [a.attachment.value for a in answers])
+    # prepare_images(hit_id, [a.attachment.value for a in answers])
     build_3d_model(hit_id)
     final_ply_file = find_final_ply_file(hit_id)
 
