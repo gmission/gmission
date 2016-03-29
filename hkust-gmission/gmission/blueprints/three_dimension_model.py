@@ -20,6 +20,7 @@ def ply_file(hit_id, filename):
 
     ply_file_dir = os.path.join(D3_MODEL_DIR, hit_id).join('bundle')
 
+    print ply_file_dir
     return send_from_directory(ply_file_dir, filename)
 
 
