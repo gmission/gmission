@@ -18,6 +18,10 @@ def ply_file(hit_id, filename):
     print hit_id
     print filename
 
+    print os.path.join(D3_MODEL_DIR, hit_id)
+
+    print D3_MODEL_DIR
+
     ply_file_dir = os.path.join(D3_MODEL_DIR, hit_id).join('bundle')
 
     print ply_file_dir
