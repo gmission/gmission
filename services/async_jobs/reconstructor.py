@@ -4,6 +4,7 @@ __author__ = 'haidaoxiaofei'
 import subprocess
 import os, sys, errno
 import shutil
+from PIL import Image
 
 DATA_PATH_BASE = '/GMission-Server/hkust-gmission/gmission/static'
 IMAGE_DIR_PATH = DATA_PATH_BASE + '/image/original'
@@ -45,7 +46,25 @@ def prepare_images(model_dir_name, images):
     mkdir_p(model_dir_path)
     for image_name in images:
         iamge_path = os.path.join(IMAGE_DIR_PATH, image_name)
-        shutil.copy2(iamge_path, model_dir_path)
+        out_image_path = os.path.join(model_dir_path, image_name)
+        scale_image(iamge_path, model_dir_path)
+        # shutil.copy2(iamge_path, model_dir_path)
+
+def scale_image(inFilePath, outFilePath):
+    size_vertical = 960, 1280
+    size_horizon = 1280, 960
+    try:
+        im = Image.open(inFilePath)
+        origin_width, origin_height = im.size
+
+        if  origin_width > origin_height:
+            im.thumbnail(size_horizon, Image.ANTIALIAS)
+        else:
+            im.thumbnail(size_vertical, Image.ANTIALIAS)
+        im.save(outFilePath, "JPEG")
+    except IOError:
+        print
+        "cannot create scaled file for '%s'" % inFilePath
 
 
 def mkdir_p(path):

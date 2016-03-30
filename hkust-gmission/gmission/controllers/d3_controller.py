@@ -17,7 +17,7 @@ def rebuild_3d_sparse_models():
 
 def rebuild_3d_sparse_model(hit_id):
     answers = Answer.query.filter(Answer.hit_id == hit_id).filter(Answer.type == '3d').all()
-    # prepare_images(hit_id, [a.attachment.value for a in answers])
+    prepare_images(hit_id, [a.attachment.value for a in answers])
     build_3d_model(hit_id)
     final_ply_file = find_final_ply_file(hit_id)
 

@@ -15,15 +15,7 @@ D3_MODEL_DIR = app.config['GMISSION_3D_MODEL_DIR']
 
 @d3_blueprint.route('/ply/<hit_id>/<filename>')
 def ply_file(hit_id, filename):
-    print hit_id
-    print filename
-
-    print os.path.join(D3_MODEL_DIR, hit_id)
-
-    print D3_MODEL_DIR
-
     ply_file_dir = os.path.join(D3_MODEL_DIR, hit_id, 'bundle')
-    print ply_file_dir
     return send_from_directory(ply_file_dir, filename)
 
 
