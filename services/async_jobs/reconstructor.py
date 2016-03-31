@@ -32,9 +32,6 @@ def merge_ply_file(model_dir_name):
     model_dir_path = os.path.join(MODELS_ROOT_DIR_PATH, model_dir_name, 'bundle')
     p = subprocess.Popen('ls ' + model_dir_path + '/*.ply', shell=True, stdout=subprocess.PIPE,
                          stderr=subprocess.STDOUT)
-    currentMaxNumber = 0
-    choosenFile = None
-
     points_count = []
 
     ply_files = p.stdout.readlines()
@@ -90,8 +87,6 @@ def build_3d_model(model_dir_name):
 
     p = subprocess.Popen('bash /GMission-Server/services/bundler/RunBundler.sh', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=model_dir_path, env=my_env)
     p.wait()
-    # for line in p.stdout.readlines():
-    #     print line
 
 
 def prepare_images(model_dir_name, images):
