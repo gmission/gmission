@@ -47,7 +47,7 @@ def prepare_images(model_dir_name, images):
     for image_name in images:
         iamge_path = os.path.join(IMAGE_DIR_PATH, image_name)
         out_image_path = os.path.join(model_dir_path, image_name)
-        scale_image(iamge_path, model_dir_path)
+        scale_image(iamge_path, out_image_path)
         # shutil.copy2(iamge_path, model_dir_path)
 
 def scale_image(inFilePath, outFilePath):
