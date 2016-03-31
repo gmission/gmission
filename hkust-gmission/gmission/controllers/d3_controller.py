@@ -9,21 +9,19 @@ service_path = os.path.join(ROOT, '../../services')
 sys.path.append(service_path)
 from async_jobs.reconstructor import *
 
+
 def rebuild_3d_sparse_models():
     for hit in HIT.query.filter(HIT.type == '3d').filter(HIT.status == 'open').all():
         rebuild_3d_sparse_model(str(hit.id))
-
 
 
 def rebuild_3d_sparse_model(hit_id):
     answers = Answer.query.filter(Answer.hit_id == hit_id).filter(Answer.type == '3d').all()
     prepare_images(hit_id, [a.attachment.value for a in answers])
     build_3d_model(hit_id)
-    final_ply_file = find_final_ply_file(hit_id)
+    final_ply_file = merge_ply_file(hit_id)
 
-    print 'ply_file', final_ply_file
-
-    if  final_ply_file is None:
+    if final_ply_file is None:
         return
 
     attachment = Attachment(name='a sparse 3D model',
@@ -32,10 +30,8 @@ def rebuild_3d_sparse_model(hit_id):
     db.session.add(attachment)
     db.session.commit()
 
-
     HIT.query.filter(HIT.id == hit_id).update(dict(attachment_id=attachment.id))
     db.session.commit()
-
 
 
 def calculate_next_best_direction(hit_id):
@@ -44,12 +40,10 @@ def calculate_next_best_direction(hit_id):
     if len(coordinates) == 0:
         return '0'
 
-
     hit = HIT.query.get(hit_id)
     hit_coordinate = hit.location.coordinate
 
     received_directions = []
-
 
     for co in coordinates:
         direction = math.atan2(co.latitude - hit_coordinate.latitude, co.longitude - hit_coordinate.longitude)

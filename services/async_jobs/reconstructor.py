@@ -28,6 +28,59 @@ def find_final_ply_file(model_dir_name):
     choosenFile = choosenFile.strip()
     return choosenFile
 
+def merge_ply_file(model_dir_name):
+    model_dir_path = os.path.join(MODELS_ROOT_DIR_PATH, model_dir_name, 'bundle')
+    p = subprocess.Popen('ls ' + model_dir_path + '/*.ply', shell=True, stdout=subprocess.PIPE,
+                         stderr=subprocess.STDOUT)
+    currentMaxNumber = 0
+    choosenFile = None
+
+    points_count = []
+
+    ply_files = p.stdout.readlines()
+    for line in ply_files:
+        points_count.append(file_len(os.path.join(model_dir_path, line)) - 13)
+
+    total_points_count = sum(points_count)
+
+    f = open(os.path.join(model_dir_path, 'total_points.ply'), 'w')
+    header = """ply
+format ascii 1.0
+element face 0
+property list uchar int vertex_indices
+element vertex lineNumber
+property float x
+property float y
+property float z
+property uchar diffuse_red
+property uchar diffuse_green
+property uchar diffuse_blue
+end_header"""
+    header = header.replace('lineNumber', str(total_points_count))
+    f.write(header)
+    f.write('\n')
+
+    for index, ply_file in enumerate(ply_files):
+        in_file = open(ply_file.strip(), 'r')
+        line_number = 0
+
+        for line in in_file:
+            line_number += 1
+            if line_number <= 12 or line_number > points_count[index] + 12 :
+                continue
+            else:
+                f.write(line)
+
+    f.close()
+    return 'total_points.ply'
+
+
+
+def file_len(fname):
+    p = subprocess.Popen('wc -l '+ fname, shell=True, stdout=subprocess.PIPE,
+                         stderr=subprocess.STDOUT)
+    result = p.stdout.readlines()[0]
+    return int(result.strip().split()[0])
 
 def build_3d_model(model_dir_name):
     model_dir_path = os.path.join(MODELS_ROOT_DIR_PATH, model_dir_name)
@@ -43,12 +96,14 @@ def build_3d_model(model_dir_name):
 
 def prepare_images(model_dir_name, images):
     model_dir_path = os.path.join(MODELS_ROOT_DIR_PATH, model_dir_name)
+
     mkdir_p(model_dir_path)
+    clean_dir(model_dir_path)
     for image_name in images:
         iamge_path = os.path.join(IMAGE_DIR_PATH, image_name)
         out_image_path = os.path.join(model_dir_path, image_name)
         scale_image(iamge_path, out_image_path)
-        # shutil.copy2(iamge_path, model_dir_path)
+
 
 def scale_image(inFilePath, outFilePath):
     size_vertical = 960, 1280
@@ -67,6 +122,18 @@ def scale_image(inFilePath, outFilePath):
         "cannot create scaled file for '%s'" % inFilePath
 
 
+def clean_dir(folder_path):
+    for the_file in os.listdir(folder_path):
+        file_path = os.path.join(folder_path, the_file)
+        try:
+            if os.path.isfile(file_path):
+                os.unlink(file_path)
+            elif os.path.isdir(file_path):
+                shutil.rmtree(file_path)
+        except Exception as e:
+            print(e)
+
+
 def mkdir_p(path):
     try:
         os.makedirs(path)
@@ -76,6 +143,3 @@ def mkdir_p(path):
         else:
             raise
 
-
-# build_3d_model('examples/ET')
-# print find_final_ply_file('examples/ET')
