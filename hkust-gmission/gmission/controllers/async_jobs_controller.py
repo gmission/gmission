@@ -22,7 +22,7 @@ def send_reg_email_async(user):
 
 Please take a moment to verify your email address by clicking the link below.
 
-http://lccpu3.cse.ust.hk/gmission-dev/user/email_verify/%s
+http://lccpu4.cse.ust.hk/gmission-dev/user/email_verify/%s
 
 If clicking the link doesn't work, copy and paste the link into your browser's address bar.
 
