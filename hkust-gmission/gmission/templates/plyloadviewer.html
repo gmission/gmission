@@ -46,8 +46,8 @@ body {
 <script>dojoConfig = {async: true, parseOnLoad: true}</script>
 <script src="http://ajax.googleapis.com/ajax/libs/dojo/1.8/dojo/dojo.js"></script>
 {#<script type="text/javascript" src="{{url_for('static',filename='js/mjs.min.js')}}"></script>#}
-    <script type="text/javascript" src="http:/lccpu4.cse.ust.hk/gmission/static/js/mjs.min.js"></script>
-<script type="text/javascript" src="http:/lccpu4.cse.ust.hk/gmission/static/js/potree.min.js"></script>
+    <script type="text/javascript" src="http:/lccpu3.cse.ust.hk/gmission/static/js/mjs.min.js"></script>
+<script type="text/javascript" src="http:/lccpu3.cse.ust.hk/gmission/static/js/potree.min.js"></script>
 
 <script>require(["dojo/parser", "dijit/Toolbar", "dijit/form/Button", "dijit/form/ToggleButton", "dijit/ToolbarSeparator",
 	"dijit/form/HorizontalSlider", "dijit/Dialog", "dojo/domReady!"]);</script>
@@ -61,8 +61,8 @@ require(["dojox/layout/FloatingPane"]);
 <script type="text/javascript">
 
 var plyNode = null;
-{#var projectName = "/gmission";#}
-var projectName = "";
+var projectName = "/gmission";
+{#var projectName = "";#}
 
 function centerData(){
 	if(plyNode != null){
@@ -107,7 +107,6 @@ function resetCamera(){
 function loadPly(){
 	$("#progress").fadeIn(300);
 	$("#progressMessage")[0].innerHTML = "loading data.";
-    alert(window.location.origin);
 
 // 'http://lccpu4.cse.ust.hk/gmission/d3/ply/1/total_points.ply'
 	PlyLoader.load({
