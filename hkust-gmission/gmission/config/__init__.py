@@ -61,6 +61,7 @@ def config_common(app, root_path):
     app.config['GMISSION_VIDEO_THUMB_DIR'] = os.path.join(root_path, 'static', 'video', 'thumb')
 
     app.config['GMISSION_AUDIO_UPLOAD_DIR'] = os.path.join(root_path, 'static', 'audio', 'original')
+    app.config['GMISSION_HTML_DIR'] = os.path.join(root_path, 'static', 'html')
 
     app.config['GMISSION_LOGS_DIR'] = os.path.join(root_path, 'logs')
 

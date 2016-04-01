@@ -1,0 +1,254 @@
+<html>
+<head>
+<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/dojo/1.9.2/dijit/themes/claro/claro.css" media="screen">
+
+<style type="text/css">
+	@import url("http://ajax.googleapis.com/ajax/libs/dojo/1.9.2/dojox/layout/resources/FloatingPane.css");
+	@import url("http://ajax.googleapis.com/ajax/libs/dojo/1.9.2/dojox/layout/resources/ResizeHandle.css");
+</style>
+
+<style type="text/css">
+body {
+	margin: 0;
+}
+
+#workarea {
+	position: absolute;
+	left: 0px;
+	right: 0px;
+	top:	0px;
+	bottom: 0px;
+	z-index:	10;
+}
+
+#canvas{
+	width:	100%;
+	height:	100%;
+}
+
+#toolbar{
+	z-index:	20;
+	position:	absolute;
+	left:		0px;
+	right:		0px;
+}
+
+#progress{
+	z-index:	20;
+}
+
+</style>
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+
+<script>dojoConfig = {async: true, parseOnLoad: true}</script>
+<script src="http://ajax.googleapis.com/ajax/libs/dojo/1.8/dojo/dojo.js"></script>
+
+<script type="text/javascript" src="../js/mjs.min.js"></script>
+<script type="text/javascript" src="../js/potree.min.js"></script>
+
+<script>require(["dojo/parser", "dijit/Toolbar", "dijit/form/Button", "dijit/form/ToggleButton", "dijit/ToolbarSeparator",
+	"dijit/form/HorizontalSlider", "dijit/Dialog", "dojo/domReady!"]);</script>
+
+<script>
+
+require(["dojox/layout/FloatingPane"]);
+
+</script>
+
+<script type="text/javascript">
+
+var plyNode = null;
+
+function centerData(){
+	if(plyNode != null){
+		Potree.currentScene.activeCamera.zoomTo(plyNode, 0.8);
+	}
+}
+
+function flipY(){
+	if(plyNode != null){
+		plyNode.scale(1,-1,1);
+	}
+}
+
+function flipYZ(){
+	if(plyNode != null){
+		//plyNode.rotateX(Math.PI/2);
+
+		var t = [	1, 0, 0, 0,
+					0, 0, 1, 0,
+					0, 1, 0, 0,
+					0, 0, 0, 1];
+		var t = M4x4.mul(t, plyNode.transform);
+		plyNode.transform = t;
+	}
+}
+
+function help(){
+	dijit.byId('fpHelp').show();
+}
+
+function resetCamera(){
+	Potree.currentScene.activeCamera.resetTransformation();
+	Potree.currentScene.activeCamera.farClipPlane = 10000;
+	Potree.currentScene.activeCamera.pitch = -0.5;
+
+	if(plyNode != null){
+		Potree.currentScene.activeCamera.zoomTo(plyNode, 0.8);
+	}
+}
+
+
+function loadPly(){
+	$("#progress").fadeIn(300);
+	$("#progressMessage")[0].innerHTML = "loading data.";
+
+// 'http://lccpu4.cse.ust.hk/gmission/d3/ply/1/total_points.ply'
+	PlyLoader.load({
+		"file": 'http://lccpu4.cse.ust.hk/plyviewer/points1.ply',
+		"finishedLoading" : function(pointCloud){
+			$("#progressMessage")[0].innerHTML = "loading finished";
+			if(plyNode != null){
+				plyNode.parent.removeChild(plyNode);
+				plyNode.pointCloud.unload();
+			}
+
+			// make navigation speed dependend on the size of the bounding box
+//			Potree.camHandler.speedMultiplier = pointCloud.aabb.radius * 0.05;
+			Potree.currentScene.activeCamera.farClipPlane = pointCloud.aabb.radius * 10;
+			Potree.camHandler.zoomSpeed = pointCloud.aabb.radius * 0.05;
+
+			plyNode = new PointCloudSceneNode("plyNode", Potree.currentScene.rootNode, pointCloud);
+			Potree.currentScene.activeCamera.zoomTo(plyNode, 0.8);
+			$("#progress").fadeOut(300);
+		},
+		"pointsLoaded" : function(numLoadedPoints, numPoints){
+			var progress = (numLoadedPoints / numPoints)*100;
+			$("#progressMessage")[0].innerHTML = "parsing points: " + numLoadedPoints + " / " + numPoints;
+			$("#progress").fadeIn(300);
+			$("#progressbar").progressbar({value: progress});
+		},
+		"fileLoadProgress" : function(percent){
+			$("#progressMessage")[0].innerHTML = "loading file: " + parseInt(percent) + "%";
+			$("#progress").fadeIn(300);
+			$("#progressbar").progressbar({value: percent});
+		}
+	});
+}
+
+
+function setPointSize(size){
+	$("#lblPointSize")[0].innerHTML = size.toFixed(2);
+	MaterialManager.getMaterial("pointCloud").pointSize = size;
+}
+
+function initToolbar(){
+	require(["dojo/parser", "dijit/Toolbar", "dijit/form/Button", "dijit/form/ToggleButton", "dijit/ToolbarSeparator"]);
+}
+
+function initItems(){
+	require([
+		"dojo/dom",
+		"dojo/parser",
+		"dijit/form/HorizontalSlider",
+		"dijit/form/TextBox"
+    ], function (dom, parser, HorizontalSlider, TextBox) {
+		parser.parse();
+
+      var slider = new HorizontalSlider({
+			name: "slider",
+			value: 1,
+			minimum: 0,
+			maximum: 2,
+			intermediateChanges: true,
+			style: "width:150px;",
+			onChange: function(value){
+				setPointSize(value);
+			}
+		}, "sldPointSize");
+
+    });
+}
+
+function initGUI(){
+	initToolbar();
+	initItems();
+}
+
+function init(){
+	var canvas = document.getElementById('canvas');
+
+	// init potree
+	var success = Potree.init(canvas);
+	if(!success){
+		return;
+	}
+
+	resetCamera();
+	var cloudURL = "resources/pointclouds/lion_takanawa.ply";
+	setPointSize(1);
+	Potree.camHandler = new EarthCamHandler(Potree.currentScene.activeCamera);
+
+	initGUI();
+
+	loadPly();
+//	canvas.focus();
+}
+
+function canvasClicked(event){
+	Potree.canvas.focus();
+}
+</script>
+
+
+
+
+
+
+
+</head>
+
+<body onload="init()" class="claro" >
+	<div id="toolbar" data-dojo-type="dijit/Toolbar">
+		<span>
+		<span style="float: left" data-dojo-type="dijit/form/Button" id="toolbar.resetCam" data-dojo-props="showLabel:true" onclick="resetCamera()">reset camera</span>
+		<span style="float: left" data-dojo-type="dijit/form/Button" id="toolbar.centerCam" data-dojo-props="showLabel:true" onclick="centerData()">center camera</span>
+		<span style="float: left" data-dojo-type="dijit/form/Button" id="toolbar.flipy" data-dojo-props="showLabel:true" onclick="flipY()">flip y</span>
+		<span style="float: left" data-dojo-type="dijit/form/Button" id="toolbar.flipyz" data-dojo-props="showLabel:true" onclick="flipYZ()">flip y-z</span>
+		<span style="float: left" data-dojo-type="dijit/ToolbarSeparator"></span>
+		<span style="float: left">
+			<label style="float: left" for="lblPointSize">PointSize: </label>
+			<span style="float: left" id="lblPointSize"></span>
+			<span style="float: left"><span id="sldPointSize"></span></span>
+			<span style="float: clear"></span>
+
+		</span>
+		<span style="float: right" data-dojo-type="dijit/form/Button" id="toolbar.help" data-dojo-props="showLabel:true" onclick="help()">help</span>
+		<span style="float: clear">&nbsp;&nbsp;</span>
+		</span>
+	</div>
+	<div id="workarea" style="">
+		<canvas id="canvas" width="800" height="600" tabindex="1" onmousedown="canvasClicked(event)">
+			Your Browser does not support WebGL. Try the newest version of Firefox or Google Chrome.
+		</canvas>
+	</div>
+	<div id="progress" style="position:absolute; display: none; background: #fff; bottom: 100px; left: 40%; right: 40%;  padding: 10px 10px 15px 10px; border-radius: 4px">
+		<div id="progressMessage" style="margin: 3px auto; text-align: center ">Message</div>
+		<div id="progressbar" style=" height: 10px"></div>
+	</div>
+
+	<div dojoType="dojox.layout.FloatingPane" title="Help & Info" style="width:400px; position:absolute; top:40px; left:20px; z-index: 20; padding: 0; " closable="false" id="fpHelp">
+		<div style="margin: 10px;">
+		Drag and Drop a PLY file into the black area to load it.<br>
+		<br>
+		Use the left mouse button to move the object. <br>
+		Hold shift and click on the object to rotate it. <br>
+		Use the scroll wheel to zoom in and out.<br>
+
+		</div>
+	</div>
+</body>
+</html>

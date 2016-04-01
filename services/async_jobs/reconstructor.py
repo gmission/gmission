@@ -43,16 +43,21 @@ def merge_ply_file(model_dir_name):
     f = open(os.path.join(model_dir_path, 'total_points.ply'), 'w')
     header = """ply
 format ascii 1.0
-element face 0
-property list uchar int vertex_indices
 element vertex lineNumber
 property float x
 property float y
 property float z
-property uchar diffuse_red
-property uchar diffuse_green
-property uchar diffuse_blue
+property float nx
+property float ny
+property float nz
+property uchar red
+property uchar green
+property uchar blue
+property uchar alpha
+element face 0
+property list uchar int vertex_indices
 end_header"""
+
     header = header.replace('lineNumber', str(total_points_count))
     f.write(header)
     f.write('\n')
@@ -66,7 +71,9 @@ end_header"""
             if line_number <= 12 or line_number > points_count[index] + 12 :
                 continue
             else:
-                f.write(line)
+                words = line.strip().split()
+
+                f.write(words[0] + ' ' + words[1] + ' ' + words[2] + ' 0 0 0 ' + words[3] + ' ' + words[4] + ' ' + words[5] + ' 255\n')
 
     f.close()
     return 'total_points.ply'
