@@ -21,7 +21,7 @@ gmissionbyuwsgi:
   working_dir: /GMission-Server/hkust-gmission
   command: uwsgi --ini ../docker/gmission_by_uwsgi/uwsgi.ini
   ports:
-    - "9092:9090"
+    - "9091:9090"
 
 
 # celery:
@@ -57,7 +57,7 @@ localmysql:
     MYSQL_PASS: "csp2014hkust"
     ON_CREATE_DB: "gmission_hkust"
   ports:
-    - "3309:3306"
+    - "3308:3306"
   volumes:
     - /mysql/data/:/var/lib/mysql/
     - /etc/localtime:/etc/localtime:ro
@@ -66,7 +66,7 @@ localmysql:
 redis: # some redis warnings ignored..
   image: redis
   ports:
-    - "6381:6379"
+    - "6380:6379"
   volumes:
     - /etc/localtime:/etc/localtime:ro
 
@@ -74,7 +74,7 @@ redis: # some redis warnings ignored..
 phppush:
   image: tutum/apache-php
   ports:
-    - "9898:80"
+    - "9899:80"
   volumes:
     - ../PHP-push:/app
     - /etc/localtime:/etc/localtime:ro

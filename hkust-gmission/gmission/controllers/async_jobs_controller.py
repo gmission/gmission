@@ -45,11 +45,11 @@ def send_view_ply_email_async(user_id, hit_id, filename):
     body = """
 You can view the 3D model from the URL below:
 
-http://lccpu3.cse.ust.hk/gmission/d3/view/<hit_id>/<filename>
+http://lccpu3.cse.ust.hk/gmission-dev/d3/view/<hit_id>/<filename>
 
 If you want to download the model, please visit the URL below:
 
-http://lccpu3.cse.ust.hk/gmission/d3/ply/<hit_id>/<filename>
+http://lccpu3.cse.ust.hk/gmission-dev/d3/ply/<hit_id>/<filename>
 
 If clicking the link doesn't work, copy and paste the link into your browser's address bar. We recommend Chrome, Firefox and Safari.
 
