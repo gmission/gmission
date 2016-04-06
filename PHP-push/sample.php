@@ -2,8 +2,8 @@
 require_once("Channel.class.php");
 
 //请开发者设置自己的apiKey与secretKey
-$apiKey = "cK1GnOiXFLTRvXP5RZwXZo3e";
-$secretKey = "lpjfkZSMCB28jmqMAyPVPcUNhIt21Rwo";
+$apiKey = "OLYzDQA0lCtvhxR8VKPoE19D";
+$secretKey = "rUsfEY9sHrqpzqFVENqmoSyffpKMyUSc";
 
 
 function error_output ( $str ) 
@@ -229,3 +229,6 @@ function test_deleteAppIoscert ( )
         right_output ( 'result: ' . print_r ( $ret, true ) ) ;
     }
 }
+
+
+test_pushMessage_android('583830720621429081')

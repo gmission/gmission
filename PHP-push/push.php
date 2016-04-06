@@ -23,8 +23,8 @@ function right_output ( $str )
 
 
 //请开发者设置自己的apiKey与secretKey
-$apiKey = "OLYzDQA0lCtvhxR8VKPoE19D";
-$secretKey = "rUsfEY9sHrqpzqFVENqmoSyffpKMyUSc";
+$apiKey = "LQpGHpuTYA0lkjQj6zY3ZVfB";
+$secretKey = "kkwpcFMTsKhdECYMbEOl7NF1hG2OGd4x";
 
 
 //推送android设备消息
@@ -143,7 +143,6 @@ if ($platform=='android'){
 }else{
     error_output ('INVALID PARAMETERS!');
 }
-
 
 
 

@@ -21,6 +21,7 @@ app.register_blueprint(blueprints.audio_bp, url_prefix='/audio')
 app.register_blueprint(blueprints.shortcut_bp, url_prefix='/shortcut')
 app.register_blueprint(blueprints.shortcut_sd, url_prefix='/definitions')
 app.register_blueprint(blueprints.d3_bp, url_prefix='/d3')
+app.register_blueprint(blueprints.test_bp, url_prefix='/test_set')
 
 rest.ReSTManager.init_rest(app)
 

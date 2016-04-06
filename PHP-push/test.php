@@ -6,12 +6,12 @@
  * Time: 3:53 PM
  */
 
-phpinfo();
+//phpinfo();
 
 require_once("sample.php");
 require_once("push.php");
 
-$userId = '1044981726564561550';
+$userId = '3954298542610496812';
 
 test_pushMessage_android($userId);
 test_pushMessage_ios($userId);
