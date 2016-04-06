@@ -72,8 +72,8 @@ def ios_push_task(alert, payload_dict, baidu_user_id):
 def android_push_task(payload_dict, baidu_user_id):
     filter_datetime(payload_dict)
     logger.info('applying android push task: %s', ','.join(map(repr, [payload_dict, baidu_user_id])))
-    push_by_php('ios', message_dict, baidu_user_id)
-    push_by_native('android', payload_dict, baidu_user_id)
+    push_by_php('android', message_dict, baidu_user_id)
+    # push_by_native('android', payload_dict, baidu_user_id)
     #logger.info('applying android push task: %s done', ','.join(map(repr, [payload_dict, baidu_user_id])))
 
 def push_by_php(platform, payload_dict, baidu_user_id):
