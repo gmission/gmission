@@ -11,9 +11,9 @@ from async_jobs.tasks import ios_push_task, android_push_task
 
 test_blueprint = Blueprint('test', __name__, template_folder='templates')
 
-TEST_USER_ID = '583830720621429081'
+TEST_USER_CHANNEL_ID = '3954298542610496812'
 
 @test_blueprint.route('/test_android_message/<message>')
 def send_message_android(message):
-    android_push_task.apply_async((message, TEST_USER_ID))
+    android_push_task.apply_async((message, TEST_USER_CHANNEL_ID))
     return 'good'
