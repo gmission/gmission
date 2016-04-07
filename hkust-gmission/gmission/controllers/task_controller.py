@@ -43,7 +43,21 @@ def close_task_and_pay_workers(task):
 
 
 def assign_task_to_workers(task):
-    assign_task_to_all_possible_workers(task)
+    if task.campaign_id is not None:
+        assign_task_to_campaign_workers(task)
+    else:
+        assign_task_to_all_possible_workers(task)
+
+    pass
+
+
+def assign_task_to_campaign_workers(task):
+    campaign_users = CampaignUser.query\
+        .filter(CampaignUser.campaign_id == task.campaign_id)\
+        .filter(CampaignUser.user_id != task.requester_id).all()
+
+    users = [campaign_user.user for campaign_user in campaign_users]
+    send_request_messages(task, users)
     pass
 
 # def assign_task_to_knn_workers(task, k_in_knn=10):
