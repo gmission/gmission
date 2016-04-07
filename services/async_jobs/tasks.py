@@ -9,7 +9,6 @@ import os.path
 import requests
 import logging
 import gmail
-from baidu_push import Channel
 from logging.handlers import RotatingFileHandler
 
 push_key = ('OLYzDQA0lCtvhxR8VKPoE19D', 'rUsfEY9sHrqpzqFVENqmoSyffpKMyUSc')
@@ -58,65 +57,35 @@ def filter_datetime(message_dict):
 
 
 @celery_app.task()
-def ios_push_task(alert, payload_dict, baidu_user_id):
+def ios_push_task(alert, payload_dict, baidu_channel_id):
     filter_datetime(payload_dict)
-    logger.info('applying ios push task: %s', ','.join(map(repr, [alert, payload_dict, baidu_user_id])))
+    logger.info('applying ios push task: %s', ','.join(map(repr, [alert, payload_dict, baidu_channel_id])))
     message_dict = {"aps": {"alert": alert, "sound": "default", "badge": 1}, 'payload': payload_dict}
 
-    push_by_php('ios', message_dict, baidu_user_id)
-    #push_by_native('ios', message_dict, baidu_user_id)
-    #logger.info('applying ios push task: %s done', ','.join(map(repr, [alert, payload_dict, baidu_user_id])))
+    push_by_php('ios', message_dict, baidu_channel_id)
+    #logger.info('applying ios push task: %s done', ','.join(map(repr, [alert, payload_dict, baidu_channel_id])))
 
 
 @celery_app.task()
-def android_push_task(payload_dict, baidu_user_id):
+def android_push_task(payload_dict, baidu_channel_id):
     filter_datetime(payload_dict)
-    logger.info('applying android push task: %s', ','.join(map(repr, [payload_dict, baidu_user_id])))
-    push_by_php('android', message_dict, baidu_user_id)
-    # push_by_native('android', payload_dict, baidu_user_id)
-    #logger.info('applying android push task: %s done', ','.join(map(repr, [payload_dict, baidu_user_id])))
+    logger.info('applying android push task: %s', ','.join(map(repr, [payload_dict, baidu_channel_id])))
+    push_by_php('android', payload_dict, baidu_channel_id)
+    #logger.info('applying android push task: %s done', ','.join(map(repr, [payload_dict, baidu_channel_id])))
 
-def push_by_php(platform, payload_dict, baidu_user_id):
+
+def push_by_php(platform, payload_dict, baidu_channel_id):
     app = 'gmission'
     push_url = 'http://docker-php-push/push.php'
 
-    params = dict(app=app, platform=platform, message=json.dumps(payload_dict), user_id=baidu_user_id)
-    if platform=='android':
-        msgkey = str(random.randint(10000000, 999999999))  # useful only if platform == 'android':
-        params['message_key'] = msgkey
-    elif platform=='ios':
+    params = dict(app=app, platform=platform, message=json.dumps(payload_dict), channel_id=baidu_channel_id)
+    if platform=='ios':
         params['deploy_status'] = 'both' #'production' # 'developing'
+
     r = requests.get(push_url, params=params)
     print r.url
     if r.status_code != 200:
-        logger.info('async push task failed: %s', ','.join(map(repr, [app, platform, payload_dict, baidu_user_id])))
+        logger.info('async push task failed: %s', ','.join(map(repr, [app, platform, payload_dict, baidu_channel_id])))
     else:
-        logger.info('async push task succeeded: %s', ','.join(map(repr, [app, platform, payload_dict, baidu_user_id])))
+        logger.info('async push task succeeded: %s', ','.join(map(repr, [app, platform, payload_dict, baidu_channel_id])))
     print r.text
-
-
-def push_by_native(platform, payload_dict, baidu_user_id):
-    (api_key, secret_key) = push_key
-    c = Channel(api_key, secret_key)
-    push_by_native_inner(c, platform, payload_dict, baidu_user_id)
-
-
-def push_by_native_inner(channel, platform, payload_dict, baidu_user_id):
-    optional = dict()
-    message_key = str(random.randint(10000000, 999999999))  # useful only if platform == 'android':
-    if platform == 'ios':
-        optional[Channel.DEVICE_TYPE] = Channel.DEVICE_IOS
-        optional[Channel.MESSAGE_TYPE] = Channel.PUSH_NOTIFICATION
-        optional['deploy_status'] = 1
-    else:
-        optional[Channel.DEVICE_TYPE] = Channel.DEVICE_ANDRIOD
-        optional[Channel.MESSAGE_TYPE] = Channel.PUSH_MESSAGE
-
-    optional[Channel.USER_ID] = baidu_user_id
-    ret = channel.pushMessage(Channel.PUSH_TO_USER, payload_dict, message_key, optional)
-    if ret:
-        logger.info('async push task success: %s',
-                    ','.join(map(repr, [platform, payload_dict, baidu_user_id])))
-    else:
-        logger.info('async push task failed: %s',
-                    ','.join(map(repr, [platform, payload_dict, baidu_user_id])))

@@ -16,11 +16,11 @@ from async_jobs.tasks import ios_push_task, android_push_task
 def push_message_async(message_obj):
     def apply_push_task_for_message(baidu_push_info, message_dict):
         if baidu_push_info.type == 'android':
-            android_push_task.apply_async((message_dict, baidu_push_info.baidu_user_id))
+            android_push_task.apply_async((message_dict, baidu_push_info.baidu_channel_id))
         elif baidu_push_info.type == 'ios':
             ios_push_task.apply_async((message_dict['content'],
-                                       {'type': 'Message', 'id': message_dict['id']}, baidu_push_info.baidu_user_id))
-        push_msg_logger.info('sent to MQ %s %s', repr(message_dict), repr(baidu_push_info.baidu_user_id))
+                                       {'type': 'Message', 'id': message_dict['id']}, baidu_push_info.baidu_channel_id))
+        push_msg_logger.info('sent to MQ %s %s', repr(message_dict), repr(baidu_push_info.baidu_channel_id))
 
     bindlist = BaiduPushInfo.query.filter(BaiduPushInfo.user_id == message_obj.receiver_id,
                                           BaiduPushInfo.is_valid == True).all()
