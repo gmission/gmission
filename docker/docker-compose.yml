@@ -24,18 +24,6 @@ gmissionbyuwsgi:
     - "9091:9090"
 
 
-# celery:
-#   image: chenzhao/gmission
-#   links:
-#     - redis:docker-redis
-#     - phppush:docker-php-push
-#   volumes:
-#     - ../:/GMission-Server
-#   environment:
-#     - C_FORCE_ROOT=true
-#   working_dir: /GMission-Server/services
-#   command: celery -A push_msg.task worker
-
 asyncjobs:
   image: haidaoxiaofei/gmission
   links:

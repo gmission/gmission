@@ -21,17 +21,18 @@ function right_output ( $str )
 }
 
 
-//推送android设备消息
+//push message to android devices
 function pushMessage_android($channel_id, $message)
 {
-    $sdk = new PushSDK();
+    $apiKey = 'OLYzDQA0lCtvhxR8VKPoE19D';
+    $secretkey = 'rUsfEY9sHrqpzqFVENqmoSyffpKMyUSc';
+    $sdk = new PushSDK($apiKey, $secretkey);
 
     $opts = array (
-        'msg_type' => 0, //1表示通知，0表示透传
+        'msg_type' => 0, //1 means notifications，0 means messages
         'device_type' => 3
     );
 
-    // 向目标设备发送一条消息
     $rs = $sdk -> pushMsgToSingleDevice($channel_id, $message, $opts);
 
 
@@ -50,7 +51,7 @@ function pushMessage_android($channel_id, $message)
 }
 
 
-//推送ios设备消息
+//push message to ios devices
 
 function pushMessage_ios_developing($user_id, $message)
 {
@@ -68,22 +69,16 @@ function pushMessage_ios_production($user_id, $message)
 
 function pushMessage_ios ($channel_id, $message, $deploy_status)
 {
-    $sdk = new PushSDK();
-
-//    $message = array (
-//        'aps' => array (
-//            // 消息内容
-//            'alert' => "hello, this message from baidu push service.",
-//        ),
-//    );
+    $apiKey = 'LQpGHpuTYA0lkjQj6zY3ZVfB';
+    $secretkey = 'kkwpcFMTsKhdECYMbEOl7NF1hG2OGd4x';
+    $sdk = new PushSDK($apiKey, $secretkey);
 
     $opts = array (
-        'msg_type' => 0, //1表示通知，0表示透传
-        'deploy_status' => $deploy_status,   // iOS应用的部署状态:  1：开发状态；2：生产状态； 若不指定，则默认设置为生产状态。
+        'msg_type' => 0, //1 means notifications，0 means messages
+        'deploy_status' => $deploy_status,   // iOS App deployment status :  1：development；2：production； if not configured, default is production
         'device_type' => 4
     );
 
-    // 向目标设备发送一条消息
     $rs = $sdk -> pushMsgToSingleDevice($channel_id, $message, $opts);
 
 
