@@ -78,25 +78,25 @@ def init_priv_table():
 
         push_priv_rule('/rest/attachment', ['GET'], priv(role=[role_admin], skip_with_query=True))
         push_priv_rule('/rest/attachment', ['POST', 'PUT', 'DELETE'], priv(role=role_everyone))
-        push_priv_rule('/rest/attachment/<instid>', ['GET','POST', 'PUT', 'DELETE'], priv(role=role_everyone))
+        push_priv_rule('/rest/attachment/<instid>', ['GET', 'POST', 'PUT', 'DELETE'], priv(role=role_everyone))
 
         push_priv_rule('/rest/campaign', ['GET', 'POST', 'PUT', 'DELETE'], priv(role=role_everyone))
         push_priv_rule('/rest/campaign/<instid>', ['GET', 'POST', 'PUT', 'DELETE'], priv(role=role_everyone))
 
         push_priv_rule('/rest/campaign_role', ['GET'], priv(role=[role_admin], skip_with_query=True))
         push_priv_rule('/rest/campaign_role', ['POST', 'PUT', 'DELETE'], priv(role=role_everyone))
-        push_priv_rule('/rest/campaign_role/<instid>', ['GET','POST', 'PUT', 'DELETE'], priv(role=role_everyone))
+        push_priv_rule('/rest/campaign_role/<instid>', ['GET', 'POST', 'PUT', 'DELETE'], priv(role=role_everyone))
 
         push_priv_rule('/rest/campaign_user', ['GET'], priv(role=[role_admin], skip_with_query=True))
         push_priv_rule('/rest/campaign_user', ['POST', 'PUT', 'DELETE'], priv(role=role_everyone))
-        push_priv_rule('/rest/campaign_user/<instid>', ['GET','POST', 'PUT', 'DELETE'], priv(role=role_everyone))
+        push_priv_rule('/rest/campaign_user/<instid>', ['GET', 'POST', 'PUT', 'DELETE'], priv(role=role_everyone))
 
         push_priv_rule('/rest/coordinate', ['GET'], priv(role=[role_admin]))
         push_priv_rule('/rest/coordinate', ['POST', 'PUT', 'DELETE'], priv(role=role_everyone))
-        push_priv_rule('/rest/coordinate/<instid>', ['GET','POST', 'PUT', 'DELETE'], priv(role=role_everyone))
+        push_priv_rule('/rest/coordinate/<instid>', ['GET', 'POST', 'PUT', 'DELETE'], priv(role=role_everyone))
 
         push_priv_rule('/rest/credit_transaction', ['GET', 'POST', 'PUT', 'DELETE'], priv(role=[role_admin]))
-        push_priv_rule('/rest/credit_transaction/<instid>', ['GET','POST', 'PUT', 'DELETE'], priv(role=[role_admin]))
+        push_priv_rule('/rest/credit_transaction/<instid>', ['GET', 'POST', 'PUT', 'DELETE'], priv(role=[role_admin]))
 
         push_priv_rule('/rest/hit', ['GET', 'POST', 'PUT', 'DELETE'], priv(role=role_everyone))
         push_priv_rule('/rest/hit/<instid>', ['GET', 'POST', 'PUT', 'DELETE'], priv(role=role_everyone))
@@ -106,16 +106,16 @@ def init_priv_table():
 
         push_priv_rule('/rest/position_trace', ['GET'], priv(role=[role_admin]))
         push_priv_rule('/rest/position_trace', ['POST', 'PUT', 'DELETE'], priv(role=role_everyone))
-        push_priv_rule('/rest/position_trace/<instid>', ['GET','POST', 'PUT', 'DELETE'], priv(role=[role_admin]))
+        push_priv_rule('/rest/position_trace/<instid>', ['GET', 'POST', 'PUT', 'DELETE'], priv(role=[role_admin]))
 
         push_priv_rule('/rest/role', ['GET', 'POST', 'PUT', 'DELETE'], priv(role=[role_admin]))
-        push_priv_rule('/rest/role/<instid>', ['GET','POST', 'PUT', 'DELETE'], priv(role=[role_admin]))
+        push_priv_rule('/rest/role/<instid>', ['GET', 'POST', 'PUT', 'DELETE'], priv(role=[role_admin]))
 
         push_priv_rule('/rest/user', ['GET', 'POST', 'PUT', 'DELETE'], priv(role=[role_admin]))
-        push_priv_rule('/rest/user/<instid>', ['GET','POST', 'PUT', 'DELETE'], priv(role=role_everyone))
+        push_priv_rule('/rest/user/<instid>', ['GET', 'POST', 'PUT', 'DELETE'], priv(role=role_everyone))
 
         push_priv_rule('/rest/user_last_position', ['GET', 'POST', 'PUT', 'DELETE'], priv(role=[role_admin]))
-        push_priv_rule('/rest/user_last_position/<instid>', ['GET','POST', 'PUT', 'DELETE'], priv(role=[role_admin]))
+        push_priv_rule('/rest/user_last_position/<instid>', ['GET', 'POST', 'PUT', 'DELETE'], priv(role=[role_admin]))
 
         push_priv_rule('/rest/baidu_push_info', ['GET'], priv(role=[role_admin], skip_with_query=True))
         push_priv_rule('/rest/baidu_push_info', ['POST', 'PUT', 'DELETE'], priv(role=role_everyone))
@@ -123,11 +123,14 @@ def init_priv_table():
 
         push_priv_rule('/rest/message', ['GET'], priv(role=[role_admin], skip_with_query=True))
         push_priv_rule('/rest/message', ['POST', 'PUT', 'DELETE'], priv(role=[role_admin]))
-        push_priv_rule('/rest/message/<instid>', ['GET','POST', 'PUT', 'DELETE'], priv(role=role_everyone))
+        push_priv_rule('/rest/message/<instid>', ['GET', 'POST', 'PUT', 'DELETE'], priv(role=role_everyone))
 
         push_priv_rule('/rest/selection', ['GET', 'POST', 'PUT', 'DELETE'], priv(role=role_everyone))
         push_priv_rule('/rest/selection/<instid>', ['GET', 'POST', 'PUT', 'DELETE'], priv(role=role_everyone))
 
         push_priv_rule('/user/credit/campaign/<campaign_id>', ['GET'], priv(role=role_everyone))
+
+        push_priv_rule('/rest/worker_detail', ['GET', 'POST', 'PUT'], priv(role=role_everyone))
+        push_priv_rule('/rest/hit_detail', ['GET', 'POST', 'PUT'], priv(role=role_everyone))
 
         priv_table_inited = True

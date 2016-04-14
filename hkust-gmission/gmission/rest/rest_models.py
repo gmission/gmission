@@ -9,6 +9,8 @@ from gmission.models import *
 from gmission.controllers.task_controller import refresh_task_status, assign_task_to_workers, credit_process, \
     push_worker_to_campaign_user
 from gmission.controllers.payment_controller import pay
+from gmission.config import index_server
+import requests
 
 
 # for k,v in app.blueprints.items():
@@ -55,9 +57,9 @@ class ReSTHIT(HIT, ReSTBase):
 
     @classmethod
     def after_post(cls, result=None):
-        hit = HIT.query.get(result['id'])
-        assign_task_to_workers(hit)
-        credit_process(hit)
+        # hit = HIT.query.get(result['id'])
+        # assign_task_to_workers(hit)
+        # credit_process(hit)
         pass
 
 
@@ -110,13 +112,21 @@ class ReSTLocation(Location, ReSTBase):
 class ReSTPositionTrace(PositionTrace, ReSTBase):
     @classmethod
     def after_post(cls, result):
-        # print 'ReSTPositionTrace after_post'
+        print 'ReSTPositionTrace after_post'
         pos = get_or_create(UserLastPosition, user_id=result['user_id'])
         # pos:UserLastPosition
         pos.longitude = result['longitude']
         pos.latitude = result['latitude']
         pos.z = result['z']
         db.session.commit()
+        # ReSTPositionTrace.post_to_new_index(pos)
+
+    @classmethod
+    def post_to_new_index(cls, pos):
+        headers = {'content-type': 'application/form', 'accept': 'application/json'}
+        param = {'ID': int(pos.user_id), 'longitude': pos.longitude, 'latitude': pos.latitude}
+        response = requests.post(url=index_server.server_addr + '/RTreeIndex/actions/node', data=param)
+        print 'post to index: ' + response.text
 
 
 class ReSTUserLastPosition(UserLastPosition, ReSTBase):
@@ -128,3 +138,40 @@ class ReSTUserLastPosition(UserLastPosition, ReSTBase):
 
 class ReSTSelection(Selection, ReSTBase):
     pass
+
+
+class ReSTWorkerDetail(WorkerDetail, ReSTBase):
+
+    @classmethod
+    def before_post(cls, data):
+        WorkerDetail.query.filter_by(id=data['id']).delete()
+
+    @classmethod
+    def after_post(cls, result):
+        print 'ReSTWorkerDetail after_post'
+        return
+        detail = get_or_create(WorkerDetail, id=result['id'])
+        # pos:UserLastPosition
+        detail.capacity = result['capacity']
+        detail.reliability = result['reliability']
+        detail.min_direction = result['min_direction']
+        detail.max_direction = result['max_direction']
+        detail.velocity = result['velocity']
+        detail.region_min_lon = result['region_min_lon']
+        detail.region_min_lat = result['region_min_lat']
+        detail.region_max_lon = result['region_max_lon']
+        detail.region_max_lat = result['region_max_lat']
+        detail.is_online = result['is_online']
+        db.session.commit()
+
+
+class ReSTHitDetail(HitDetail, ReSTBase):
+    @classmethod
+    def after_post(cls, result):
+        print 'ReSTHitDetail after_post'
+        return
+        detail = get_or_create(HitDetail, id=result['id'])
+        # pos:UserLastPosition
+        detail.confidence = result['confidence']
+        detail.entropy = result['entropy']
+        db.session.commit()

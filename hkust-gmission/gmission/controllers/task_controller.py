@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
 __author__ = 'chenzhao'
 
-from gmission.controllers.message_controller import send_request_messages
+from gmission.controllers.message_controller import send_request_messages, send_request_message
 import dateutil
-import dateutil.tz
+import dateutil.tz, dateutil.parser
 from gmission.controllers.payment_controller import pay_image, pay_choice
+from gmission.controllers.geo_controller import get_nearest_n_users, get_nearest_n_users_from_index
 from gmission.models import *
+import time
+import requests
+from gmission.config import index_server
 
 
 def refresh_task_status():
@@ -43,22 +47,59 @@ def close_task_and_pay_workers(task):
 
 
 def assign_task_to_workers(task):
-    assign_task_to_all_possible_workers(task)
+    # assign_task_to_all_possible_workers(task)
+    assign_task_to_knn_workers(task, k_in_knn=5000)
     pass
 
-# def assign_task_to_knn_workers(task, k_in_knn=10):
-#     """:type task:Task"""
-#     location = task.location
-#     print 'assign_task_to_knn_workers: location', location
-#     lo, la = location.longitude, location.latitude
-#     users = [u for u in get_nearest_n_users(lo, la, k_in_knn + 1) if u.id != task.requester_id][:k_in_knn]
-#     # users = [u for u in User.query.all() if u.id!=task.requester_id]
-#     # send_request_messages(task, users)
+
+def assign_task_to_knn_workers(task, k_in_knn=10):
+    """:type task:Task"""
+    location = task.location
+    print 'assign_task_to_knn_workers: location', location
+    lo, la = location.coordinate.longitude, location.coordinate.latitude
+
+    t = time.time()
+    for iter in range(100):
+        users_index = [u for u in get_nearest_n_users_from_index(lo, la, k_in_knn + 1, 0.01, use_rtree=True) if
+                       u.id != task.requester_id][:k_in_knn]
+    print('rtree assign task cost: %s' % (time.time() - t))
+
+    t = time.time()
+    for iter in range(100):
+        users = [u for u in get_nearest_n_users_from_index(lo, la, k_in_knn + 1, 0.01, use_rtree=False) if
+                 u.id != task.requester_id][:k_in_knn]
+    print('linear assign task cost: %s' % (time.time() - t))
+
+    print 'index:', len(users_index), 'naive:', len(users)
+    user_id = [u.id for u in users]
+    for user in users_index:
+        if user.id not in user_id:
+            print 'not in: ', user.id
+        else:
+            user_id.remove(user.id)
+    print 'remain:', user_id
+    # users = [u for u in User.query.all() if u.id!=task.requester_id]
+    print 'assigned worker number: ', len(users)
+    send_request_messages(task, users)
 
 
 def assign_task_to_all_possible_workers(task):
-    users = [u for u in User.query.all() if u!=task.requester]
+    users = [u for u in User.query.all() if u != task.requester]
     send_request_messages(task, users)
+
+
+def assign_all_tasks_by_algorithm(method, current_time):
+    headers = {'content-type': 'application/json', 'accept': 'application/json'}
+    matches = requests.post(
+        url=index_server.server_addr + '/Index/actions/assignment/' + method + '/' + str(current_time),
+        headers=headers).json()
+    for match in matches:
+        # print match, match[u'taskId'], match[u'workerId']
+        task = HIT.query.filter(HIT.id == match[u'taskId']).first()
+        worker = User.query.filter(User.id == match[u'workerId']).first()
+        if task is not None and worker is not None:
+            send_request_message(task, worker)
+    return matches
 
 
 def query_online_users():
@@ -99,13 +140,16 @@ def push_worker_to_campaign_user(answer):
         return
     if answer.hit.campaign is None:
         return
-    users = CampaignUser.query.filter(CampaignUser.campaign_id == answer.hit.campaign_id).filter(CampaignUser.user_id == answer.worker_id).all()
+    users = CampaignUser.query.filter(CampaignUser.campaign_id == answer.hit.campaign_id).filter(
+        CampaignUser.user_id == answer.worker_id).all()
     if len(users) > 0:
         return
     role = get_or_create(CampaignRole, name='participant', description='participant')
-    campaignuser = get_or_create(CampaignUser, user_id=answer.worker_id, campaign_id=answer.hit.campaign_id, role_id=role.id)
+    campaignuser = get_or_create(CampaignUser, user_id=answer.worker_id, campaign_id=answer.hit.campaign_id,
+                                 role_id=role.id)
     db.session.commit()
     return
+
 
 if __name__ == '__main__':
     check_expired()

@@ -40,6 +40,12 @@ def jwt_auth():
 
 @app.before_request
 def jwt_verify():
+    # return
+    # print "test"
+    # print request.url
+    # print request.url_rule
+    # print request.url_rule.rule
+    # print request.json
     # check priv table
     init_priv_table()
     priv = priv_table[(request.url_rule.rule, request.method)]
@@ -88,7 +94,8 @@ def new_user():
     user.hash_password(password)
     db.session.add(user)
     db.session.commit()
-    send_user_auth_email(user)
+    # todo recover
+    # send_user_auth_email(user)
     return jsonify(user.get_json(password=True))
 
 
@@ -126,5 +133,24 @@ def user_email_verify(hashid):
 
 @user_blueprint.route('/credit/campaign/<campaign_id>', methods=['GET'])
 def user_credit_campaign_log(campaign_id):
-    credit = [transaction.credit for transaction in db.session.query(CreditTransaction).all() if transaction.campaign_id == int(campaign_id) and transaction.worker_id == g.user.id]
+    credit = [transaction.credit for transaction in db.session.query(CreditTransaction).all() if
+              transaction.campaign_id == int(campaign_id) and transaction.worker_id == g.user.id]
     return jsonify({'credit': sum(credit)})
+
+
+@user_blueprint.route('/online', methods=['POST'])
+def online():
+    user = g.user
+    worker_detail = get_or_create(WorkerDetail, user_id=user.id)
+    worker_detail.is_online = True
+    db.session.commit()
+    return jsonify({'result': 'success'})
+
+
+@user_blueprint.route('/offline', methods=['POST'])
+def offline():
+    user = g.user
+    worker_detail = get_or_create(WorkerDetail, user_id=user.id)
+    worker_detail.is_online = False
+    db.session.commit()
+    return jsonify({'result': 'success'})

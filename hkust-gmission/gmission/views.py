@@ -8,6 +8,7 @@ from flask_app import app, cache
 import rest
 from flask import render_template, request, redirect, jsonify, g
 from models import *
+from controllers import task_controller
 
 import json
 
@@ -42,6 +43,14 @@ def test():
         if rule.endpoint != 'static':
             func_list[rule.rule] = app.view_functions[rule.endpoint].__doc__
     return jsonify(func_list)
+
+
+@app.route('/assignment', methods=['POST'])
+def assign():
+    method = request.json['method']
+    current_time = request.json['time']
+    result = task_controller.assign_all_tasks_by_algorithm(method=method, current_time=current_time)
+    return jsonify({'result': result})
 
 
 def is_cached_url(url):

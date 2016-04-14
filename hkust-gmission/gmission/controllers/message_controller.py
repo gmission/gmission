@@ -39,7 +39,7 @@ def save_and_push_msg(msg, commit=True):
         db.session.commit()
     else:
         db.session.flush()
-    push_message_async(msg)
+    # push_message_async(msg)
 
 
 def send_request_messages(task, users):
@@ -56,6 +56,22 @@ def send_request_messages(task, users):
                     receiver=user,
                     status='new')
         save_and_push_msg(m, False)
+    db.session.commit()
+
+
+def send_request_message(task, user):
+    msg_type = 'task assignment'
+    # msg_content = u'在"%s"有一个新任务!' % (task.location.name,)
+    msg_content = u'There is a new task at "%s"!' % (task.location.name,)
+
+    m = Message(type=msg_type,
+                content=msg_content,
+                att_type=task.__class__.__name__,
+                attachment=task.id,
+                sender=task.requester,
+                receiver=user,
+                status='new')
+    save_and_push_msg(m, False)
     db.session.commit()
 
 

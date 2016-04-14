@@ -14,5 +14,6 @@ from attachment import *
 from crowdsourcing import *
 from campaign import *
 from message import *
+from assignment_detail import *
 
 

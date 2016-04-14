@@ -28,7 +28,7 @@ class ReSTManager(object):
                                           preprocessors=ReSTBase.universal_preprocessors(),
                                           postprocessors=ReSTBase.universal_postprocessors())
         for rest_class in ReSTBase.__subclasses__():
-            cls.manager.create_api(rest_class, methods=['GET', 'POST', 'PUT', 'DELETE'],
+            cls.manager.create_api(rest_class, methods=['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
                                                url_prefix=REST_PREFIX,
                                                results_per_page=None,
                                                allow_functions=True,
