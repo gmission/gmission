@@ -7,13 +7,13 @@
 #  working_dir: /GMission-Server/services/cron_jobs
 #  command: python task.py
 
-
 gmissionbyuwsgi:
     # image: chenzhao/gmission
   image: freeznet/gmission
   links:
     - localmysql:docker-mysql
     - redis:docker-redis
+    - assignmentalg:server-assign
   volumes:
     - ../:/GMission-Server
     - /etc/localtime:/etc/localtime:ro
@@ -79,3 +79,18 @@ phppush:
   volumes:
     - ../PHP-push:/app
     - /etc/localtime:/etc/localtime:ro
+
+assignmentalg:
+  image: java:8-jre
+  links:
+    - localmysql:docker-mysql
+  volumes:
+    - ~/apache-tomcat-8.0.30:/tomcat
+  environment:
+    - CATALINA_HOME=/tomcat
+    - PATH=/tomcat/bin:$PATH
+  working_dir: /tomcat/bin
+  command: sh catalina.sh run
+  ports:
+    - "8081:8080"
+
