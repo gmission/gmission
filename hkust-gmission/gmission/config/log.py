@@ -10,11 +10,11 @@ def set_logger(app):
     if not os.path.exists(logs_path):
         os.mkdir(logs_path)
 
-    set_flask_logger(app, logs_path)
-    set_profiling_logger(app, logs_path)
+    # set_flask_logger(app, logs_path)
+    # set_profiling_logger(app, logs_path)
 
-    set_admin_logger(app, logs_path)
-    set_push_msg_logger(app, logs_path)
+    # set_admin_logger(app, logs_path)
+    set_async_job_logger(app, logs_path)
 
 
 def set_flask_logger(app, logs_path):
@@ -40,7 +40,6 @@ def set_profiling_logger(app, logs_path):
     app.profiling_logger = logger
 
 
-
 def set_admin_logger(app, logs_path):
     admin_formatter = logging.Formatter('%(asctime)s %(message)s')
     admin_log_file = os.path.join(logs_path, 'GMissionAdmin.log')
@@ -53,8 +52,7 @@ def set_admin_logger(app, logs_path):
     app.admin_logger = logger
 
 
-
-def set_push_msg_logger(app, logs_path):
+def set_async_job_logger(app, logs_path):
     profiling_formatter = logging.Formatter('%(asctime)s %(message)s')
 
     profiling_log_file = os.path.join(logs_path, 'GMissionAsyncJobs.log')
@@ -67,5 +65,5 @@ def set_push_msg_logger(app, logs_path):
     if not logger.handlers:
         logger.addHandler(profiling_handler)
 
-    app.push_msg_logger = logger
+    app.async_job_logger = logger
 

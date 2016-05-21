@@ -2,8 +2,7 @@
 # encoding: utf-8
 __author__ = 'rui'
 
-from gmission.config import is_production
-from gmission.models import *
+
 from gmission.flask_app import app, ROOT
 import sys
 import os.path
@@ -11,9 +10,6 @@ import user_controller
 service_path = os.path.join(ROOT, '../../services')
 sys.path.append(service_path)
 from async_jobs.tasks import send_email
-
-logger = app.logger
-push_msg_logger = app.push_msg_logger
 
 
 def send_reg_email_async(user):
@@ -33,4 +29,4 @@ If you need further assistance, please visit us at http://gmissionhkust.com.
 Cheers,
 GMission team from HKUST """ % (user_controller.generate_user_auth_hashid(user.id),)
     send_email.apply_async((subject, body, user.email))
-    push_msg_logger.info('sent to MQ %s', repr(user.email))
+    app.async_job_logger.info('sent to MQ %s', repr(user.email))

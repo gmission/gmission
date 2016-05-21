@@ -16,7 +16,8 @@ def all_models():
 def init_admin():
     admin = Admin(app, name=u"gMission Admin Control Panel")
     for model in all_models():
-        admin.add_view(ModelView(model, db.session, name=model.__name__))
+        print 'to add in admin portal:', model.__name__
+        admin.add_view(ModelView(model, db.session, name="%s" % model.__name__))
 
 
 

@@ -9,7 +9,7 @@ from gmission.models import *
 from functools import wraps
 import time
 
-user_blueprint = Blueprint('user', __name__, template_folder='templates')
+user_blueprint = Blueprint('user bp', __name__, template_folder='templates')
 
 
 def verify_password(username_or_token, password):
@@ -40,6 +40,8 @@ def jwt_auth():
 
 @app.before_request
 def jwt_verify():
+    if not request.url_rule:
+        return
     # check priv table
     init_priv_table()
     priv = priv_table[(request.url_rule.rule, request.method)]

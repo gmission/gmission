@@ -15,18 +15,12 @@ app.register_blueprint(blueprints.user_bp, url_prefix='/user')
 app.register_blueprint(blueprints.image_bp, url_prefix='/image')
 app.register_blueprint(blueprints.video_bp, url_prefix='/video')
 app.register_blueprint(blueprints.audio_bp, url_prefix='/audio')
-# flask_app.register_blueprint(blueprints._bp,     url_prefix='/portal')
 app.register_blueprint(blueprints.shortcut_bp, url_prefix='/shortcut')
 app.register_blueprint(blueprints.shortcut_sd, url_prefix='/definitions')
 
 rest.ReSTManager.init_rest(app)
 
-
-# admin.init_admin()
-
-
-def profile_log(*l):
-    app.profiling_logger.debug(l)
+admin.init_admin()
 
 
 @app.route('/')
@@ -44,16 +38,19 @@ def test():
     return jsonify(func_list)
 
 
-def is_cached_url(url):
-    return url.endswith('/rest/location')
-
+# def profile_log(*l):
+#     app.profiling_logger.debug(l)
 
 # @app.before_request
 # def before_request():
 #     g.request_start_time = time.time()  # time.time is precise enough
 #     profile_log(request.path, 'crab', time.time() - g.request_start_time)
-#
-#
+
+# @app.teardown_request
+# def teardown_request(l):
+#     profile_log(request.path, time.time() - g.request_start_time)
+
+
 @app.after_request
 def after_request(response):
     try:
@@ -69,11 +66,6 @@ def after_request(response):
 #     # if not getattr(response, 'simple_url_cached', False):
 #     #     cache.set(request.url, response)
 #     return response
-
-
-# @app.teardown_request
-# def teardown_request(l):
-#     profile_log(request.path, time.time() - g.request_start_time)
 
 
 # 409 Conflict: the best HTTP code I can find

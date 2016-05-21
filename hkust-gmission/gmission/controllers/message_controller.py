@@ -5,8 +5,6 @@ __author__ = 'rui'
 from gmission.models import *
 from gmission.flask_app import app, ROOT
 import os, sys
-logger = app.logger
-push_msg_logger = app.push_msg_logger
 
 service_path = os.path.join(ROOT, '../../services')
 sys.path.append(service_path)
@@ -20,7 +18,7 @@ def push_message_async(message_obj):
         elif baidu_push_info.type == 'ios':
             ios_push_task.apply_async((message_dict['content'],
                                        {'type': 'Message', 'id': message_dict['id']}, baidu_push_info.baidu_user_id))
-        push_msg_logger.info('sent to MQ %s %s', repr(message_dict), repr(baidu_push_info.baidu_user_id))
+        app.async_job_logger.info('sent to MQ %s %s', repr(message_dict), repr(baidu_push_info.baidu_user_id))
 
     bindlist = BaiduPushInfo.query.filter(BaiduPushInfo.user_id == message_obj.receiver_id,
                                           BaiduPushInfo.is_valid == True).all()

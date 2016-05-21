@@ -63,65 +63,20 @@ def init_roles():
 def init_users():
     requester, worker, admin = init_roles()
     users = [
-        # ('scheduler@gmission.com', '111111', 'Request Scheduler', [requester,]),
-        #      ('zchenah@ust.hk', '111111', 'Chen Zhao', [admin, worker, requester]),
-        #      ('rfu@connect.ust.hk', '111111', 'Free', [admin,worker, requester]),
-        #      ('zhaoziyuan1991@gmail.com', '111111', 'Ziyuan', [admin, worker, requester]),
-        #      ('haidaoxiaofei@gmail.com', '111111', 'Cheng Peng', [admin, worker, requester]),
-        #      ('lxia@ust.hk', '111111', 'Leihao', [admin, worker, requester]),
-        ('test1@xxx.com', '111111', 'Testing NO.1', [worker, requester]),
-        ('test2@xxx.com', '111111', 'Testing NO.2', [worker, requester]),
-        ('test3@xxx.com', '111111', 'Testing NO.3', [worker, requester]),
-        ('test4@xxx.com', '111111', 'Testing NO.4', [worker, requester]),
-        ('test5@xxx.com', '111111', 'Testing NO.5', [worker, requester]),
+        ('zchenah@ust.hk', '111111', 'chenzhao', [admin, worker, requester]),
+        ('haidaoxiaofei@gmail.com', '111111', 'chengpeng', [admin, worker, requester]),
+        ('test1@xxx.com', '111111', 'test1', [worker, requester]),
+        ('test2@xxx.com', '111111', 'test2', [worker, requester]),
+        ('test3@xxx.com', '111111', 'test3', [worker, requester]),
+        ('test4@xxx.com', '111111', 'test4', [worker, requester]),
+        ('test5@xxx.com', '111111', 'test5', [worker, requester]),
     ]
-    for email, password, name, roles in users:
-        user = get_or_create(User, email=email, password=password, name=name)
+    for email, password, username, roles in users:
+        user = User(username=username, email=email)
+        user.hash_password(password)
         for role in roles:
             user_datastore.add_role_to_user(user, role)
     db.session.commit()
-    create_user_for_each_phone()
-
-
-def create_user_for_each_phone():
-    requester, worker, admin = init_roles()
-    users = [
-        # ('zopo_orange@ust.hk', '111111', 'zopo_orange', [worker, requester]),
-        #      ('zopo_blue@ust.hk', '111111', 'zopo_blue', [worker, requester]),
-        #      ('zopo_white@ust.hk', '111111', 'zopo_white', [worker, requester]),
-        #      ('zopo_black@ust.hk', '111111', 'zopo_black', [worker, requester]),
-        #      ('redmi1@ust.hk', '111111', 'redmi1', [worker, requester]),
-        #      ('redmi2@ust.hk', '111111', 'redmi2', [worker, requester]),
-        #      ('redmi3@ust.hk', '111111', 'redmi3', [worker, requester]),
-        #      ('redmi4@ust.hk', '111111', 'redmi4', [worker, requester]),
-        #      ('redmi5@ust.hk', '111111', 'redmi5', [worker, requester]),
-        #      ('redmi6@ust.hk', '111111', 'redmi6', [worker, requester]),
-        #      ('redmi7@ust.hk', '111111', 'redmi7', [worker, requester]),
-        #      ('redmi8@ust.hk', '111111', 'redmi8', [worker, requester]),
-        #      ('redmi9@ust.hk', '111111', 'redmi9', [worker, requester]),
-        #      ('samsung_white@ust.hk', '111111', 'samsung_white', [worker, requester]),
-        #      ('samsung_blue@ust.hk', '111111', 'samsung_blue', [worker, requester]),
-        #      ('redmi1@ust.hk', '111111', 'redmi1', [worker, requester]),
-        #      ('redmi2@ust.hk', '111111', 'redmi2', [worker, requester]),
-        #      ('redmi3@ust.hk', '111111', 'redmi3', [worker, requester]),
-        #      ('redmi4@ust.hk', '111111', 'redmi4', [worker, requester]),
-        #      ('redmi5@ust.hk', '111111', 'redmi5', [worker, requester]),
-        #      ('redmi6@ust.hk', '111111', 'redmi6', [worker, requester]),
-        #      ('redmi7@ust.hk', '111111', 'redmi7', [worker, requester]),
-        #      ('redmi8@ust.hk', '111111', 'redmi8', [worker, requester]),
-        #      ('redmi9@ust.hk', '111111', 'redmi9', [worker, requester]),
-        #      ('backup1@ust.hk', '111111', 'backup1', [worker, requester]),
-        #      ('backup2@ust.hk', '111111', 'backup2', [worker, requester]),
-    ]
-    for email, password, name, roles in users:
-        user = get_or_create(User, email=email, password=password, name=name)
-        for role in roles:
-            user_datastore.add_role_to_user(user, role)
-    db.session.commit()
-
-
-def init_assign_messages():
-    pass
 
 
 def init_user_roles():
@@ -129,13 +84,13 @@ def init_user_roles():
     user_role_user = get_or_create(Role, name='user', description='user')
     campaign_role_owner = get_or_create(CampaignRole, name='owner', description='owner')
     campaign_role_participant = get_or_create(CampaignRole, name='participant', description='participant')
-    print user_role_admin, user_role_user, campaign_role_owner, campaign_role_participant
+    print 'init user role:', user_role_admin, user_role_user, campaign_role_owner, campaign_role_participant
     db.session.commit()
 
 
 def init_data():
     init_user_roles()
-    # init_users()
+    init_users()
     # clear_and_import_all()
     # init_assign_messages()
 
@@ -145,13 +100,11 @@ def init_db():
 
 
 if __name__ == '__main__':
-    # drop_all_table()
     stdout('<<<<<<init db begin.')
     check_db()
-    # drop_all_table()
+    drop_all_table()
     init_db()
     init_data()
     stdout('>>>>>>init db done.')
-    # raise Exception("error")
     # clear_and_import_all()
     pass
