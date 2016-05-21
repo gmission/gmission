@@ -1,13 +1,3 @@
-#cron:
-#  image: chenzhao/gmission
-#  links:
-#    - gmissionbyuwsgi:docker-gmission
-#  volumes:
-#    - ../:/GMission-Server
-#  working_dir: /GMission-Server/services/cron_jobs
-#  command: python task.py
-
-
 gmissionbyuwsgi:
     # image: chenzhao/gmission
   image: freeznet/gmission
@@ -17,25 +7,10 @@ gmissionbyuwsgi:
   volumes:
     - ../:/GMission-Server
     - /etc/localtime:/etc/localtime:ro
-      #- /home/bigstone/MATLAB2014/:/matlab-home
-      #- /home/bigstone/workspace/matlab/geocrowdMatlab/:/Matlab-Scripts
   working_dir: /GMission-Server/hkust-gmission
   command: uwsgi --ini ../docker/gmission_by_uwsgi/uwsgi.ini
   ports:
     - "9091:9090"
-
-
-# celery:
-#   image: chenzhao/gmission
-#   links:
-#     - redis:docker-redis
-#     - phppush:docker-php-push
-#   volumes:
-#     - ../:/GMission-Server
-#   environment:
-#     - C_FORCE_ROOT=true
-#   working_dir: /GMission-Server/services
-#   command: celery -A push_msg.task worker
 
 asyncjobs:
   image: freeznet/gmission
@@ -52,15 +27,17 @@ asyncjobs:
 
 
 localmysql:
-  image: tutum/mysql:latest
+  image: mysql:5.6
   environment:
     MYSQL_USER: "csp_team"
-    MYSQL_PASS: "csp2014hkust"
-    ON_CREATE_DB: "gmission_hkust"
+    MYSQL_PASSWORD: "csp2014hkust"
+    MYSQL_DATABASE: "gmission_hkust"
+    MYSQL_ROOT_PASSWORD: "csp2014hkust"
   ports:
-    - "3308:3306"
+    - "3306:3306"
   volumes:
-    - /mysql/data/:/var/lib/mysql/
+    - ./mysql/data/:/var/lib/mysql/
+    - ./mysql/my.cnf:/etc/mysql/my.cnf
     - /etc/localtime:/etc/localtime:ro
 
 

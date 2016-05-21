@@ -128,3 +128,9 @@ def user_email_verify(hashid):
 def user_credit_campaign_log(campaign_id):
     credit = [transaction.credit for transaction in db.session.query(CreditTransaction).all() if transaction.campaign_id == int(campaign_id) and transaction.worker_id == g.user.id]
     return jsonify({'credit': sum(credit)})
+
+@user_blueprint.route('/answered-hits', methods=['GET'])
+def user_answerd_hits():
+    hits = [(hit.id, hit.title) for hit, answer in db.session.query(HIT, Answer).filter(HIT.id==Answer.hit_id).filter(Answer.worker_id==g.user.id) ]
+    # {"id":hit.id, "title":hit.title}
+    return jsonify({'hits': [{"id":hit[0], "title":hit[1]} for hit in list(set(hits))]})

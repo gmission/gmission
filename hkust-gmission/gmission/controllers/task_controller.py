@@ -13,6 +13,13 @@ def refresh_task_status():
     check_enough_answer()
     pass
 
+def refresh_hit_status_with_id(hit_id):
+    check_expired()
+
+    hit = HIT.query.get(hit_id)
+    if len(hit.answers) >= hit.required_answer_count:
+        # print 'close enough answer', request.id, request.task.title
+        close_task_and_pay_workers(hit)
 
 def check_expired():
     print 'check_expired'

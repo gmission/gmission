@@ -7,7 +7,7 @@ from .base import ReSTBase
 from werkzeug.exceptions import Conflict
 from gmission.models import *
 from gmission.controllers.task_controller import refresh_task_status, assign_task_to_workers, credit_process, \
-    push_worker_to_campaign_user
+    push_worker_to_campaign_user, refresh_hit_status_with_id
 from gmission.controllers.payment_controller import pay
 
 
@@ -83,7 +83,8 @@ class ReSTAnswer(Answer, ReSTBase):
         # print 'ReSTAnswer after_post'
         answer = Answer.query.get(result['id'])
         send_answer_message(answer)
-        refresh_task_status()
+        # refresh_task_status()
+        refresh_hit_status_with_id(answer.hit_id)
         # Prof. Chen wants workers to be paid at once:
         pay(answer.hit.requester, answer.worker, answer, answer.hit.credit)
         push_worker_to_campaign_user(answer)

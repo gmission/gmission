@@ -21,8 +21,8 @@ class Role(db.Model, RoleMixin, BasicModelMixin):
 
 class User(db.Model, UserMixin, BasicModelMixin):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(255), unique=True, nullable=False)
-    email = db.Column(db.String(255), unique=True, nullable=False)
+    username = db.Column(db.String(100), unique=True, nullable=False)  # utf8mb4 has a 191 limit for unique index
+    email = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(255))  # encrypt later
     credit = db.Column(db.Integer, default=0)
     active = db.Column(db.Boolean(), default=False)
@@ -40,14 +40,14 @@ class User(db.Model, UserMixin, BasicModelMixin):
     def verify_password(self, password):
         return pwd_context.verify(password, self.password)
 
-    def generate_auth_token(self, expiration=3600):
+    def generate_auth_token(self, expiration=3600*24*30):
         s = Serializer(APP_SECRET_KEY, expires_in=expiration)
         ret = s.dumps({'id': self.id, 'username': self.username})
         try:
             payload, header = s.loads(ret, return_header=True)
             self.iat = header.get('iat', 0)
             db.session.commit()
-        except Exception:
+        except Exception:  # w t f..
             return ret
 
         return ret

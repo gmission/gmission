@@ -8,8 +8,8 @@ class HIT(db.Model, BasicModelMixin):
     __tablename__ = 'hit'
     id = db.Column(db.Integer, primary_key=True)
     type = db.Column(db.String(20))
-    title = db.Column(db.String(500))
-    description = db.Column(db.TEXT)
+    title = db.Column(db.String(200))
+    content = db.Column(db.TEXT)
 
     attachment_id = db.Column(db.Integer, db.ForeignKey('attachment.id'))
     attachment = db.relationship('Attachment', foreign_keys=attachment_id)
@@ -23,7 +23,7 @@ class HIT(db.Model, BasicModelMixin):
     min_selection_count = db.Column(db.Integer, default=1)
     max_selection_count = db.Column(db.Integer, default=1)
     begin_time = db.Column(db.DateTime, default=datetime.datetime.now)
-    end_time = db.Column(db.DateTime, default=lambda: datetime.datetime.now() + datetime.timedelta(days=1))
+    end_time = db.Column(db.DateTime, default=lambda: datetime.datetime.now() + datetime.timedelta(days=30))
     created_on = db.Column(db.DateTime, default=datetime.datetime.now)
 
     location_id = db.Column(db.Integer, db.ForeignKey('location.id'), nullable=True)
@@ -36,7 +36,7 @@ class HIT(db.Model, BasicModelMixin):
     answers = db.relationship('Answer', lazy='select')
 
     def __unicode__(self):
-        return '<%s,%s>' % (repr(self.id), self.task)
+        return '<%d,%s>' % (self.id, self.title)
 
 
 class Answer(db.Model, BasicModelMixin):
@@ -45,12 +45,12 @@ class Answer(db.Model, BasicModelMixin):
     hit = db.relationship('HIT', lazy='select')
     hit_id = db.Column(db.Integer, db.ForeignKey('hit.id'))
 
-    brief = db.Column(db.String(100))
+    type = db.Column(db.String(20))
+    content = db.Column(db.String(200))
 
     attachment_id = db.Column(db.Integer, db.ForeignKey('attachment.id'))
     attachment = db.relationship('Attachment', lazy='immediate', foreign_keys=attachment_id)
 
-    type = db.Column(db.String(20))
     accepted = db.Column(db.Boolean, default=False)
     created_on = db.Column(db.DateTime, default=datetime.datetime.now)
 
@@ -61,7 +61,7 @@ class Answer(db.Model, BasicModelMixin):
     worker_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def __unicode__(self):
-        return '<%d,%s,%s>' % (self.id, self.task, self.option)
+        return '<%d,%s,%s>' % (self.id, self.hit, self.content)
 
 
 class Selection(db.Model, BasicModelMixin):
@@ -70,6 +70,7 @@ class Selection(db.Model, BasicModelMixin):
     hit = db.relationship('HIT', lazy='select')
     hit_id = db.Column(db.Integer, db.ForeignKey('hit.id'))
 
-    brief = db.Column(db.String(100))
+    type = db.Column(db.String(20))
+    content = db.Column(db.String(200))
 
     created_on = db.Column(db.DateTime, default=datetime.datetime.now)
