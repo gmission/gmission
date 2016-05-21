@@ -40,14 +40,12 @@ localmysql:
     - ./mysql/my.cnf:/etc/mysql/my.cnf
     - /etc/localtime:/etc/localtime:ro
 
-
 redis: # some redis warnings ignored..
   image: redis
   ports:
     - "6380:6379"
   volumes:
     - /etc/localtime:/etc/localtime:ro
-
 
 phppush:
   image: tutum/apache-php

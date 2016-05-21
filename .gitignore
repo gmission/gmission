@@ -67,3 +67,5 @@ export-files
 *.3gp
 *.pid
 .DS_Store
+
+docker/mysql/data/*
