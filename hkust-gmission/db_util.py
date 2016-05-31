@@ -54,57 +54,40 @@ def drop_all_table():
 
 
 def init_roles():
-    requester = get_or_create(Role, name='requester', description='who can ask', )
-    worker = get_or_create(Role, name='worker', description='who can answer', )
-    admin = get_or_create(Role, name='admin', description='who can do anything', )
-    return requester, worker, admin
+    user_role_admin = get_or_create(Role, name='admin', description='who can do anything')
+    user_role_user = get_or_create(Role, name='user', description='user')
+    campaign_role_owner = get_or_create(CampaignRole, name='owner', description='owner')
+    campaign_role_participant = get_or_create(CampaignRole, name='participant', description='participant')
+    print 'init roles:', user_role_admin, user_role_user, campaign_role_owner, campaign_role_participant
+    db.session.commit()
+    return user_role_admin, user_role_user
 
 
 def init_users():
-    requester, worker, admin = init_roles()
+    admin, user = init_roles()
     users = [
-        ('zchenah@ust.hk', '111111', 'chenzhao', [admin, worker, requester]),
-        ('haidaoxiaofei@gmail.com', '111111', 'chengpeng', [admin, worker, requester]),
-        ('test1@xxx.com', '111111', 'test1', [worker, requester]),
-        ('test2@xxx.com', '111111', 'test2', [worker, requester]),
-        ('test3@xxx.com', '111111', 'test3', [worker, requester]),
-        ('test4@xxx.com', '111111', 'test4', [worker, requester]),
-        ('test5@xxx.com', '111111', 'test5', [worker, requester]),
+        ('zchenah@ust.hk', '111111', 'chenzhao', [admin, user]),
+        ('haidaoxiaofei@gmail.com', '111111', 'chengpeng', [admin, user]),
+        ('test1@xxx.com', '111111', 'test1', [user]),
+        ('test2@xxx.com', '111111', 'test2', [user]),
+        ('test3@xxx.com', '111111', 'test3', [user]),
+        ('test4@xxx.com', '111111', 'test4', [user]),
+        ('test5@xxx.com', '111111', 'test5', [user]),
     ]
     for email, password, username, roles in users:
-        user = User(username=username, email=email)
+        user = get_or_create(User, username=username, email=email, source="python")
         user.hash_password(password)
         for role in roles:
             user_datastore.add_role_to_user(user, role)
     db.session.commit()
 
 
-def init_user_roles():
-    user_role_admin = get_or_create(Role, name='admin', description='who can do anything')
-    user_role_user = get_or_create(Role, name='user', description='user')
-    campaign_role_owner = get_or_create(CampaignRole, name='owner', description='owner')
-    campaign_role_participant = get_or_create(CampaignRole, name='participant', description='participant')
-    print 'init user role:', user_role_admin, user_role_user, campaign_role_owner, campaign_role_participant
-    db.session.commit()
-
-
-def init_data():
-    init_user_roles()
-    init_users()
-    # clear_and_import_all()
-    # init_assign_messages()
-
-
-def init_db():
-    db.create_all()
-
-
 if __name__ == '__main__':
     stdout('<<<<<<init db begin.')
     check_db()
     # drop_all_table()
-    init_db()
-    init_data()
+    db.create_all()
+    init_users()
     stdout('>>>>>>init db done.')
     # clear_and_import_all()
     pass
