@@ -102,7 +102,7 @@ def init_db():
 if __name__ == '__main__':
     stdout('<<<<<<init db begin.')
     check_db()
-    drop_all_table()
+    # drop_all_table()
     init_db()
     init_data()
     stdout('>>>>>>init db done.')
