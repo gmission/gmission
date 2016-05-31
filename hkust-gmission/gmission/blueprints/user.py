@@ -80,13 +80,14 @@ def new_user():
     username = request.json.get('username')
     password = request.json.get('password')
     email = request.json.get('email')
+    source = request.json.get('source', 'unknown')
     if username is None or password is None or email is None:
         raise GMissionError('Invalid', 'missing arguments')
     if User.query.filter_by(username=username).first() is not None:
         raise GMissionError('Invalid', 'existing user')
     if User.query.filter_by(email=email).first() is not None:
         raise GMissionError('Invalid', 'existing email')
-    user = User(username=username, email=email)
+    user = User(username=username, email=email, source=source)
     user.hash_password(password)
     db.session.add(user)
     db.session.commit()

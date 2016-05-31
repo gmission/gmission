@@ -62,6 +62,7 @@ class GMissionError(Exception):
 
 @app.errorhandler(GMissionError)
 def handle_gmission_error(error):
+    print error.to_dict()
     response = jsonify(error.to_dict())
     response.status_code = error.status_code
     return response

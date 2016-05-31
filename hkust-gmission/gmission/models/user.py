@@ -54,7 +54,7 @@ class User(db.Model, UserMixin, BasicModelMixin):
         return ret
 
     def get_json(self, password=False):
-        fields_in_json = ['id', 'username', 'email', 'credit', 'active', 'created_on']
+        fields_in_json = ['id', 'username', 'email', 'credit', 'active', 'created_on', 'source']
         json_dict = {}
         for field in fields_in_json:
             json_dict[field] = getattr(self, field)
