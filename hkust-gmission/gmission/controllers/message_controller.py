@@ -43,7 +43,8 @@ def save_and_push_msg(msg, commit=True):
 def send_request_messages(task, users):
     msg_type = 'task assignment'
     # msg_content = u'在"%s"有一个新任务!' % (task.location.name,)
-    msg_content = u'There is a new task at "%s"!' % (task.location.name,)
+    location_name = task.location.name if task.location else "gMission"
+    msg_content = u'There is a new task at "%s"!' % (location_name,)
 
     for user in users:
         m = Message(type=msg_type,

@@ -85,7 +85,7 @@ def init_users():
 if __name__ == '__main__':
     stdout('<<<<<<init db begin.')
     check_db()
-    drop_all_table()
+    #drop_all_table()
     db.create_all()
     init_users()
     stdout('>>>>>>init db done.')
