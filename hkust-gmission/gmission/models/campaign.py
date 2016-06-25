@@ -18,6 +18,8 @@ class Campaign(db.Model, BasicModelMixin):
 
     hits = db.relationship('HIT', lazy='select')
 
+    # callback_prefix = db.Column(db.String(100))
+
     created_on = db.Column(db.DateTime, default=datetime.datetime.now)
 
 

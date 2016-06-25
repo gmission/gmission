@@ -27,7 +27,7 @@ asyncjobs:
 
 
 localmysql:
-  image: mysql:5.6
+  build: ./mysql/
   environment:
     MYSQL_USER: "csp_team"
     MYSQL_PASSWORD: "csp2014hkust"
