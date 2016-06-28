@@ -8,7 +8,7 @@ __author__ = 'rui'
 
 class Campaign(db.Model, BasicModelMixin):
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(100), unique=True)
+    title = db.Column(db.String(100))
     type = db.Column(db.String(20))
     content = db.Column(db.TEXT)
 

@@ -6,6 +6,7 @@ __author__ = 'CHEN Zhao'
 
 from flask import Blueprint, url_for, session, request, redirect, g, jsonify, json, abort, render_template
 from gmission.models import *
+from sqlalchemy.sql import text
 from functools import wraps
 import time
 
@@ -69,12 +70,16 @@ def jwt_verify():
         # check user by table rules or pre_callback
         return priv.check(user)
     except GMissionError as err:
+        print 'error'
+        print 'priv', priv, priv.allow_roles
         if priv and role_guest in priv.allow_roles:
+            print 'returned, wtf'
             return
         else:
             # for easy debug
             if 'testingust' in request.args:
-                g.user = User.query.get(1)
+                g.user = User.query.get(int(request.args['testingust'] or 1))
+                print g.user
                 return
             raise err
 
@@ -138,6 +143,22 @@ def user_credit_campaign_log(campaign_id):
 
 @user_blueprint.route('/answered-hits', methods=['GET'])
 def user_answerd_hits():
-    hits = [(hit.id, hit.title) for hit, answer in db.session.query(HIT, Answer).filter(HIT.id==Answer.hit_id).filter(Answer.worker_id==g.user.id) ]
-    # {"id":hit.id, "title":hit.title}
+    cid = request.args.get('cid')
+    if cid:
+        hits = [(hit.id, hit.title) for c, hit, answer in db.session.query(Campaign, HIT, Answer). \
+            filter(Campaign.id==HIT.campaign_id, HIT.id==Answer.hit_id, Answer.worker_id==g.user.id,
+                   Campaign.id==int(cid)) ]
+    else:
+        hits = [(hit.id, hit.title) for hit, answer in db.session.query(HIT, Answer).\
+                    filter(HIT.id==Answer.hit_id, Answer.worker_id==g.user.id) ]
+        # {"id":hit.id, "title":hit.title}
     return jsonify({'hits': [{"id":hit[0], "title":hit[1]} for hit in list(set(hits))]})
+
+@user_blueprint.route('/answered-campaigns', methods=['GET'])
+def user_answerd_campaigns():
+    sql = text('''select distinct(C.id) from campaign C join hit H on C.id=H.campaign_id
+                                                   join answer A on H.id=A.hit_id
+                                                   where A.worker_id= :uid''')
+    cids = [r[0] for r in db.engine.execute(sql, uid=g.user.id)]
+    campaigns = db.session.query(Campaign).filter(Campaign.id.in_(cids)).all()
+    return jsonify({'campaigns': [c.as_dict() for c in campaigns]})

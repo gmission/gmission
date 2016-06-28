@@ -53,6 +53,9 @@ class BasicModelMixin(object):
         s = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', model_cls.__name__)
         return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s).lower()
 
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
     def __unicode__(self):
         return "%s id:%d" % (self.__class__.__name__, self.id)
 
