@@ -158,19 +158,19 @@ def user_answerd_hits():
 @user_blueprint.route('/unanswered-hits', methods=['GET'])
 def user_unanswerd_hits():
     cid = request.args.get('cid')
-    offset = request.args.get('offset', 0)
-    limit = request.args.get('limit', 20)
+    offset = int(request.args.get('offset', 0))
+    limit = int(request.args.get('limit', 20))
 
     if cid:
-        sql = text('''select id, title from hit where campaign_id = :cid and
+        sql = text('''select id, title, credit from hit where campaign_id = :cid and status='open' and
                         id not in (select hit_id from answer A where A.worker_id = :wid) limit :l offset :o''')
-        res = db.engine.execute(sql, cid=cid, wid=g.user.id, l=limit, o=offset)
+        res = db.engine.execute(sql, cid=int(cid), wid=g.user.id, l=limit, o=offset)
     else:
-        sql = text('''select id, title from hit where
+        sql = text('''select id, title, credit from hit where status='open' and
                         id not in (select hit_id from answer A where A.worker_id = :wid) limit :l offset :o''')
         res = db.engine.execute(sql, wid=g.user.id, l=limit, o=offset)
 
-    return jsonify({'hits': [{"id":hit[0], "title":hit[1]} for hit in res]})
+    return jsonify({'hits': [{"id":hit[0], "title":hit[1], "credit":hit[2]} for hit in res]})
 
 
 @user_blueprint.route('/answered-campaigns', methods=['GET'])
@@ -181,3 +181,22 @@ def user_answerd_campaigns():
     cids = [r[0] for r in db.engine.execute(sql, uid=g.user.id)]
     campaigns = db.session.query(Campaign).filter(Campaign.id.in_(cids)).all()
     return jsonify({'campaigns': [c.as_dict() for c in campaigns]})
+
+
+@user_blueprint.route('/campaign/<int:campaign_id>', methods=['GET'])
+def next_campaign_hit(campaign_id):
+    campaign_dict = db.session.query(Campaign).get(campaign_id).as_dict()
+
+    sql = text('''select count(*) from hit where campaign_id = :cid and
+                        id in (select hit_id from answer A where A.worker_id = :wid) ''')
+
+    campaign_dict['answered_count'] = db.engine.scalar(sql, cid=campaign_id, wid=g.user.id)
+
+    sql = text('''select count(*) from hit where campaign_id = :cid and status='open' and
+                        id not in (select hit_id from answer A where A.worker_id = :wid) ''')
+
+    campaign_dict['unanswered_count'] = db.engine.scalar(sql, cid=campaign_id, wid=g.user.id)
+
+    return jsonify(campaign_dict)
+
+
