@@ -154,6 +154,25 @@ def user_answerd_hits():
         # {"id":hit.id, "title":hit.title}
     return jsonify({'hits': [{"id":hit[0], "title":hit[1]} for hit in list(set(hits))]})
 
+
+@user_blueprint.route('/unanswered-hits', methods=['GET'])
+def user_unanswerd_hits():
+    cid = request.args.get('cid')
+    offset = request.args.get('offset', 0)
+    limit = request.args.get('limit', 20)
+
+    if cid:
+        sql = text('''select id, title from hit where campaign_id = :cid and
+                        id not in (select hit_id from answer A where A.worker_id = :wid) limit :l offset :o''')
+        res = db.engine.execute(sql, cid=cid, wid=g.user.id, l=limit, o=offset)
+    else:
+        sql = text('''select id, title from hit where
+                        id not in (select hit_id from answer A where A.worker_id = :wid) limit :l offset :o''')
+        res = db.engine.execute(sql, wid=g.user.id, l=limit, o=offset)
+
+    return jsonify({'hits': [{"id":hit[0], "title":hit[1]} for hit in res]})
+
+
 @user_blueprint.route('/answered-campaigns', methods=['GET'])
 def user_answerd_campaigns():
     sql = text('''select distinct(C.id) from campaign C join hit H on C.id=H.campaign_id
