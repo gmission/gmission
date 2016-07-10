@@ -11,6 +11,8 @@ class HIT(db.Model, BasicModelMixin):
     title = db.Column(db.String(200))
     content = db.Column(db.TEXT)
 
+    properties = db.Column(db.String(100))
+
     attachment_id = db.Column(db.Integer, db.ForeignKey('attachment.id'))
     attachment = db.relationship('Attachment', foreign_keys=attachment_id)
 
