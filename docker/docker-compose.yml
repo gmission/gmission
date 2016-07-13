@@ -4,6 +4,7 @@ gmissionbyuwsgi:
   links:
     - localmysql:docker-mysql
     - redis:docker-redis
+    - ssdb:docker-ssdb
   volumes:
     - ../:/GMission-Server
     - /etc/localtime:/etc/localtime:ro
@@ -12,18 +13,18 @@ gmissionbyuwsgi:
   ports:
     - "9095:9090"
 
-asyncjobs:
-  image: freeznet/gmission
-  links:
-    - redis:docker-redis
-    - phppush:docker-php-push
-  volumes:
-    - ../:/GMission-Server
-    - /etc/localtime:/etc/localtime:ro
-  environment:
-    - C_FORCE_ROOT=true
-  working_dir: /GMission-Server/services
-  command: celery -A async_jobs.tasks worker
+#asyncjobs:
+#  image: freeznet/gmission
+#  links:
+#    - redis:docker-redis
+#    - phppush:docker-php-push
+#  volumes:
+#    - ../:/GMission-Server
+#    - /etc/localtime:/etc/localtime:ro
+#  environment:
+#    - C_FORCE_ROOT=true
+#  working_dir: /GMission-Server/services
+#  command: celery -A async_jobs.tasks worker
 
 
 localmysql:
@@ -46,11 +47,14 @@ redis: # some redis warnings ignored..
           #- "6380:6379"
   volumes:
     - /etc/localtime:/etc/localtime:ro
+ssdb:
+  image: wendal/ssdb
+  entrypoint: /usr/bin/ssdb-server -s restart /etc/ssdb.conf
 
-phppush:
-  image: tutum/apache-php
+#phppush:
+#  image: tutum/apache-php
   #ports:
   #- "9899:80"
-  volumes:
-    - ../PHP-push:/app
-    - /etc/localtime:/etc/localtime:ro
+#  volumes:
+#    - ../PHP-push:/app
+#    - /etc/localtime:/etc/localtime:ro

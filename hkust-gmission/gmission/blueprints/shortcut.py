@@ -1,10 +1,13 @@
 __author__ = 'CHEN Zhao'
 
 from flask import Blueprint, jsonify, request, g
+import redis
 import random
 
 from gmission.models import *
 
+
+ssdb = redis.StrictRedis(host='docker-ssdb', port=8888, db=0)
 
 
 shortcut_blueprint = Blueprint('shortcut', __name__, template_folder='templates')
@@ -12,6 +15,13 @@ shortcut_blueprint = Blueprint('shortcut', __name__, template_folder='templates'
 @shortcut_blueprint.route('/campaign/<campaign_id>/next-hit', methods=['GET'])
 def next_campaign_hit(campaign_id):
     uid = g.user.id
+
+    print 'ssdb ts:', ssdb.get('test-timestamp')
+    print 'ssdb un:', ssdb.get('user')
+
+    ssdb.set('user', g.user.username)
+    ssdb.set('test', "testing")
+    ssdb.set('test-timestamp', str(datetime.datetime.now()))
 
     answered_hits = [hit.id for hit,answer in db.session.query(HIT, Answer).filter(HIT.id==Answer.hit_id, Answer.worker_id==uid).all()]
 

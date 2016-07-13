@@ -70,10 +70,8 @@ def jwt_verify():
         # check user by table rules or pre_callback
         return priv.check(user)
     except GMissionError as err:
-        print 'error'
-        print 'priv', priv, priv.allow_roles
+        # print 'priv', priv, priv.allow_roles
         if priv and role_guest in priv.allow_roles:
-            print 'returned, wtf'
             return
         else:
             # for easy debug
