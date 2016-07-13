@@ -3,7 +3,6 @@ gmissionbyuwsgi:
   image: freeznet/gmission
   links:
     - localmysql:docker-mysql
-    - redis:docker-redis
     - ssdb:docker-ssdb
   volumes:
     - ../:/GMission-Server
@@ -41,12 +40,6 @@ localmysql:
     - ./mysql/my.cnf:/etc/mysql/my.cnf
     - /etc/localtime:/etc/localtime:ro
 
-redis: # some redis warnings ignored..
-  image: redis
-  #ports:
-          #- "6380:6379"
-  volumes:
-    - /etc/localtime:/etc/localtime:ro
 ssdb:
   image: wendal/ssdb
   entrypoint: /usr/bin/ssdb-server -s restart /etc/ssdb.conf
