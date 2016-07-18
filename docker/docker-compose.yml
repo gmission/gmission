@@ -1,32 +1,3 @@
-gmissionbyuwsgi:
-    # image: chenzhao/gmission
-  image: freeznet/gmission
-  links:
-    - localmysql:docker-mysql
-    - redis:docker-redis
-    - assignmentalg:server-assign
-  volumes:
-    - ../:/GMission-Server
-    - /etc/localtime:/etc/localtime:ro
-  working_dir: /GMission-Server/hkust-gmission
-  command: uwsgi --ini ../docker/gmission_by_uwsgi/uwsgi.ini
-  ports:
-    - "9091:9090"
-
-asyncjobs:
-  image: freeznet/gmission
-  links:
-    - redis:docker-redis
-    - phppush:docker-php-push
-  volumes:
-    - ../:/GMission-Server
-    - /etc/localtime:/etc/localtime:ro
-  environment:
-    - C_FORCE_ROOT=true
-  working_dir: /GMission-Server/services
-  command: celery -A async_jobs.tasks worker
-
-
 localmysql:
   image: tutum/mysql:latest
   environment:
@@ -37,23 +8,6 @@ localmysql:
     - "3308:3306"
   volumes:
     - /mysql/data/:/var/lib/mysql/
-    - /etc/localtime:/etc/localtime:ro
-
-
-redis: # some redis warnings ignored..
-  image: redis
-  ports:
-    - "6380:6379"
-  volumes:
-    - /etc/localtime:/etc/localtime:ro
-
-
-phppush:
-  image: tutum/apache-php
-  ports:
-    - "9899:80"
-  volumes:
-    - ../PHP-push:/app
     - /etc/localtime:/etc/localtime:ro
 
 assignmentalg:
