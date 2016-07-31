@@ -130,6 +130,8 @@ def init_priv_table():
 
         push_priv_rule('/user/credit/campaign/<campaign_id>', ['GET'], priv(role=role_everyone))
         push_priv_rule('/user/answered-campaigns', ['GET'], priv(role=role_everyone))
+        push_priv_rule('/user/statistics', ['GET'], priv(role=role_everyone))
+        push_priv_rule('/user/ranking', ['GET'], priv(role=role_everyone))
         push_priv_rule('/user/answered-hits', ['GET'], priv(role=role_everyone))
 
         priv_table_inited = True

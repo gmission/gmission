@@ -181,6 +181,36 @@ def user_answerd_campaigns():
     return jsonify({'campaigns': [c.as_dict() for c in campaigns]})
 
 
+@user_blueprint.route('/rankings', methods=['GET'])
+def rankings():
+    sql = text('''select worker_id, username, count(*) from answer join user on answer.worker_id=user.id
+                    group by worker_id order by count(*) desc; ''')
+    answered_ranking = [r for r in db.engine.execute(sql)]
+
+    sql = text(' select id, username, credit from user order by credit desc;')
+    credit_ranking = [r for r in db.engine.execute(sql)]
+
+    return jsonify({'credit': [{'id':cr[0], 'username':cr[1], 'credit':cr[2]} for cr in credit_ranking],
+                    'answered':[{'id':cr[0], 'username':cr[1], 'answered':cr[2]} for cr in answered_ranking] })
+
+
+@user_blueprint.route('/statistics', methods=['GET'])
+def user_statistics():
+    sql = text('select worker_id, count(*) from answer group by worker_id order by count(*) desc;')
+    answered_ranking = [r for r in db.engine.execute(sql)]
+
+    sql = text(' select id, credit from user order by credit desc;')
+    credit_ranking = [r for r in db.engine.execute(sql)]
+
+    # shitcode..
+    get_user_ranking = lambda r: ([i for i in enumerate(r) if i[1][0]==g.user.id] or [[None, [None, None]]]) [0]
+
+
+    return jsonify({'credit_ranking': get_user_ranking(credit_ranking)[0]+1,
+                    'answered_ranking': get_user_ranking(answered_ranking)[0]+1,
+                    'answered_count': get_user_ranking(answered_ranking)[1][1]})
+
+
 @user_blueprint.route('/campaign/<int:campaign_id>', methods=['GET'])
 def next_campaign_hit(campaign_id):
     campaign_dict = db.session.query(Campaign).get(campaign_id).as_dict()
