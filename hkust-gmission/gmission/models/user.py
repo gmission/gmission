@@ -22,6 +22,8 @@ class Role(db.Model, RoleMixin, BasicModelMixin):
 class User(db.Model, UserMixin, BasicModelMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100), unique=True, nullable=False)  # utf8mb4 has a 191 limit for unique index
+    display_name = db.Column(db.String(100), nullable=True)
+    icon_url = db.Column(db.String(200), nullable=True)
     source = db.Column(db.String(20))  # wechat/facebook/...
     email = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(255))  # encrypt later

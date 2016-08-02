@@ -85,6 +85,8 @@ def jwt_verify():
 @user_blueprint.route('/register', methods=['POST'])
 def new_user():
     username = request.json.get('username')
+    display_name = request.json.get('display_name', username)
+    icon_url = request.json.get('icon_url')
     password = request.json.get('password')
     email = request.json.get('email')
     source = request.json.get('source', 'unknown')
@@ -95,6 +97,8 @@ def new_user():
     if User.query.filter_by(email=email).first() is not None:
         raise GMissionError('Invalid', 'existing email')
     user = User(username=username, email=email, source=source)
+    user.display_name = display_name
+    user.icon_url = icon_url
     user.hash_password(password)
     db.session.add(user)
     db.session.commit()
@@ -183,15 +187,15 @@ def user_answerd_campaigns():
 
 @user_blueprint.route('/rankings', methods=['GET'])
 def rankings():
-    sql = text('''select worker_id, username, count(*) from answer join user on answer.worker_id=user.id
+    sql = text('''select worker_id, username, display_name, count(*) from answer join user on answer.worker_id=user.id
                     group by worker_id order by count(*) desc; ''')
     answered_ranking = [r for r in db.engine.execute(sql)]
 
-    sql = text(' select id, username, credit from user order by credit desc;')
+    sql = text(' select id, username, display_name, credit from user order by credit desc;')
     credit_ranking = [r for r in db.engine.execute(sql)]
 
-    return jsonify({'credit': [{'id':cr[0], 'username':cr[1], 'credit':cr[2]} for cr in credit_ranking],
-                    'answered':[{'id':cr[0], 'username':cr[1], 'answered':cr[2]} for cr in answered_ranking] })
+    return jsonify({'credit': [{'id':cr[0], 'display_name':cr[2] or cr[1], 'credit':cr[3]} for cr in credit_ranking],
+                    'answered':[{'id':cr[0], 'display_name':cr[2] or cr[1], 'answered':cr[3]} for cr in answered_ranking] })
 
 
 @user_blueprint.route('/statistics', methods=['GET'])
