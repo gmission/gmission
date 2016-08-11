@@ -49,6 +49,7 @@ class Answer(db.Model, BasicModelMixin):
 
     type = db.Column(db.String(20))
     content = db.Column(db.String(200))
+    ordinal = db.Column(db.Integer)  # for selections
 
     attachment_id = db.Column(db.Integer, db.ForeignKey('attachment.id'))
     attachment = db.relationship('Attachment', lazy='immediate', foreign_keys=attachment_id)
