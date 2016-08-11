@@ -25,7 +25,7 @@ class HIT(db.Model, BasicModelMixin):
     min_selection_count = db.Column(db.Integer, default=1)
     max_selection_count = db.Column(db.Integer, default=1)
     begin_time = db.Column(db.DateTime, default=datetime.datetime.now)
-    end_time = db.Column(db.DateTime, default=lambda: datetime.datetime.now() + datetime.timedelta(days=30))
+    end_time = db.Column(db.DateTime, default=lambda: datetime.datetime.now() + datetime.timedelta(days=300))
     created_on = db.Column(db.DateTime, default=datetime.datetime.now)
 
     location_id = db.Column(db.Integer, db.ForeignKey('location.id'), nullable=True)
