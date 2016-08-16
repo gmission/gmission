@@ -40,9 +40,9 @@ localmysql:
     - ./mysql/my.cnf:/etc/mysql/my.cnf
     - /etc/localtime:/etc/localtime:ro
 
-ssdb:
-  image: wendal/ssdb
-  entrypoint: /usr/bin/ssdb-server -s restart /etc/ssdb.conf
+#ssdb:
+#  image: wendal/ssdb
+#  entrypoint: /usr/bin/ssdb-server -s restart /etc/ssdb.conf
 
 #phppush:
 #  image: tutum/apache-php
