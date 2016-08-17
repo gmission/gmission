@@ -231,7 +231,7 @@ def user_statistics():
     credit_ranking = [r for r in db.engine.execute(sql)]
 
     # shitcode..
-    get_user_ranking = lambda r: ([i for i in enumerate(r) if i[1][0]==g.user.id] or [[0, [g.user.id, 0]]]) [0]
+    get_user_ranking = lambda r: ([i for i in enumerate(r) if i[1][0]==g.user.id] or [[len(r), [g.user.id, 0]]]) [0]
 
 
     return jsonify({'credit_ranking': get_user_ranking(credit_ranking)[0]+1,

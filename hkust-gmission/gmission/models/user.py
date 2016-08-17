@@ -56,13 +56,15 @@ class User(db.Model, UserMixin, BasicModelMixin):
         return ret
 
     def get_json(self, password=False):
-        fields_in_json = ['id', 'username', 'email', 'credit', 'active', 'created_on', 'source']
-        json_dict = {}
-        for field in fields_in_json:
-            json_dict[field] = getattr(self, field)
+        # fields_in_json = ['id', 'username', 'email', 'credit', 'active', 'created_on', 'source']
+        json_dict = self.as_dict()
+        # for field in fields_in_json:
+        #     json_dict[field] = getattr(self, field)
         json_dict['roles'] = self.get_roles()
         if password:
             json_dict['password'] = self.password
+        else:
+            json_dict.pop('password')
         return json_dict
 
     @staticmethod
