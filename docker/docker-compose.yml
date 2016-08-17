@@ -3,7 +3,7 @@ gmissionbyuwsgi:
   image: freeznet/gmission
   links:
     - localmysql:docker-mysql
-    - ssdb:docker-ssdb
+    #- ssdb:docker-ssdb
   volumes:
     - ../:/GMission-Server
     - /etc/localtime:/etc/localtime:ro
