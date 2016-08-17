@@ -3,7 +3,7 @@ gmissionbyuwsgi:
   image: freeznet/gmission
   links:
     - localmysql:docker-mysql
-    - ssdb:docker-ssdb
+#    - ssdb:docker-ssdb
   volumes:
     - ../:/GMission-Server
     - /etc/localtime:/etc/localtime:ro
@@ -43,11 +43,11 @@ localmysql:
 #ssdb:
 #  image: wendal/ssdb
 #  entrypoint: /usr/bin/ssdb-server -s restart /etc/ssdb.conf
-
+#
 #phppush:
 #  image: tutum/apache-php
-  #ports:
-  #- "9899:80"
+#  ports:
+#  - "9899:80"
 #  volumes:
 #    - ../PHP-push:/app
 #    - /etc/localtime:/etc/localtime:ro

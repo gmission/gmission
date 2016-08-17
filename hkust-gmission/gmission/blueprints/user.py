@@ -185,12 +185,36 @@ def user_answerd_campaigns():
     return jsonify({'campaigns': [c.as_dict() for c in campaigns]})
 
 
+# @user_blueprint.route('/rankings', methods=['GET'])
+# def rankings():
+#     # cid = request.args.get('cid')
+#     # offset = int(request.args.get('offset', 0))
+#     # limit = int(request.args.get('limit', 20))
+#
+#     # if cid
+#     sql = text('''select worker_id, username, display_name, count(*) from answer join user on answer.worker_id=user.id
+#                     group by worker_id order by count(*) desc; ''')
+#     answered_ranking = [r for r in db.engine.execute(sql)]
+#
+#     sql = text(' select id, username, display_name, credit from user order by credit desc;')
+#     credit_ranking = [r for r in db.engine.execute(sql)]
+#
+#     return jsonify({'credit': [{'id':cr[0], 'display_name':cr[2] or cr[1], 'credit':cr[3]} for cr in credit_ranking],
+#                     'answered':[{'id':cr[0], 'display_name':cr[2] or cr[1], 'answered':cr[3]} for cr in answered_ranking] })
+
 @user_blueprint.route('/rankings', methods=['GET'])
 def rankings():
-    sql = text('''select worker_id, username, display_name, count(*) from answer join user on answer.worker_id=user.id
-                    group by worker_id order by count(*) desc; ''')
+    # cid = int(request.args.get('cid'))
+    sql = text('''select worker_id,username, display_name, count(*)
+                from answer join user on answer.worker_id = user.id join hit on hit.id = answer.hit_id
+                where hit.campaign_id = 1
+                group by worker_id order by count(*) desc;''')
     answered_ranking = [r for r in db.engine.execute(sql)]
 
+    # sql = text('''select worker_id,username, display_name, sum(hit.credit)
+    #             from answer join user on answer.worker_id = user.id join hit on hit.id = answer.hit_id
+    #             where hit.campaign_id = 1
+    #             group by worker_id order by sum(hit.credit) desc;''')
     sql = text(' select id, username, display_name, credit from user order by credit desc;')
     credit_ranking = [r for r in db.engine.execute(sql)]
 
