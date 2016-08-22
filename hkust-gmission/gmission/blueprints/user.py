@@ -217,8 +217,8 @@ def rankings():
         group by worker_id order by sum(hit.credit) desc;''')
     credit_ranking = [r for r in db.engine.execute(sql, cid = cid)]
 
-    return jsonify({'credit': [{'id':cr[0], 'display_name':cr[2] or cr[1], 'credit':cr[3]} for cr in credit_ranking],
-                    'answered':[{'id':cr[0], 'display_name':cr[2] or cr[1], 'answered':cr[3]} for cr in answered_ranking] })
+    return jsonify({'credit': [{'id':cr[0], 'display_name':cr[2] or cr[1], 'credit':int(cr[3])} for cr in credit_ranking],
+                    'answered':[{'id':cr[0], 'display_name':cr[2] or cr[1], 'answered':int(cr[3])} for cr in answered_ranking] })
 
 
 @user_blueprint.route('/statistics', methods=['GET'])
