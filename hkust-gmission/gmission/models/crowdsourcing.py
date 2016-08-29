@@ -20,6 +20,7 @@ class HIT(db.Model, BasicModelMixin):
     campaign = db.relationship('Campaign', lazy='select')
 
     credit = db.Column(db.Integer, default=10)
+    payment = db.Column(db.String(20), default="requester")
     status = db.Column(db.String(20), default='open')  # or closed
     required_answer_count = db.Column(db.Integer, default=3)
     min_selection_count = db.Column(db.Integer, default=1)

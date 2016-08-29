@@ -9,10 +9,12 @@ import os.path
 import user_controller
 service_path = os.path.join(ROOT, '../../services')
 sys.path.append(service_path)
-from async_jobs.tasks import send_email
+# from async_jobs.tasks import send_email
 
 
 def send_reg_email_async(user):
+    print 'ignore email confirmation..'
+    return
     subject = "Email confirmation for gMission"
     body = """Thank you for signing up to use gMission!
 

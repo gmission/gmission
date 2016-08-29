@@ -5,6 +5,7 @@ import redis
 import random
 
 from gmission.models import *
+from gmission.controllers.payment_controller import pay_majority
 
 
 # ssdb = redis.StrictRedis(host='docker-ssdb', port=8888, db=0)
@@ -36,6 +37,22 @@ def next_campaign_hit(campaign_id):
         return jsonify({'hit_id': hit.id})
     else:
         return jsonify({'hit_id': None})
+
+
+@shortcut_blueprint.route('/pay-majority', methods=['GET'])
+def pay_majority_():
+    hid = request.values.get('hid')
+    if hid:
+        hit = HIT.query.get(hid)
+        answers = pay_majority(hit)
+        return jsonify(paid_answers=[a.id for a in answers])
+    cid = request.values.get('cid')
+    if cid:
+        campaign = Campaign.query.get(cid)
+        answers_list = map(pay_majority, campaign.hits)
+        return jsonify(hits=zip((h.id for h in campaign.hits), answers_list))
+
+    return jsonify(error="invalid parameters")
 
 
 @shortcut_blueprint.route('/answered-hits', methods=['GET'])

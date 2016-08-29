@@ -4,22 +4,22 @@ __author__ = 'chenzhao'
 from gmission.controllers.message_controller import send_request_messages
 import dateutil
 import dateutil.tz
-from gmission.controllers.payment_controller import pay_image, pay_choice
+from gmission.controllers.payment_controller import pay_image
 from gmission.models import *
 
 
 def refresh_task_status():
     check_expired()
     check_enough_answer()
-    pass
 
-def refresh_hit_status_with_id(hit_id):
+
+def refresh_hit_status(hit):
     check_expired()
 
-    hit = HIT.query.get(hit_id)
     if len(hit.answers) >= hit.required_answer_count:
         # print 'close enough answer', request.id, request.task.title
         close_task_and_pay_workers(hit)
+
 
 def check_expired():
     print 'check_expired'
@@ -43,14 +43,16 @@ def close_task_and_pay_workers(task):
     if task.type in ('image', 'video', 'mix'):
         pay_image(task)
     else:  # text multiple choice
-        # pay_choice(task)
+        # to add new payment types: "requester", "majority", ...
+
         pass
     task.status = 'closed'
     db.session.commit()
 
 
 def assign_task_to_workers(task):
-    assign_task_to_all_possible_workers(task)
+    # no need for wechat mode
+    # assign_task_to_all_possible_workers(task)
     pass
 
 # def assign_task_to_knn_workers(task, k_in_knn=10):
@@ -84,12 +86,12 @@ def query_online_users():
 #     send_request_messages(task, users)
 #     pass
 
-
-def credit_process(task):
-    user = task.requester
-    credit = task.credit
-    user.credit -= credit
-    db.session.commit()
+# Why? for what?
+# def credit_process(task):
+#     user = task.requester
+#     credit = task.credit
+#     user.credit -= credit
+#     db.session.commit()
 
 
 def local_datetime(dt_string):
@@ -101,7 +103,7 @@ def local_datetime(dt_string):
     return dt
 
 
-def push_worker_to_campaign_user(answer):
+def log_worker_as_campaign_participant(answer):
     if answer is None:
         return
     if answer.hit.campaign is None:

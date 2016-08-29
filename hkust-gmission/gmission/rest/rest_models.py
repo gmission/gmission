@@ -1,18 +1,13 @@
-from gmission.controllers.geo_controller import filter_location
-from gmission.controllers.message_controller import send_answer_message
-
 __author__ = 'chenzhao'
 
 from .base import ReSTBase
 from werkzeug.exceptions import Conflict
 from gmission.models import *
-from gmission.controllers.task_controller import refresh_task_status, assign_task_to_workers, credit_process, \
-    push_worker_to_campaign_user, refresh_hit_status_with_id
-from gmission.controllers.payment_controller import pay
+from gmission.controllers.geo_controller import filter_location
+from gmission.controllers.message_controller import send_answer_message
+from gmission.controllers.task_controller import assign_task_to_workers, log_worker_as_campaign_participant, refresh_hit_status
+from gmission.controllers.payment_controller import pay_for_instant_type_hit
 
-
-# for k,v in app.blueprints.items():
-#     print k,v
 
 class ReSTUser(User, ReSTBase):
     @classmethod
@@ -57,37 +52,28 @@ class ReSTHIT(HIT, ReSTBase):
     def after_post(cls, result=None):
         hit = HIT.query.get(result['id'])
         assign_task_to_workers(hit)
-        credit_process(hit)
+        # why?
+        # credit_process(hit)
         pass
 
 
 class ReSTAnswer(Answer, ReSTBase):
-    # @priv_GET
-    # def priv(cls, url, user):
-    # return user == answer.hit.requester or user.role == admin
-
-
     @classmethod
     def before_post(cls, data):
-        # print 'ReSTAnswer before_post'
+        data['accepted'] = False
         filter_location(data)
-        # data['status'] = 'open'
 
     @classmethod
-    def before_put_single(cls, instance_id=None, data=None):
-        # print 'ReSTAnswer before_put'
+    def before_put_single(cls, instance_id=None, data=None):  # PUT means updating submitted answers
         filter_location(data)
 
     @classmethod
     def after_post(cls, result):
-        # print 'ReSTAnswer after_post'
         answer = Answer.query.get(result['id'])
-        send_answer_message(answer)
-        # refresh_task_status()
-        refresh_hit_status_with_id(answer.hit_id)
-        # Prof. Chen wants workers to be paid at once:
-        pay(answer.hit.requester, answer.worker, answer, answer.hit.credit)
-        push_worker_to_campaign_user(answer)
+        # send_answer_message(answer) messages are not needed in wechat
+        pay_for_instant_type_hit(answer)
+        refresh_hit_status(answer.hit)
+        log_worker_as_campaign_participant(answer)
 
     @classmethod
     def after_get_many(cls, search_params=None, **kwargs):

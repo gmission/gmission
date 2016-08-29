@@ -1,4 +1,4 @@
-from collections import defaultdict
+from collections import defaultdict, Counter
 from gmission.models import *
 
 __author__ = 'chenzhao'
@@ -14,18 +14,43 @@ def log_payment(requester, worker, answer, credit):
     db.session.add(ct)
 
 
-def has_paid(requester, worker, answer):
+def has_paid(answer):
     logged = CreditTransaction.query.filter(CreditTransaction.answer_id==answer.id).count()
     return logged > 0
 
 
-def pay(requester, worker, answer, credit):
-    if has_paid(requester, worker, answer):
-        return
-    worker.credit += credit
-    requester.credit -= credit
-    log_payment(requester, worker, answer, credit)
+def pay_for_instant_type_hit(answer):
+    if answer.hit.payment=="instant":
+        pay(answer)
+
+
+def pay(answer):
+    if has_paid(answer):  # double insurance for no duplicate payment
+        return False, "paid before"
+    credit = answer.hit.credit
+
+    answer.accepted = True
+    answer.worker.credit += credit
+    answer.hit.requester.credit -= credit
+    log_payment(answer.hit.requester, answer.worker, answer, credit)
     db.session.commit()
+    return True, credit
+
+
+def pay_majority(hit):
+    print hit
+    print len(hit.answers), 'answers total'
+    if len(hit.answers)<hit.required_answer_count:
+        return "not enough answers"
+    valid_answers = sorted(hit.answers, key=lambda a:a.created_on)[:hit.required_answer_count]  # to prevent sync issues
+    print len(valid_answers), 'valid answers'
+
+    correct_ordinal = get_majority_ordinal(hit)
+    print 'correct ordinal', correct_ordinal
+    correct_answers = filter(lambda a:a.ordinal == correct_ordinal, valid_answers)
+    print 'correct answers', correct_answers
+    result = map(pay, correct_answers)
+    return [{'answer':a.id, 'result':r} for a, r in zip(correct_answers, result)]
 
 
 def pay_image(task):
@@ -33,20 +58,10 @@ def pay_image(task):
         pay(task.requester, answer.worker, answer, task.credit)
 
 
-def get_majority_option(request):
-    if not request.answers:
+def get_majority_ordinal(hit):
+    if not hit.answers:
         return None
-    option_counter = defaultdict(int)
-    for answer in request.answers:
-        option_counter[answer.option] += 1
-    return max(option_counter.items(), key=lambda i:i[1])[0]
-
-
-def pay_choice(task):
-    credit = task.credit
-    majority_option = get_majority_option(task)
-    good_answers = filter(lambda a:a.option==majority_option, task.answers) # \!/ not necessary
-    for answer in sorted(good_answers, key=lambda a:a.created_on)[:task.required_answer_count]:  # should be updated on
-        pay(task.requester, answer.worker, answer, credit)
-
+    counter = Counter(a.ordinal for a in hit.answers)
+    majority_ordinal, majority_count = counter.most_common(1)[0]
+    return majority_ordinal
 
