@@ -8,6 +8,6 @@ class Attachment(db.Model, BasicModelMixin):
     name = db.Column(db.String(100))
     type = db.Column(db.String(20))  # image, video, option, list
     content = db.Column(db.String(100))
-    parent_id = db.Column(db.Integer, db.ForeignKey('attachment.id'))
+    parent_id = db.Column(db.Integer, db.ForeignKey('attachment.id'), nullable=True)
     children = db.relationship('Attachment', backref=db.backref("parent", remote_side=id), lazy='select')
     created_on = db.Column(db.DateTime, default=datetime.datetime.now)
