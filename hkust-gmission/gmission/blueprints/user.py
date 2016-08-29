@@ -204,18 +204,27 @@ def user_answerd_campaigns():
 
 @user_blueprint.route('/rankings', methods=['GET'])
 def rankings():
-    cid = int(request.args.get('cid'))
-    sql = text('''select worker_id,username, display_name, count(*)
-                from answer join user on answer.worker_id = user.id join hit on hit.id = answer.hit_id
-                where hit.campaign_id = :cid
-                group by worker_id order by count(*) desc;''')
-    answered_ranking = [r for r in db.engine.execute(sql, cid = cid)]
+    cid = request.args.get('cid')
+    if cid is None:
+        sql = text('''select worker_id, username, display_name, count(*) from answer join user on answer.worker_id=user.id
+                        group by worker_id order by count(*) desc; ''')
+        answered_ranking = [r for r in db.engine.execute(sql)]
 
-    sql = text('''select worker_id,username, display_name, sum(hit.credit)
-        from answer join user on answer.worker_id = user.id join hit on hit.id = answer.hit_id
-        where hit.campaign_id = :cid
-        group by worker_id order by sum(hit.credit) desc;''')
-    credit_ranking = [r for r in db.engine.execute(sql, cid = cid)]
+        sql = text(' select id, username, display_name, credit from user order by credit desc;')
+        credit_ranking = [r for r in db.engine.execute(sql)]
+    else:
+        cid = int(cid)
+        sql = text('''select worker_id,username, display_name, count(*)
+                    from answer join user on answer.worker_id = user.id join hit on hit.id = answer.hit_id
+                    where hit.campaign_id = :cid
+                    group by worker_id order by count(*) desc;''')
+        answered_ranking = [r for r in db.engine.execute(sql, cid = cid)]
+
+        sql = text('''select worker_id,username, display_name, sum(hit.credit)
+            from answer join user on answer.worker_id = user.id join hit on hit.id = answer.hit_id
+            where hit.campaign_id = :cid
+            group by worker_id order by sum(hit.credit) desc;''')
+        credit_ranking = [r for r in db.engine.execute(sql, cid = cid)]
 
     return jsonify({'credit': [{'id':cr[0], 'display_name':cr[2] or cr[1], 'credit':int(cr[3])} for cr in credit_ranking],
                     'answered':[{'id':cr[0], 'display_name':cr[2] or cr[1], 'answered':int(cr[3])} for cr in answered_ranking] })
