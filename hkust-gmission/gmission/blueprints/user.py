@@ -187,16 +187,23 @@ def user_answerd_campaigns():
 
 @user_blueprint.route('/rankings', methods=['GET'])
 def rankings():
-    sql = text('''select worker_id, username, display_name, count(*) from answer join user on answer.worker_id=user.id
-                    group by worker_id order by count(*) desc; ''')
-    answered_ranking = [r for r in db.engine.execute(sql)]
+    cid = request.args.get('cid')
 
-    sql = text(' select id, username, display_name, credit from user order by credit desc;')
-    credit_ranking = [r for r in db.engine.execute(sql)]
+    if cid is None:
+        sql = text('''select worker_id, username, display_name, count(*) from answer join user on answer.worker_id=user.id
+                        group by worker_id order by count(*) desc; ''')
+        answered_ranking = [r for r in db.engine.execute(sql)]
 
-    return jsonify({'credit': [{'id':cr[0], 'display_name':cr[2] or cr[1], 'credit':cr[3]} for cr in credit_ranking],
-                    'answered':[{'id':cr[0], 'display_name':cr[2] or cr[1], 'answered':cr[3]} for cr in answered_ranking] })
+        sql = text(' select id, username, display_name, credit from user order by credit desc;')
+        credit_ranking = [r for r in db.engine.execute(sql)]
 
+        return jsonify({'credit': [{'id':cr[0], 'display_name':cr[2] or cr[1], 'credit':cr[3]} for cr in credit_ranking],
+                        'answered':[{'id':cr[0], 'display_name':cr[2] or cr[1], 'answered':cr[3]} for cr in answered_ranking] })
+    else:
+        return jsonify({'credit': [{'id': 1, 'display_name': 'testuserdddddddd', 'credit': 123},
+                           {'id': 2, 'display_name': 'testuser2', 'credit': 111}  ],
+         'answered': [{'id': 1, 'display_name': 'testu2', 'answered': 123}
+                      {'id': 2, 'display_name': 'testuser3', 'answered': 111} ] })
 
 @user_blueprint.route('/statistics', methods=['GET'])
 def user_statistics():
