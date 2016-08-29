@@ -144,7 +144,7 @@ def user_credit_campaign_log(campaign_id):
     return jsonify({'credit': sum(credit)})
 
 @user_blueprint.route('/answered-hits', methods=['GET'])
-def user_answerd_hits():
+def user_answered_hits():
     cid = request.args.get('cid')
     if cid:
         hits = [(hit.id, hit.title) for c, hit, answer in db.session.query(Campaign, HIT, Answer). \
@@ -220,10 +220,9 @@ def rankings():
                     group by worker_id order by count(*) desc;''')
         answered_ranking = [r for r in db.engine.execute(sql, cid = cid)]
 
-        sql = text('''select worker_id,username, display_name, sum(hit.credit)
-            from answer join user on answer.worker_id = user.id join hit on hit.id = answer.hit_id
-            where hit.campaign_id = :cid
-            group by worker_id order by sum(hit.credit) desc;''')
+        sql = text('''select worker_id,  username, display_name, sum(T.credit)
+ from `credit_transaction` T join user U on T.worker_id=U.id
+ where campaign_id=:cid group by worker_id order by sum(T.credit) desc''')
         credit_ranking = [r for r in db.engine.execute(sql, cid = cid)]
 
     return jsonify({'credit': [{'id':cr[0], 'display_name':cr[2] or cr[1], 'credit':int(cr[3])} for cr in credit_ranking],
@@ -248,7 +247,7 @@ def user_statistics():
 
 
 @user_blueprint.route('/campaign/<int:campaign_id>', methods=['GET'])
-def next_campaign_hit(campaign_id):
+def campaign_statistic(campaign_id):
     campaign_dict = db.session.query(Campaign).get(campaign_id).as_dict()
 
     sql = text('''select count(*) from hit where campaign_id = :cid and
