@@ -28,6 +28,13 @@ def index():
     return render_template('index.html', config=app.config)
 
 
+@app.route('/statistic')
+def statistic():
+    worker_accuracy = []
+    return render_template('statistic.html', worker_accuracy=worker_accuracy)
+    pass
+
+
 @app.route('/test')
 def test():
     """Print available functions."""

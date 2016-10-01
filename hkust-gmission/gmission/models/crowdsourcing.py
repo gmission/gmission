@@ -49,7 +49,7 @@ class Answer(db.Model, BasicModelMixin):
     hit_id = db.Column(db.Integer, db.ForeignKey('hit.id'))
 
     type = db.Column(db.String(20))
-    content = db.Column(db.String(200))
+    content = db.Column(db.String(1024))
     ordinal = db.Column(db.Integer)  # for selections
 
     attachment_id = db.Column(db.Integer, db.ForeignKey('attachment.id'))

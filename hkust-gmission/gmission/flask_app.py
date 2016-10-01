@@ -42,7 +42,7 @@ from models import user_datastore
 security = Security(app, user_datastore)
 
 app.config['DEBUG_TB_PROFILER_ENABLED'] = False
-toolbar = DebugToolbarExtension(app)
+# toolbar = DebugToolbarExtension(app)
 
 
 class GMissionError(Exception):
