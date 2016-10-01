@@ -2,56 +2,144 @@
 <html lang="zh-cmn-Hans">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
-    <title>WeUI</title>
-    <link rel="stylesheet" href="./WeUI_files/weui.css"/>
-    <link rel="stylesheet" href="./WeUI_files/example.css"/>
-</head>
-<body ontouchstart>
+{#    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">#}
+    <title>Statistic</title>
+{#    <link rel="stylesheet" href="./WeUI_files/weui.css"/>#}
+{#    <link rel="stylesheet" href="./WeUI_files/example.css"/>#}
 
-<canvas id="myChart" width="400" height="400"></canvas>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+      integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+</head>
+<body>
+
+
+    <h1>WeChat Crowdsourcing Statistic</h1>
+    <div class="container">
+  <div class="row">
+          <canvas width="800" height="400" id="myChart"></canvas>
+  </div>
+
+</div>
+
 
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.3.0/Chart.js"></script>
-<script>
-    var ctx = document.getElementById("myChart");
+    <script>
 
-var myChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
-        datasets: [{
-            label: '# of Votes',
-            data: [12, 19, 3, 5, 2, 3],
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)'
-            ],
-            borderColor: [
-                'rgba(255,99,132,1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)'
-            ],
-            borderWidth: 1
-        }]
-    },
-    options: {
-        scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero:true
-                }
-            }]
+        Chart.defaults.global.maintainAspectRatio = false;
+        Chart.defaults.global.responsive = false;
+
+        colors = [
+            { // blue
+                fillColor: "rgba(151,187,205,0.2)",
+                strokeColor: "rgba(151,187,205,1)",
+                pointColor: "rgba(151,187,205,1)",
+                pointStrokeColor: "#fff",
+                pointHighlightFill: "#fff",
+                pointHighlightStroke: "rgba(151,187,205,0.8)"
+            },
+            { // light grey
+                fillColor: "rgba(220,220,220,0.2)",
+                strokeColor: "rgba(220,220,220,1)",
+                pointColor: "rgba(220,220,220,1)",
+                pointStrokeColor: "#fff",
+                pointHighlightFill: "#fff",
+                pointHighlightStroke: "rgba(220,220,220,0.8)"
+            },
+            { // red
+                fillColor: "rgba(247,70,74,0.2)",
+                strokeColor: "rgba(247,70,74,1)",
+                pointColor: "rgba(247,70,74,1)",
+                pointStrokeColor: "#fff",
+                pointHighlightFill: "#fff",
+                pointHighlightStroke: "rgba(247,70,74,0.8)"
+            },
+            { // green
+                fillColor: "rgba(70,191,189,0.2)",
+                strokeColor: "rgba(70,191,189,1)",
+                pointColor: "rgba(70,191,189,1)",
+                pointStrokeColor: "#fff",
+                pointHighlightFill: "#fff",
+                pointHighlightStroke: "rgba(70,191,189,0.8)"
+            },
+            { // yellow
+                fillColor: "rgba(253,180,92,0.2)",
+                strokeColor: "rgba(253,180,92,1)",
+                pointColor: "rgba(253,180,92,1)",
+                pointStrokeColor: "#fff",
+                pointHighlightFill: "#fff",
+                pointHighlightStroke: "rgba(253,180,92,0.8)"
+            },
+            { // grey
+                fillColor: "rgba(148,159,177,0.2)",
+                strokeColor: "rgba(148,159,177,1)",
+                pointColor: "rgba(148,159,177,1)",
+                pointStrokeColor: "#fff",
+                pointHighlightFill: "#fff",
+                pointHighlightStroke: "rgba(148,159,177,0.8)"
+            },
+            { // dark grey
+                fillColor: "rgba(77,83,96,0.2)",
+                strokeColor: "rgba(77,83,96,1)",
+                pointColor: "rgba(77,83,96,1)",
+                pointStrokeColor: "#fff",
+                pointHighlightFill: "#fff",
+                pointHighlightStroke: "rgba(77,83,96,1)"
+            }
+        ];
+    </script>
+
+<script>
+    function update(obj/*, …*/) {
+        for (var i=1; i<arguments.length; i++) {
+        for (var prop in arguments[i]) {
+            var val = arguments[i][prop];
+            if (typeof val == "object") // this also applies to arrays or null!
+                update(obj[prop], val);
+            else
+                obj[prop] = val;
         }
     }
-});
+    return obj;
+}
+
+    var colorIdx = 0;
+    function colorize(dataset) {
+        function nextColor(){
+            colorIdx += 1;
+            return colors[colorIdx]
+        }
+        update(dataset, nextColor());
+        console.log(dataset)
+        dataset.backgroundColor = dataset.fillColor
+        return dataset
+    }
+
+    var data = {
+        labels: ["0.0", "0.1", "0.2", "0.3", "0.4", "0.5", "0.6", "0.7", "0.8", "0.9", "1.0"],
+        datasets: [
+            colorize({
+                label: "Face Label",
+                data: [0, 12, 23, 34, 65, 59, 80, 81, 56, 55, 40],
+            }), colorize({
+                label: "Robot talk Label",
+                data: [12, 54, 12, 23, 34, 65, 59, 80, 81, 56, 32],
+            }), colorize({
+                label: "Robot talk Label",
+                data: [32, 54, 12, 54, 12, 23, 34, 65, 59, 80, 81],
+            }), colorize({
+                label: "Robot talk Label",
+                data: [54, 14, 65, 43, 12, 54, 12, 23, 34, 65, 59],
+            })
+        ]
+    };
+    var ctx = document.getElementById("myChart");
+    var myLineChart = new Chart(ctx, {
+        type: 'line',
+        data: data,
+    });
+
 </script>
+
 
 </body>
 </html>
