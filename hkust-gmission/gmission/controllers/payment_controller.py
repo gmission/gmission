@@ -5,7 +5,7 @@ __author__ = 'chenzhao'
 
 
 def log_payment(requester, worker, answer, credit):
-    ct = CreditTransaction(credit=credit,
+    ct = CreditPayment(credit=credit,
                            requester=requester,
                            worker=worker,
                            answer_id=answer.id,
@@ -15,7 +15,7 @@ def log_payment(requester, worker, answer, credit):
 
 
 def has_paid(answer):
-    logged = CreditTransaction.query.filter(CreditTransaction.answer_id==answer.id).count()
+    logged = CreditPayment.query.filter(CreditPayment.answer_id==answer.id).count()
     return logged > 0
 
 

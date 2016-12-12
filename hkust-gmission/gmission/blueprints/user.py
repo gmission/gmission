@@ -140,7 +140,7 @@ def user_email_verify(hashid):
 
 @user_blueprint.route('/credit/campaign/<campaign_id>', methods=['GET'])
 def user_credit_campaign_log(campaign_id):
-    credit = [transaction.credit for transaction in db.session.query(CreditTransaction).all() if transaction.campaign_id == int(campaign_id) and transaction.worker_id == g.user.id]
+    credit = [transaction.credit for transaction in db.session.query(CreditPayment).all() if transaction.campaign_id == int(campaign_id) and transaction.worker_id == g.user.id]
     return jsonify({'credit': sum(credit)})
 
 @user_blueprint.route('/answered-hits', methods=['GET'])
