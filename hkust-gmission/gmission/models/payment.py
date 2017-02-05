@@ -23,9 +23,9 @@ class CreditExchange(db.Model, BasicModelMixin):
     id = db.Column(db.Integer, primary_key=True)
     credit = db.Column(db.Integer, nullable=False)
     money = db.Column(db.DECIMAL, nullable=False)
-    channel = db.Column(db.String, nullable=False)
-    action = db.Column(db.String, nullable=True)  # topup or withdraw
-    status = db.Column(db.String, nullable=True)  # processing, done, ... TODO: not enough
+    channel = db.Column(db.String(20), nullable=False)
+    action = db.Column(db.String(20), nullable=True)  # topup or withdraw
+    status = db.Column(db.String(20), nullable=True)  # processing, done, ... TODO: not enough
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship('User', foreign_keys=user_id)

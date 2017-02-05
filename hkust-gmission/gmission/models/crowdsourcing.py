@@ -11,7 +11,7 @@ class HIT(db.Model, BasicModelMixin):
     title = db.Column(db.String(200))
     content = db.Column(db.TEXT)
 
-    properties = db.Column(db.String(100))
+    properties = db.Column(db.String(200))
 
     attachment_id = db.Column(db.Integer, db.ForeignKey('attachment.id'))
     attachment = db.relationship('Attachment', foreign_keys=attachment_id)
@@ -75,6 +75,6 @@ class Selection(db.Model, BasicModelMixin):
     hit_id = db.Column(db.Integer, db.ForeignKey('hit.id'))
 
     type = db.Column(db.String(20))
-    content = db.Column(db.String(200))
+    content = db.Column(db.String(500))
 
     created_on = db.Column(db.DateTime, default=datetime.datetime.now)
