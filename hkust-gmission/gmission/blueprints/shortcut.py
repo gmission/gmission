@@ -41,7 +41,7 @@ def next_campaign_hit(campaign_id):
 
 
 @shortcut_blueprint.route('/exchange', methods=['GET'])
-def exchange():
+def exchange_():
     try:
         credit = int(request.values.get('credit'))
         if 'money' in request.values:
