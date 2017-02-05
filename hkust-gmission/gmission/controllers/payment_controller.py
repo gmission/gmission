@@ -5,7 +5,7 @@ __author__ = 'chenzhao'
 
 
 def log_payment(requester, worker, answer, credit):
-    ct = CreditPayment(credit=credit,
+    ct = CreditTransaction(credit=credit,
                            requester=requester,
                            worker=worker,
                            answer_id=answer.id,
@@ -15,7 +15,7 @@ def log_payment(requester, worker, answer, credit):
 
 
 def has_paid(answer):
-    logged = CreditPayment.query.filter(CreditPayment.answer_id==answer.id).count()
+    logged = CreditTransaction.query.filter(CreditTransaction.answer_id==answer.id).count()
     return logged > 0
 
 
@@ -35,6 +35,17 @@ def pay(answer):
     log_payment(answer.hit.requester, answer.worker, answer, credit)
     db.session.commit()
     return True, credit
+
+
+def exchange(user, credit, money, channel, action):
+    if user.credit + credit < 0:
+        print 'exchange failed, user credit<0'
+        return False
+    user.credit += credit
+    ce = CreditExchange(credit=credit, money=money, user_id=user.id, channel=channel, action=action)
+    db.session.add(ce)
+    db.session.commit()
+    return ce
 
 
 def pay_majority(hit):
