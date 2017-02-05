@@ -22,7 +22,7 @@ class CreditTransaction(db.Model, BasicModelMixin):
 class CreditExchange(db.Model, BasicModelMixin):
     id = db.Column(db.Integer, primary_key=True)
     credit = db.Column(db.Integer, nullable=False)
-    money = db.Column(db.DECIMAL, nullable=False)
+    money = db.Column(db.DECIMAL(10, 3), nullable=False)
     channel = db.Column(db.String(20), nullable=False)
     action = db.Column(db.String(20), nullable=True)  # topup or withdraw
     status = db.Column(db.String(20), nullable=True)  # processing, done, ... TODO: not enough
