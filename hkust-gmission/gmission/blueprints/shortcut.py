@@ -66,7 +66,9 @@ def exchange_():
         action = 'withdraw'
 
     ce = exchange(g.user, credit, money, channel, action)
-    return jsonify(ce.as_dict())
+    res = ce.as_dict()
+    res['money'] = str(ce.money)
+    return jsonify(res)
 
 @shortcut_blueprint.route('/pay-majority', methods=['GET'])
 def pay_majority_():
