@@ -1,4 +1,5 @@
-百度云推送PHP SDK 
+note: register baidu account first.
+百度云推送PHP SDK
 
 功能：
 	1. PHP SDK 是对百度云存储的HTTP API的封装，方便开发者使用；

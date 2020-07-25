@@ -5,4 +5,4 @@
 
 ## Docs
 
-Please visit [gMission Docs](http://gmission.github.io/gmission/).
+Please visit our project home page [gMission](https://gmission.github.io) and [gMission Docs](http://gmission.github.io/gmission/).

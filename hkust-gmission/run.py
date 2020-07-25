@@ -7,4 +7,4 @@ __author__ = 'chenzhao'
 from gmission import app
 
 
-app.run(debug=True)
+app.run(debug=False)
